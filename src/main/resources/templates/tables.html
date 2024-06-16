@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables</title>
+    <style>
+        .table-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 50px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .table-button {
+            position: relative;
+            width: 120px;
+            height: 90px;
+            background-color: #2B230A;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 28px;
+            margin: 8px 300px;
+            cursor: pointer;
+        }
+
+        .table-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .table-button.disabled {
+            background-color: rgb(128, 128, 128);
+            cursor: not-allowed;
+        }
+
+        .table-button:not(.disabled):hover {
+            background-color: saddlebrown;
+        }
+
+        .chair {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #2B230A;
+            border: 1px solid black;
+        }
+        .chair-top-left {
+            top: -25px;
+            left: 20px;
+        }
+        .chair-top-right {
+            top: -25px;
+            right: 20px;
+        }
+        .chair-bottom-left {
+            bottom: -25px;
+            left: 20px;
+        }
+        .chair-bottom-right {
+            bottom: -25px;
+            right: 20px;
+        }
+
+        .table-button:hover .chair {
+            background-color: saddlebrown;
+        }
+
+        .table-button.disabled .chair {
+            background-color: rgb(128, 128, 128);
+            cursor: not-allowed;
+            border-color: rgb(128, 128, 128);
+        }
+
+        .menu-column {
+            width: 120px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 695px;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .logout-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 115px;
+            border: none;
+            border-radius: 5px;
+            background-image: url("exit-button.png");
+            background-position: center;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .set-tables-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 115px;
+            border: none;
+            border-radius: 5px;
+            background-image: url("tables-button.png");
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .set-tables-button.disabled {
+            background-color: rgb(128, 128, 128);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .add-products-in-stock-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 115px;
+            border: none;
+            border-radius: 5px;
+            background-image: url("products-button.png");
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .add-products-in-stock-button.disabled {
+            background-color: rgb(128, 128, 128);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .list-menu-items-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 115px;
+            border: none;
+            border-radius: 5px;
+            background-image: url("menu-button.png");
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .list-menu-items-button.disabled {
+            background-color: rgb(128, 128, 128);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+
+        .laminate-background {
+            background-color: #D2B48C;
+            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.1) 75%);
+            background-size: 20px 20px;
+        }
+
+        .center-text {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .bold {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .status-circle {
+            position: absolute;
+            top: 30px;
+            right: 5px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: green;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 100px;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 250px;
+            height: 250px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body class="laminate-background">
+<div class="center-text" style="margin-top: -10px; margin-bottom: -20px" th:if="${(waiterDto.firstName) != null}">
+    <p class="bold"><span th:text="${waiterDto.firstName}"></span>'s tables</p>
+</div>
+<div th:each="rowIdx : ${#numbers.sequence(0, tables.size()-1, 2)}">
+    <div class="table-container">
+        <div class="row">
+            <span class="status-circle"></span>
+            <button class="table-button"
+                    th:with="isWaiterNull=${tables[rowIdx].waiter == null},
+                        isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx].id)}"
+                    th:attr="onclick='navigateToTableOrder(' + ${tables[rowIdx].id} + ',' + ${waiterDto.id} + ')'"
+                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button enabled' : 'table-button disabled')}"
+                    th:disabled="${!isWaiterNull && !isTableAssigned}">
+                <div class="chair chair-top-left"></div>
+                <div class="chair chair-top-right"></div>
+                <div class="chair chair-bottom-left"></div>
+                <div class="chair chair-bottom-right"></div>
+                <div class="table-info">
+                    <span th:text="${tables[rowIdx].id}"></span>
+                    <span style="font-size: 14px" th:if="${tables[rowIdx].waiter != null}" th:text="${tables[rowIdx].waiter.getFirstName()}"></span>
+                </div>
+                <span class="status-circle"
+                      th:style="'background-color: ' + (${tables[rowIdx].tableStatus.name()} == 'AVAILABLE' ?
+                       '#63F225' : (${tables[rowIdx].tableStatus.name()} == 'RESERVED' ? '#FF9E3D' : 'red'))"></span>
+            </button>
+            <button class="table-button" th:if="${rowIdx + 1 < tables.size()}"
+                    th:with="isWaiterNull=${tables[rowIdx + 1].waiter == null},
+                        isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx + 1].id)}"
+                    th:attr="onclick='navigateToTableOrder(' + ${tables[rowIdx].id + 1} + ',' + ${waiterDto.id} + ')'"
+                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button enabled' : 'table-button disabled')}"
+                    th:disabled="${!isWaiterNull && !isTableAssigned}">
+                <div class="chair chair-top-left"></div>
+                <div class="chair chair-top-right"></div>
+                <div class="chair chair-bottom-left"></div>
+                <div class="chair chair-bottom-right"></div>
+                <div class="table-info">
+                    <span th:text="${tables[rowIdx].id + 1}"></span>
+                    <span style="font-size: 14px" th:if="${tables[rowIdx + 1].waiter != null}" th:text="${tables[rowIdx + 1].waiter.getFirstName()}"></span>
+                </div>
+                <span class="status-circle"
+                      th:style="'background-color: ' + (${tables[rowIdx + 1].tableStatus.name()} == 'AVAILABLE'
+                      ? '#63F225' : (${tables[rowIdx + 1].tableStatus.name()} == 'RESERVED' ? '#FF9E3D' : 'red'))"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="menu-column laminate-background">
+    <button class="logout-button" onclick="location.href='/login';"></button>
+    <button class="set-tables-button"
+            th:class="${waiterDto.admin ? 'set-tables-button enabled' : 'set-tables-button disabled'}"
+            th:disabled="${not waiterDto.admin}">
+    </button>
+    <button class="add-products-in-stock-button"
+            th:class="${waiterDto.admin ? 'add-products-in-stock-button enabled' : 'add-products-in-stock-button disabled'}"
+            th:disabled="${not waiterDto.admin}"
+            onclick="location.href='/products/products-in-stock';">
+    </button>
+    <button class="list-menu-items-button"
+            th:class="${waiterDto.admin ? 'list-menu-items-button enabled' : 'list-menu-items-button disabled'}"
+            th:disabled="${not waiterDto.admin}"
+            onclick="location.href='/menuItem/list-menu-items';">
+    </button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form action="/setWaiter" method="post">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div style="margin-bottom: 10px;">
+                        <label for="tableSelect" class="bold" style="font-size: 24px">Select Table:</label>
+                        <select id="tableSelect" name="tableId"
+                                style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                            <option th:each="table : ${tables}" th:value="${table.id}" th:text="${table.id}"></option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
+                        <select id="waiterSelect" name="waiterId"
+                                style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                        </select>
+                    </div>
+                </div>
+                <button type="submit"
+                        style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px">Assign
+                    Table
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function navigateToTableOrder(tableId, waiterId) {
+        window.location.href = "/table" + tableId + "-order/" + waiterId;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var modal = document.getElementById("myModal");
+        var btn = document.querySelector(".set-tables-button");
+        var span = document.querySelector(".close");
+
+        btn.addEventListener("click", function () {
+            modal.style.display = "block";
+        });
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+</script>
+</body>
+</html>

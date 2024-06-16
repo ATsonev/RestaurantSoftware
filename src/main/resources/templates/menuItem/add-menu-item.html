@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Menu Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: -25px auto 5px;
+            padding: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: -5px;
+        }
+
+        form {
+            margin-top: 5px;
+        }
+
+        form div {
+            margin-bottom: 10px;
+        }
+
+        span, label {
+            font-size: 24px;
+        }
+
+        form label {
+            display: inline-block;
+            width: 200px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="number"],
+        form textarea,
+        form select {
+            width: 300px;
+            padding: 8px;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        form textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        form button[type="submit"] {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 120px;
+            height: 60px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #253258;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+            margin-left: 205px;
+        }
+
+        .container-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .go-back-button {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            height: 70px;
+            width: 170px;
+            margin-top: 15px;
+            margin-right: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 17px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .go-back-button:hover {
+            background-color: #253258;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="container-head">
+    <h1>Add Menu Item</h1>
+    <button class="go-back-button" onclick="location.href='/menuItem/list-menu-items'">Go back to all items</button>
+</div>
+<form class="container" th:action="@{/menuItem/add-menu-item}" th:object="${addMenuItemDTO}" method="post" enctype="multipart/form-data">
+    <div>
+        <label class="label-text" for="name">Name:</label>
+        <input th:errorclass="is-invalid" type="text" id="name" name="name" autocomplete="name" th:field="*{name}" th:value="${addMenuItemDTO.name}" required>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></div>
+    </div>
+    <div>
+        <label class="label-text" for="description">Description:</label>
+        <textarea id="description" name="description" th:field="*{description}" required th:text="${addMenuItemDTO.description}"></textarea>
+        <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error">Description Error</div>
+    </div>
+    <div>
+        <label class="label-text" for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option th:each="category : ${categories}" th:field="*{category}" th:value="${category}" th:text="${category}"></option>
+        </select>
+    </div>
+    <div>
+        <label class="label-text" for="price">Price:</label>
+        <input type="number" id="price" name="price" th:field="*{price}" th:value="${addMenuItemDTO.price}" step="0.01" required>
+        <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="error">Price Error</div>
+    </div>
+    <div>
+        <label class="label-text" for="vat">VAT:</label>
+        <select id="vat" name="vat" required>
+            <option th:each="vat : ${vats}" th:value="${vat}" th:text="${vat}" ></option>
+        </select>
+    </div>
+    <div>
+        <label class="label-text" for="image">Image:</label>
+        <input type="file" id="image" name="image" accept="image/*">
+    </div>
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>

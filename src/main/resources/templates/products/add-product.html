@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 10px auto;
+            padding: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        form div {
+            margin-bottom:  20px;
+        }
+
+        form label {
+            display: inline-block;
+            width: 200px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="number"],
+        form select{
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 20px;
+            box-sizing: border-box;
+        }
+
+        form button[type="submit"] {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 120px;
+            height: 60px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #253258;
+        }
+
+        .container-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .go-back-button {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            height: 70px;
+            width: 170px;
+            margin-top: 15px;;
+            margin-right: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 17px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .go-back-button:hover {
+            background-color: #253258;
+        }
+
+        .button {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 120px;
+            height: 60px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #253258;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+            margin-left: 205px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container-head">
+    <h1>Add Product</h1>
+    <button class="go-back-button" onclick="location.href='/products/products-in-stock'"> Go back to all products</button>
+</div>
+<form class="container" th:object="${dto}" action="/products/add-product" method="post">
+    <div>
+        <label for="productName">Name:</label>
+        <input type="text" id="productName" th:field="*{name}" name="productName" required>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error">Price Error</div>
+        <div th:if="${nameErrorMassage}" class="error"><p th:text="${nameErrorMassage}"></p></div>
+    </div>
+    <div>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" th:field="*{quantityInStock}" name="quantity" step="0.0001" required>
+        <div th:if="${#fields.hasErrors('quantityInStock')}" th:errors="*{quantityInStock}" class="error">Price Error</div>
+        <div th:if="${errorMessage}" class="error"><p th:text="${errorMessage}"></p></div>
+    </div>
+    <div>
+        <label for="productUnit">Product Unit:</label>
+        <select id="productUnit" name="productUnit" th:field="*{productUnit}" style="font-size: 18px" required>
+            <option value="KILOGRAM">Kilogram</option>
+            <option value="LITER">Liter</option>
+            <option value="PIECE">Piece</option>
+        </select>
+    </div>
+    <button class="button" onclick="confirmAddProduct()">Submit</button>
+</form>
+
+<script>
+    function confirmAddProduct() {
+        var productName = document.getElementById("productName").value;
+        var quantity = document.getElementById("quantity").value;
+
+        var confirmationMessage = "Are you sure you want to add product " + productName + " with quantity " + quantity + "?";
+
+       var confirmed = confirm(confirmationMessage);
+
+        if (!confirmed) {
+            event.preventDefault();
+        }
+    }
+    document.getElementById("addProductForm").addEventListener("submit", confirmAddProduct);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #304174;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .form-container {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header {
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        #password {
+            width: 250px;
+            height: 30px;
+            font-size: 40px;
+            margin-left: 55px;
+        }
+
+
+        button {
+            width: 110px;
+            height: 70px;
+            font-size: 20px;
+            margin: 10px;
+            background-color: #D28F49;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #show-password-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 30px;
+            background-color: #D28F49;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #show-password-btn:hover {
+            background-color: #253258;
+        }
+
+        button:hover {
+            background-color: #253258;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h2 class="header">EasyServe</h2>
+<div class="form-container">
+    <form action="#" th:action="@{/login}" method="post">
+        <label for="password">Password:</label><br>
+        <div style="position: relative;">
+            <input type="password" id="password" name="password" readonly="readonly" th:value="${password}" required>
+            <button type="button" id="show-password-btn" onmousedown="showPassword()" onmouseup="hidePassword()" onmouseleave="hidePassword()">👁</button>
+        </div>
+        <div th:if="${loginFailed}" class="error-message">Login failed. Please try again.</div>
+        <br>
+        <div>
+            <button type="button" onclick="addNumber(1)">1</button>
+            <button type="button" onclick="addNumber(2)">2</button>
+            <button type="button" onclick="addNumber(3)">3</button>
+            <br>
+            <button type="button" onclick="addNumber(4)">4</button>
+            <button type="button" onclick="addNumber(5)">5</button>
+            <button type="button" onclick="addNumber(6)">6</button>
+            <br>
+            <button type="button" onclick="addNumber(7)">7</button>
+            <button type="button" onclick="addNumber(8)">8</button>
+            <button type="button" onclick="addNumber(9)">9</button>
+            <br>
+            <button type="button" onclick="clearPassword()">Clear</button>
+            <button type="button" onclick="addNumber(0)">0</button>
+            <button type="submit">Login</button>
+        </div>
+    </form>
+</div>
+<br>
+
+
+
+<script>
+    var passwordField = document.getElementById("password");
+    var showPasswordBtn = document.getElementById("show-password-btn");
+
+    function showPassword() {
+        passwordField.type = "text";
+    }
+
+    function hidePassword() {
+        passwordField.type = "password";
+    }
+
+    function addNumber(num) {
+        var passwordField = document.getElementById("password");
+        if (passwordField.value.length < 6) {
+            passwordField.value += num;
+        }
+    }
+
+    function clearPassword() {
+        var passwordField = document.getElementById("password");
+        passwordField.value = "";
+    }
+</script>
+</body>
+</html>

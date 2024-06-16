@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 10px auto;
+            padding: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2em;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        form div {
+            margin-bottom:  20px;
+        }
+
+        form label {
+            display: inline-block;
+            width: 200px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        form input[type="text"],
+        form input[type="number"],
+        form select{
+            width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 20px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 20px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 38px;
+        }
+
+        form button[type="submit"] {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 120px;
+            height: 60px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #253258;
+        }
+
+        .container-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .go-back-button {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            height: 70px;
+            width: 170px;
+            margin-top: 15px;;
+            margin-right: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 17px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .go-back-button:hover {
+            background-color: #253258;
+        }
+
+        .button {
+            background-color: #304174;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 120px;
+            height: 60px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #253258;
+        }
+
+        input{
+            font-size: 20px;
+        }
+
+        select{
+            font-size: 20px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+            margin-left: 205px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-head">
+    <h1>Add Product</h1>
+    <a th:href="@{'/menuItem/edit-products/' + ${dto.menuItemId}}">
+        <button class="go-back-button"> Go back to menu item products</button>
+    </a>
+</div>
+<form class="container" th:action="@{/menuItem/add-new-product}" th:object="${dto}" method="post">
+    <input type="hidden" th:field="*{menuItemId}" th:value="${dto.menuItemId}"/>
+    <div>
+        <label for="product">Product:</label>
+        <select id="product" th:field="*{product}">
+            <option th:each="product : ${allProducts}" th:value="${product.id}" th:text="${product.name}"></option>
+        </select>
+    </div>
+    <div>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" th:field="*{quantity}" step="0.0001" required>
+        <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error">Quantity error</div>
+    </div>
+    <div>
+        <label for="productCategory"> Product Category:</label>
+        <label>
+            <select id = "productCategory" th:field="*{productCategory}">
+                <option th:each="category : ${allProductCategories}" th:value="${category}" th:text="${category.name()}">
+                    Product Category
+                </option>
+            </select>
+        </label>
+    </div>
+    <button class="button">Submit</button>
+</form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#product').select2({
+            placeholder: 'Select a product',
+            allowClear: true
+        });
+    });
+</script>
+</body>
+</html>

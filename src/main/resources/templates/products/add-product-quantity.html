@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product Quantity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin: 10px auto;
+      padding: 10px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      margin-top: 20px;
+    }
+
+    form div {
+      margin-bottom: 10px;
+    }
+
+    span{
+      font-size: 24px;
+    }
+
+    form label {
+      display: inline-block;
+      width: 200px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    form input[type="text"],
+    form input[type="number"] {
+      width: 300px;
+      padding: 8px;
+      font-size: 24px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+
+    form button[type="submit"] {
+      background-color: #304174;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      width: 120px;
+      height: 60px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    form button[type="submit"]:hover {
+      background-color: #253258;
+    }
+
+    .container-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .go-back-button {
+      background-color: #304174;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      height: 70px;
+      width: 170px;
+      margin-top: 15px;;
+      margin-right: 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 17px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .go-back-button:hover {
+      background-color: #253258;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 5px;
+      margin-left: 205px;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container-head">
+<h1>Add Product Quantity</h1>
+<button class="go-back-button" onclick="location.href='/products/products-in-stock'"> Go back to all products</button>
+</div>
+<form class="container" action="/products/add-product-quantity" th:object="${dto}" method="post">
+  <input type="hidden" id="productName" name="name" th:field="*{name}" th:value="${dto.name}">
+  <input type="hidden" id="productId" name="id" th:field="*{id}" th:value="${dto.id}">
+  <input type="hidden" th:field="*{quantity}" id="quantity" name="quantity" th:value="${dto.quantity}">
+  <div>
+    <label for="productName">Name:</label>
+    <span th:text="${dto.name}" id="name"></span>
+  </div>
+  <div>
+    <label for="currentQuantity">Quantity:</label>
+    <span th:text="${dto.quantity}" id="currentQuantity"></span>
+  </div>
+  <div>
+    <label for="newQuantity">Add Quantity:</label>
+    <input type="number" id="newQuantity" name="newQuantity" th:field="*{newQuantity}" step="0.0001" required>
+    <div th:if="${errorMessage}" class="error-message">
+      <p th:text="${errorMessage}"></p>
+    </div>
+  </div>
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>
