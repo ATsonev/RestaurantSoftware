@@ -838,7 +838,7 @@
   function completePayment(paymentType) {
     const tableId = document.querySelector('.table-button').getAttribute('data-table-id');
     const waiterId = document.querySelector('.table-button').getAttribute('data-waiter-id');
-    const discountPercentage = appliedDiscount; // Use the stored discount value
+    const discountPercentage = appliedDiscount;
     const url = `/order/finishTable${paymentType}/${tableId}/${waiterId}?discount=${discountPercentage}`;
 
     fetch(url, {
