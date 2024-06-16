@@ -1,8 +1,6 @@
 package com.example.restaurantsoftware.util;
 
-import com.example.restaurantsoftware.util.ValidationUtil;
 import org.springframework.stereotype.Component;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.util.Set;

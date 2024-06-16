@@ -13,7 +13,6 @@ import com.example.restaurantsoftware.model.enums.ProductUnit;
 import com.example.restaurantsoftware.repository.MenuItemProductQuantityRepository;
 import com.example.restaurantsoftware.repository.MenuItemRepository;
 import com.example.restaurantsoftware.service.MenuItemService;
-import com.example.restaurantsoftware.util.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +26,11 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     private final MenuItemRepository menuItemRepository;
     private final MenuItemProductQuantityRepository menuItemProductQuantityRepository;
-    private final ValidationUtil validator;
     private final ModelMapper modelMapper;
 
-    public MenuItemServiceImpl(MenuItemRepository menuItemRepository, MenuItemProductQuantityRepository menuItemProductQuantityRepository, ValidationUtil validator, ModelMapper modelMapper) {
+    public MenuItemServiceImpl(MenuItemRepository menuItemRepository, MenuItemProductQuantityRepository menuItemProductQuantityRepository, ModelMapper modelMapper) {
         this.menuItemRepository = menuItemRepository;
         this.menuItemProductQuantityRepository = menuItemProductQuantityRepository;
-        this.validator = validator;
         this.modelMapper = modelMapper;
     }
 

@@ -1,7 +1,6 @@
 package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
-import com.example.restaurantsoftware.model.enums.ProductCategory;
 import com.example.restaurantsoftware.model.enums.ProductUnit;
 
 import javax.persistence.*;

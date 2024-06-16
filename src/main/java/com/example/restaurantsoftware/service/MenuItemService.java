@@ -5,7 +5,6 @@ import com.example.restaurantsoftware.model.dto.menuItemDto.AddMenuItemDTO;
 import com.example.restaurantsoftware.model.dto.menuItemDto.EditMenuItemDTO;
 import com.example.restaurantsoftware.model.dto.menuItemDto.EditMenuItemProductsDTO;
 import com.example.restaurantsoftware.model.dto.menuItemDto.MenuItemAddProductDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;

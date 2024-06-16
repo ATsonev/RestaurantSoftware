@@ -1,9 +1,6 @@
 package com.example.restaurantsoftware.model.dto.menuItemDto;
 
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.Entity;
 
 public class ShowMenuItemJSONDTo {
     private Long id;

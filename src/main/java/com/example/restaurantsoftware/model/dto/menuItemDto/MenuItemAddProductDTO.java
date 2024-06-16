@@ -4,7 +4,6 @@ import com.example.restaurantsoftware.model.Product;
 import com.example.restaurantsoftware.model.enums.ProductCategory;
 
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 
 public class MenuItemAddProductDTO {
 

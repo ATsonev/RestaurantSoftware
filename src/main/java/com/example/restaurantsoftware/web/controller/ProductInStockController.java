@@ -5,10 +5,8 @@ import com.example.restaurantsoftware.model.customExceptions.ExistingProductExce
 import com.example.restaurantsoftware.model.customExceptions.InvalidProductException;
 import com.example.restaurantsoftware.model.dto.productDto.AddProductDto;
 import com.example.restaurantsoftware.model.dto.productDto.AddQuantityDTO;
-import com.example.restaurantsoftware.model.enums.ProductUnit;
 import com.example.restaurantsoftware.service.ProductService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,11 +20,11 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductInStockController {
 
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
     private final ModelMapper modelMapper;
 
-    public ProductInStockController(ModelMapper modelMapper) {
+    public ProductInStockController(ProductService productService, ModelMapper modelMapper) {
+        this.productService = productService;
         this.modelMapper = modelMapper;
     }
 

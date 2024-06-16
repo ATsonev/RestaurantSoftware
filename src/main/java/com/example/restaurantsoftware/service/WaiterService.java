@@ -1,6 +1,5 @@
 package com.example.restaurantsoftware.service;
 
-import com.example.restaurantsoftware.model.Table;
 import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.model.dto.WaiterTurnoverDto;
 

@@ -4,7 +4,6 @@ package com.example.restaurantsoftware.service;
 import com.example.restaurantsoftware.model.Product;
 import com.example.restaurantsoftware.model.dto.productDto.AddProductDto;
 import com.example.restaurantsoftware.model.dto.productDto.AddQuantityDTO;
-import com.example.restaurantsoftware.model.enums.ProductUnit;
 
 import java.util.List;
 

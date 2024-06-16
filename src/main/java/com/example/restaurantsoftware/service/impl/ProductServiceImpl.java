@@ -5,10 +5,8 @@ import com.example.restaurantsoftware.model.customExceptions.ExistingProductExce
 import com.example.restaurantsoftware.model.customExceptions.InvalidProductException;
 import com.example.restaurantsoftware.model.dto.productDto.AddProductDto;
 import com.example.restaurantsoftware.model.dto.productDto.AddQuantityDTO;
-import com.example.restaurantsoftware.model.enums.ProductUnit;
 import com.example.restaurantsoftware.repository.ProductRepository;
 import com.example.restaurantsoftware.service.ProductService;
-import com.example.restaurantsoftware.util.ValidationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +17,10 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final ValidationUtil validator;
     private final ModelMapper modelMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ValidationUtil validator, ModelMapper modelMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, ModelMapper modelMapper) {
         this.productRepository = productRepository;
-        this.validator = validator;
         this.modelMapper = modelMapper;
     }
 

@@ -58,7 +58,6 @@ public class OrdersController {
 
     @GetMapping("/order/setWaiter/{waiterId}/{tableId}")
     public String setWaiter(@PathVariable Long waiterId, @PathVariable Long tableId) {
-        Waiter waiter = waiterService.findWaiterByID(waiterId);
         tableService.setWaiter(tableId, waiterId);
         return "redirect:/table" + tableId + "-order/" + waiterId;
     }
@@ -117,7 +116,7 @@ public class OrdersController {
     }
 
     private List<ShowMenuItemJSONDTo> getShowMenuItemJSONDTos(List<MenuItem> menuItems) {
-        List<ShowMenuItemJSONDTo> menuItemDTO = menuItems.stream()
+        return menuItems.stream()
                 .map(mi->{
                     ShowMenuItemJSONDTo map = modelMapper.map(mi, ShowMenuItemJSONDTo.class);
                     if(mi.getImage() != null){
@@ -125,7 +124,7 @@ public class OrdersController {
                     }
                     return map;
                 }).collect(Collectors.toList());
-        return menuItemDTO;
+
     }
 
 

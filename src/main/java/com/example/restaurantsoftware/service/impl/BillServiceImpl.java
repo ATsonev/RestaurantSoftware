@@ -8,7 +8,6 @@ import com.example.restaurantsoftware.service.BillService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -22,7 +21,7 @@ public class BillServiceImpl implements BillService {
 
     @Override
     public TurnoverDto getTurnoverBetweenDates(LocalDateTime startDate, LocalDateTime endDate, String waiterId, String paymentMethod) {
-        List<Bill> bills = new LinkedList<>();
+        List<Bill> bills;
         if("all".equals(waiterId) && "all".equals(paymentMethod)){
             bills = billRepository.findByDateAndTimeFinishedBetween(startDate, endDate);
         }else if(!"all".equals(waiterId) && "all".equals(paymentMethod)){

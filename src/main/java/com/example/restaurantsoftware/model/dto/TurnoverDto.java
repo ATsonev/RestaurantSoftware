@@ -1,7 +1,5 @@
 package com.example.restaurantsoftware.model.dto;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class TurnoverDto {
     private int numberOfBills;

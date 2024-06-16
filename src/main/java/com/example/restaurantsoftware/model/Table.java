@@ -2,11 +2,8 @@ package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.TableStatus;
-import org.aspectj.weaver.ast.Or;
-
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @javax.persistence.Table(name = "tables")

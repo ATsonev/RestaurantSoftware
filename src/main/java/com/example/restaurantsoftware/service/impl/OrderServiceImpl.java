@@ -2,13 +2,11 @@ package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.*;
 import com.example.restaurantsoftware.model.dto.orderDto.MenuItemsDto;
-import com.example.restaurantsoftware.model.dto.orderDto.OrderMenuItemDto;
 import com.example.restaurantsoftware.model.enums.OrderStatus;
 import com.example.restaurantsoftware.model.enums.PaymentMethod;
 import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.repository.*;
 import com.example.restaurantsoftware.service.OrderService;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,16 +23,14 @@ public class OrderServiceImpl implements OrderService {
     private final WaiterRepository waiterRepository;
     private final TableRepository tableRepository;
     private final BillRepository billRepository;
-    private final ModelMapper modelMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository, ModelMapper modelMapper) {
+    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository) {
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
         this.productRepository = productRepository;
         this.waiterRepository = waiterRepository;
         this.tableRepository = tableRepository;
         this.billRepository = billRepository;
-        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -130,8 +126,8 @@ public class OrderServiceImpl implements OrderService {
         Table table = tableRepository.getById(tableId);
         Waiter waiter = waiterRepository.getById(waiterId);
         List<Order> orders = orderRepository.findAllByTable(table);
-        double sum = 0;
-        double taxes = 0;
+        double sum;
+        double taxes;
         double appliedDiscount = 1 - discount/100;
         sum = orders.stream()
                 .flatMap(o ->o.getMenuItems().stream())

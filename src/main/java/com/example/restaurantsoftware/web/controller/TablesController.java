@@ -46,7 +46,6 @@ public class TablesController {
     @PostMapping("/setWaiter")
     public String setWaiter(@RequestParam("tableId") Long tableId,
                             @RequestParam("waiterId") Long waiterId) {
-        Waiter waiter = waiterService.findWaiterByID(waiterId);
         tableService.setWaiter(tableId, waiterId);
         return "redirect:/tables";
     }
