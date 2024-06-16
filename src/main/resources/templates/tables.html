@@ -20,14 +20,23 @@
         .table-button {
             position: relative;
             width: 120px;
-            height: 90px;
-            background-color: #2B230A;
+            height: 135px;
+            background-image: url("/tables.png");
+            background-size: cover;
             color: white;
             border: none;
             border-radius: 10px;
             font-size: 28px;
-            margin: 8px 300px;
+            margin: -10px 300px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .table-button.enabled:hover{
+            transform: scale(1.1);
         }
 
         .table-info {
@@ -41,46 +50,13 @@
         }
 
         .table-button.disabled {
-            background-color: rgb(128, 128, 128);
+            background-image: url("tables-disabled.png");
             cursor: not-allowed;
         }
 
-        .table-button:not(.disabled):hover {
-            background-color: saddlebrown;
-        }
-
-        .chair {
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            background-color: #2B230A;
-            border: 1px solid black;
-        }
-        .chair-top-left {
-            top: -25px;
-            left: 20px;
-        }
-        .chair-top-right {
-            top: -25px;
-            right: 20px;
-        }
-        .chair-bottom-left {
-            bottom: -25px;
-            left: 20px;
-        }
-        .chair-bottom-right {
-            bottom: -25px;
-            right: 20px;
-        }
-
-        .table-button:hover .chair {
-            background-color: saddlebrown;
-        }
-
-        .table-button.disabled .chair {
-            background-color: rgb(128, 128, 128);
+        .table-button.taken {
+            background-image: url("/tables-taken.png");
             cursor: not-allowed;
-            border-color: rgb(128, 128, 128);
         }
 
         .menu-column {
@@ -167,9 +143,7 @@
 
         .laminate-background {
             background-color: #D2B48C;
-            background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%),
-            linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.1) 75%);
-            background-size: 20px 20px;
+            background-image: url("/background.jpg");
         }
 
         .center-text {
@@ -184,7 +158,7 @@
 
         .status-circle {
             position: absolute;
-            top: 30px;
+            top: 55px;
             right: 5px;
             width: 22px;
             height: 22px;
@@ -231,7 +205,7 @@
     </style>
 </head>
 <body class="laminate-background">
-<div class="center-text" style="margin-top: -10px; margin-bottom: -20px" th:if="${(waiterDto.firstName) != null}">
+<div class="center-text" style="margin-top: -25px; margin-bottom: -40px" th:if="${(waiterDto.firstName) != null}">
     <p class="bold"><span th:text="${waiterDto.firstName}"></span>'s tables</p>
 </div>
 <div th:each="rowIdx : ${#numbers.sequence(0, tables.size()-1, 2)}">
@@ -242,37 +216,23 @@
                     th:with="isWaiterNull=${tables[rowIdx].waiter == null},
                         isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx].id)}"
                     th:attr="onclick='navigateToTableOrder(' + ${tables[rowIdx].id} + ',' + ${waiterDto.id} + ')'"
-                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button enabled' : 'table-button disabled')}"
+                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
                     th:disabled="${!isWaiterNull && !isTableAssigned}">
-                <div class="chair chair-top-left"></div>
-                <div class="chair chair-top-right"></div>
-                <div class="chair chair-bottom-left"></div>
-                <div class="chair chair-bottom-right"></div>
                 <div class="table-info">
                     <span th:text="${tables[rowIdx].id}"></span>
                     <span style="font-size: 14px" th:if="${tables[rowIdx].waiter != null}" th:text="${tables[rowIdx].waiter.getFirstName()}"></span>
                 </div>
-                <span class="status-circle"
-                      th:style="'background-color: ' + (${tables[rowIdx].tableStatus.name()} == 'AVAILABLE' ?
-                       '#63F225' : (${tables[rowIdx].tableStatus.name()} == 'RESERVED' ? '#FF9E3D' : 'red'))"></span>
             </button>
             <button class="table-button" th:if="${rowIdx + 1 < tables.size()}"
                     th:with="isWaiterNull=${tables[rowIdx + 1].waiter == null},
                         isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx + 1].id)}"
                     th:attr="onclick='navigateToTableOrder(' + ${tables[rowIdx].id + 1} + ',' + ${waiterDto.id} + ')'"
-                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button enabled' : 'table-button disabled')}"
+                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
                     th:disabled="${!isWaiterNull && !isTableAssigned}">
-                <div class="chair chair-top-left"></div>
-                <div class="chair chair-top-right"></div>
-                <div class="chair chair-bottom-left"></div>
-                <div class="chair chair-bottom-right"></div>
                 <div class="table-info">
                     <span th:text="${tables[rowIdx].id + 1}"></span>
                     <span style="font-size: 14px" th:if="${tables[rowIdx + 1].waiter != null}" th:text="${tables[rowIdx + 1].waiter.getFirstName()}"></span>
                 </div>
-                <span class="status-circle"
-                      th:style="'background-color: ' + (${tables[rowIdx + 1].tableStatus.name()} == 'AVAILABLE'
-                      ? '#63F225' : (${tables[rowIdx + 1].tableStatus.name()} == 'RESERVED' ? '#FF9E3D' : 'red'))"></span>
             </button>
         </div>
     </div>
@@ -311,6 +271,7 @@
                         <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
                         <select id="waiterSelect" name="waiterId"
                                 style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                            <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}" th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
                         </select>
                     </div>
                 </div>
