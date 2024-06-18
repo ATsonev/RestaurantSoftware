@@ -23,14 +23,16 @@ public class OrderServiceImpl implements OrderService {
     private final WaiterRepository waiterRepository;
     private final TableRepository tableRepository;
     private final BillRepository billRepository;
+    private final OrderMenuItemCommentRepository orderMenuItemCommentRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository, OrderMenuItemCommentRepository orderMenuItemCommentRepository) {
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
         this.productRepository = productRepository;
         this.waiterRepository = waiterRepository;
         this.tableRepository = tableRepository;
         this.billRepository = billRepository;
+        this.orderMenuItemCommentRepository = orderMenuItemCommentRepository;
     }
 
     @Override
@@ -40,20 +42,27 @@ public class OrderServiceImpl implements OrderService {
         order.setWaiter(waiter);
         order.setTable(table);
         List<MenuItem> menuItems = new LinkedList<>();
+        List<OrderMenuItemComment> comments = new LinkedList<>();
         for(MenuItemsDto item:orderItems) {
             for(int i = 0; i < item.getQuantity(); i++){
                 MenuItem menuItem = menuItemRepository.findByName(item.getMenuItem()).get();
                 menuItems.add(menuItem);
-                /* TODO
-                Sum items ordered should not appear to the kitchen and the bar
-                Handle the comment to the kitchen
-                item.getComment()
-                */
+                if(!item.getComment().isEmpty()){
+                    OrderMenuItemComment comment = new OrderMenuItemComment(item.getComment(), menuItem);
+                    comments.add(comment);
+                }
             }
         }
         order.setMenuItems(menuItems);
         order.setOrderStatus(OrderStatus.PENDING);
         orderRepository.saveAndFlush(order);
+        if(!comments.isEmpty()){
+            for (OrderMenuItemComment comment : comments) {
+                comment.setOrder(order);
+                orderMenuItemCommentRepository.saveAndFlush(comment);
+            }
+
+        }
     }
 
     @Override
@@ -167,5 +176,10 @@ public class OrderServiceImpl implements OrderService {
         table.setTableStatus(TableStatus.AVAILABLE);
         table.setWaiter(null);
         tableRepository.save(table);
+    }
+
+    @Override
+    public List<Order> getPendingOrders() {
+        return orderRepository.findAllByOrderStatus(OrderStatus.PENDING);
     }
 }

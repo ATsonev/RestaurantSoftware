@@ -18,7 +18,6 @@ public class Order extends BaseEntity {
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-    private String comment;
     @ManyToOne
     @JoinColumn(name = "table_id", referencedColumnName = "id")
     private com.example.restaurantsoftware.model.Table table;
@@ -47,14 +46,6 @@ public class Order extends BaseEntity {
 
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     public com.example.restaurantsoftware.model.Table getTable() {

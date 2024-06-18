@@ -1,5 +1,6 @@
 package com.example.restaurantsoftware.service;
 
+import com.example.restaurantsoftware.model.Order;
 import com.example.restaurantsoftware.model.Table;
 import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.model.dto.orderDto.MenuItemsDto;
@@ -16,4 +17,6 @@ public interface OrderService {
     boolean moveOrderItem(Long fromTableId, Long toTableId, String menuItem, int quantity);
 
     void finishTable(Long tableId, Long waiterId, String method, Double discount );
+
+    List<Order> getPendingOrders();
 }

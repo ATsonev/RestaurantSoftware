@@ -23,6 +23,12 @@ public class LoginController {
         this.kitchenBarStaffService = kitchenBarStaffService;
     }
 
+    @GetMapping("/")
+    public String index(Model model) {
+        model.addAttribute("title", "EasyServe");
+        return "index";
+    }
+
     @GetMapping("/login")
     public String login() {
         return "login";
