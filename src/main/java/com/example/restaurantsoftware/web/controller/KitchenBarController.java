@@ -7,6 +7,8 @@ import com.example.restaurantsoftware.service.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +27,12 @@ public class KitchenBarController {
         List<ShowOrderDto> barOrders = orderService.getBarPendingOrders();
         model.addAttribute("barOrders", barOrders);
         return "bar";
+    }
+
+    @PostMapping("/order-done/bar/{id}")
+    public String orderDone(@PathVariable Long id){
+        orderService.orderDone(id, "bar");
+        return "redirect:/bar";
     }
 
     @GetMapping("/kitchen")

@@ -28,7 +28,6 @@ public class TablesController {
         this.modelMapper = modelMapper;
     }
 
-
     @GetMapping("/tables")
     public String tables(Model model, HttpSession session){
         Long waiterId = (Long) session.getAttribute("waiterId");

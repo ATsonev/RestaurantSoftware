@@ -20,6 +20,24 @@ import java.util.stream.Collectors;
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private final Map<String, List<MenuItemCategory>> categories = Map.of(
+            "bar",Arrays.asList(
+                    MenuItemCategory.ALCOHOL_BEVERAGES,
+                    MenuItemCategory.NON_ALCOHOL_BEVERAGES),
+            "hotKitchen",Arrays.asList(
+                    MenuItemCategory.PIZZAS,
+                    MenuItemCategory.PASTA,
+                    MenuItemCategory.GRILLED_DISHES,
+                    MenuItemCategory.MAIN_COURSES,
+                    MenuItemCategory.SIDE_DISHES,
+                    MenuItemCategory.BREADS),
+            "coldKitchen",Arrays.asList(
+                    MenuItemCategory.SALADS,
+                    MenuItemCategory.SAUCES,
+                    MenuItemCategory.DESSERTS,
+                    MenuItemCategory.SOUPS,
+                    MenuItemCategory.LUNCH,
+                    MenuItemCategory.APPETIZERS));
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
     private final ProductRepository productRepository;
@@ -178,41 +196,41 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<ShowOrderDto> getBarPendingOrders() {
-        return getPendingOrders(Arrays.asList(
-                MenuItemCategory.ALCOHOL_BEVERAGES,
-                MenuItemCategory.NON_ALCOHOL_BEVERAGES
-        ));
+        return getPendingOrders(categories.get("bar"));
     }
 
     @Override
     public List<ShowOrderDto> getColdKitchenPendingOrders() {
-        return getPendingOrders(Arrays.asList(
-                MenuItemCategory.SALADS,
-                MenuItemCategory.SAUCES,
-                MenuItemCategory.DESSERTS,
-                MenuItemCategory.SOUPS,
-                MenuItemCategory.LUNCH,
-                MenuItemCategory.APPETIZERS
-        ));
+        return getPendingOrders(categories.get("coldKitchen"));
     }
 
     @Override
     public List<ShowOrderDto> getHotKitchenPendingOrders() {
-        return getPendingOrders(Arrays.asList(
-                MenuItemCategory.PIZZAS,
-                MenuItemCategory.PASTA,
-                MenuItemCategory.GRILLED_DISHES,
-                MenuItemCategory.MAIN_COURSES,
-                MenuItemCategory.SIDE_DISHES,
-                MenuItemCategory.BREADS
-        ));
+        return getPendingOrders(categories.get("hotKitchen"));
+    }
+
+    @Override
+    public void orderDone(Long id, String category) {
+        Order byId = orderRepository.getById(id);
+        List<MenuItemOrderStatus> menuItems = byId.getMenuItems();
+        List<MenuItemCategory> list = categories.get(category);
+        for (MenuItemOrderStatus menuItem : menuItems) {
+            if(list.contains(menuItem.getMenuItem().getMenuItemCategory())){
+                menuItem.setOrderStatus(OrderStatus.FINISHED);
+            }
+        }
+        if(menuItems.stream().noneMatch(m -> m.getOrderStatus().equals(OrderStatus.PENDING))){
+            byId.setOrderStatus(OrderStatus.FINISHED);
+        }
+        byId.setMenuItems(menuItems);
+        orderRepository.save(byId);
     }
 
 
     public List<ShowOrderDto> getPendingOrders(List<MenuItemCategory> categoriesToCheck) {
         List<ShowOrderDto> collect = orderRepository.findAllByOrderStatus(OrderStatus.PENDING).stream()
                 .filter(order -> order.getMenuItems().stream()
-                        .anyMatch(m -> categoriesToCheck.contains(m.getMenuItem().getMenuItemCategory())))
+                        .anyMatch(m -> categoriesToCheck.contains(m.getMenuItem().getMenuItemCategory()) && m.getOrderStatus().equals(OrderStatus.PENDING) ))
                 .map(order -> convertToDTO(order, categoriesToCheck))
                 .collect(Collectors.toList());
         return collect;

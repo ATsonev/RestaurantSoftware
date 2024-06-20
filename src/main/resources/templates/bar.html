@@ -110,7 +110,9 @@
         </div>
         <div class="order-footer">
             <div class="waiter-name" th:text="${'Waiter: ' + order.waiterFirstName}">John</div>
-            <button class="done-button" onclick="markOrderAsDone(/* order ID or other identifier */)">DONE</button>
+            <form th:action="@{/order-done/bar/{id}(id=${order.id})}" method="post">
+                <button class="done-button" >DONE</button>
+            </form>
         </div>
     </div>
 </div>
