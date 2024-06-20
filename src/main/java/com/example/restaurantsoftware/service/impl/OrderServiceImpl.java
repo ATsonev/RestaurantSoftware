@@ -2,17 +2,20 @@ package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.*;
 import com.example.restaurantsoftware.model.dto.orderDto.MenuItemsDto;
+import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderDto;
+import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderMenuItemDto;
+import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.model.enums.OrderStatus;
 import com.example.restaurantsoftware.model.enums.PaymentMethod;
 import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.repository.*;
 import com.example.restaurantsoftware.service.OrderService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -24,8 +27,9 @@ public class OrderServiceImpl implements OrderService {
     private final TableRepository tableRepository;
     private final BillRepository billRepository;
     private final OrderMenuItemCommentRepository orderMenuItemCommentRepository;
+    private final ModelMapper modelMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository, OrderMenuItemCommentRepository orderMenuItemCommentRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository, OrderMenuItemCommentRepository orderMenuItemCommentRepository, ModelMapper modelMapper) {
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
         this.productRepository = productRepository;
@@ -33,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
         this.tableRepository = tableRepository;
         this.billRepository = billRepository;
         this.orderMenuItemCommentRepository = orderMenuItemCommentRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
@@ -41,28 +46,21 @@ public class OrderServiceImpl implements OrderService {
         order.setDateAndTimeOrdered(LocalDateTime.now());
         order.setWaiter(waiter);
         order.setTable(table);
-        List<MenuItem> menuItems = new LinkedList<>();
-        List<OrderMenuItemComment> comments = new LinkedList<>();
+        List<MenuItemOrderStatus> menuItems = new LinkedList<>();
         for(MenuItemsDto item:orderItems) {
+            MenuItem menuItem = menuItemRepository.findByName(item.getMenuItem()).get();
             for(int i = 0; i < item.getQuantity(); i++){
-                MenuItem menuItem = menuItemRepository.findByName(item.getMenuItem()).get();
-                menuItems.add(menuItem);
-                if(!item.getComment().isEmpty()){
-                    OrderMenuItemComment comment = new OrderMenuItemComment(item.getComment(), menuItem);
-                    comments.add(comment);
+                MenuItemOrderStatus menuItemOrderStatus = new MenuItemOrderStatus(menuItem, OrderStatus.PENDING);
+                if(!item.getComment().isEmpty()) {
+                    menuItemOrderStatus.setComment(item.getComment());
+                    item.setComment("");
                 }
+                menuItems.add(menuItemOrderStatus);
             }
         }
         order.setMenuItems(menuItems);
         order.setOrderStatus(OrderStatus.PENDING);
         orderRepository.saveAndFlush(order);
-        if(!comments.isEmpty()){
-            for (OrderMenuItemComment comment : comments) {
-                comment.setOrder(order);
-                orderMenuItemCommentRepository.saveAndFlush(comment);
-            }
-
-        }
     }
 
     @Override
@@ -70,15 +68,15 @@ public class OrderServiceImpl implements OrderService {
         List<MenuItemsDto> dtos = new LinkedList<>();
         List<Order> orders = tableRepository.getById(tableId).getOrders();
         for(Order order:orders){
-            for(MenuItem menuItem:order.getMenuItems()){
+            for(MenuItemOrderStatus menuItem:order.getMenuItems()){
                 boolean exist = dtos.stream()
-                        .anyMatch(dto -> dto.getMenuItem().equals(menuItem.getName()));
+                        .anyMatch(dto -> dto.getMenuItem().equals(menuItem.getMenuItem().getName()));
                 if(exist){
                     dtos.stream()
-                            .filter(d -> d.getMenuItem().equals(menuItem.getName()))
+                            .filter(d -> d.getMenuItem().equals(menuItem.getMenuItem().getName()))
                             .forEach(d -> d.setQuantity(d.getQuantity() + 1));
                 }else {
-                    MenuItemsDto dto = new MenuItemsDto(menuItem.getName(), 1, menuItem.getPrice());
+                    MenuItemsDto dto = new MenuItemsDto(menuItem.getMenuItem().getName(), 1, menuItem.getMenuItem().getPrice());
                     dtos.add(dto);
                 }
             }
@@ -92,11 +90,11 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = table.getOrders();
 
         for (Order order : orders) {
-            List<MenuItem> menuItems = order.getMenuItems();
-            Iterator<MenuItem> iterator = menuItems.iterator();
+            List<MenuItemOrderStatus> menuItems = order.getMenuItems();
+            Iterator<MenuItemOrderStatus> iterator = menuItems.iterator();
             while (iterator.hasNext() && quantity > 0) {
-                MenuItem menuItemEntity = iterator.next();
-                if (menuItemEntity.getName().equals(menuItem)) {
+                MenuItemOrderStatus menuItemEntity = iterator.next();
+                if (menuItemEntity.getMenuItem().getName().equals(menuItem)) {
                     iterator.remove();
                     quantity--;
                 }
@@ -111,10 +109,10 @@ public class OrderServiceImpl implements OrderService {
     public boolean moveOrderItem(Long fromTableId, Long toTableId, String menuItem, int quantity) {
         Table from = tableRepository.getById(fromTableId);
         Table to = tableRepository.getById(toTableId);
-        MenuItem movedMenuItem = null;
+        MenuItemOrderStatus movedMenuItem = new MenuItemOrderStatus(OrderStatus.PENDING);
         for (Order order : from.getOrders()) {
-            if(order.getMenuItems().stream().anyMatch(m -> m.getName().equals(menuItem))){
-                movedMenuItem = order.getMenuItems().stream().filter(m -> m.getName().equals(menuItem)).findFirst().get();
+            if(order.getMenuItems().stream().anyMatch(m -> m.getMenuItem().getName().equals(menuItem))){
+                movedMenuItem = order.getMenuItems().stream().filter(m -> m.getMenuItem().getName().equals(menuItem)).findFirst().get();
             }
         }
         deleteOrderItem(fromTableId, menuItem, quantity);
@@ -122,7 +120,7 @@ public class OrderServiceImpl implements OrderService {
         order.setDateAndTimeOrdered(LocalDateTime.now());
         order.setWaiter(null);
         order.setTable(to);
-        List<MenuItem> menuItems = new LinkedList<>();
+        List<MenuItemOrderStatus> menuItems = new LinkedList<>();
         menuItems.add(movedMenuItem);
         order.setMenuItems(menuItems);
         order.setOrderStatus(OrderStatus.PENDING);
@@ -140,11 +138,11 @@ public class OrderServiceImpl implements OrderService {
         double appliedDiscount = 1 - discount/100;
         sum = orders.stream()
                 .flatMap(o ->o.getMenuItems().stream())
-                .mapToDouble(MenuItem::getPrice)
+                .mapToDouble(m -> m.getMenuItem().getPrice())
                 .sum() * (appliedDiscount);
         taxes = orders.stream()
                 .flatMap(o ->o.getMenuItems().stream())
-                .mapToDouble(mi -> mi.getPrice()*mi.getVat().getValue())
+                .mapToDouble(mi -> mi.getMenuItem().getPrice()*mi.getMenuItem().getVat().getValue())
                 .sum() * (appliedDiscount);
         double roundedTaxes = Math.round(taxes * 100.0) / 100.0;
         Bill bill = new Bill();
@@ -162,8 +160,8 @@ public class OrderServiceImpl implements OrderService {
         billRepository.saveAndFlush(bill);
 
         for (Order order : orders) {
-            for (MenuItem menuItem : order.getMenuItems()) {
-                for (MenuItemProductQuantity menuItemProductQuantity : menuItem.getMenuItemProductsQuantity()) {
+            for (MenuItemOrderStatus menuItem : order.getMenuItems()) {
+                for (MenuItemProductQuantity menuItemProductQuantity : menuItem.getMenuItem().getMenuItemProductsQuantity()) {
                     Product product = productRepository.findByName(menuItemProductQuantity.getProduct().getName()).get();
                     product.setQuantityInStock(product.getQuantityInStock()-menuItemProductQuantity.getQuantity());
                     productRepository.save(product);
@@ -179,7 +177,74 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getPendingOrders() {
-        return orderRepository.findAllByOrderStatus(OrderStatus.PENDING);
+    public List<ShowOrderDto> getBarPendingOrders() {
+        return getPendingOrders(Arrays.asList(
+                MenuItemCategory.ALCOHOL_BEVERAGES,
+                MenuItemCategory.NON_ALCOHOL_BEVERAGES
+        ));
+    }
+
+    @Override
+    public List<ShowOrderDto> getColdKitchenPendingOrders() {
+        return getPendingOrders(Arrays.asList(
+                MenuItemCategory.SALADS,
+                MenuItemCategory.SAUCES,
+                MenuItemCategory.DESSERTS,
+                MenuItemCategory.SOUPS,
+                MenuItemCategory.LUNCH,
+                MenuItemCategory.APPETIZERS
+        ));
+    }
+
+    @Override
+    public List<ShowOrderDto> getHotKitchenPendingOrders() {
+        return getPendingOrders(Arrays.asList(
+                MenuItemCategory.PIZZAS,
+                MenuItemCategory.PASTA,
+                MenuItemCategory.GRILLED_DISHES,
+                MenuItemCategory.MAIN_COURSES,
+                MenuItemCategory.SIDE_DISHES,
+                MenuItemCategory.BREADS
+        ));
+    }
+
+
+    public List<ShowOrderDto> getPendingOrders(List<MenuItemCategory> categoriesToCheck) {
+        List<ShowOrderDto> collect = orderRepository.findAllByOrderStatus(OrderStatus.PENDING).stream()
+                .filter(order -> order.getMenuItems().stream()
+                        .anyMatch(m -> categoriesToCheck.contains(m.getMenuItem().getMenuItemCategory())))
+                .map(order -> convertToDTO(order, categoriesToCheck))
+                .collect(Collectors.toList());
+        return collect;
+    }
+
+    private ShowOrderDto convertToDTO(Order order, List<MenuItemCategory> categoriesToCheck) {
+        Map<String, ShowOrderMenuItemDto> menuItemMap = new HashMap<>();
+
+        for (MenuItemOrderStatus menuItem : order.getMenuItems()) {
+            if(categoriesToCheck.contains(menuItem.getMenuItem().getMenuItemCategory()) && menuItem.getOrderStatus().equals(OrderStatus.PENDING)){
+                String key = menuItem.getMenuItem().getName();
+                ShowOrderMenuItemDto existingItem = menuItemMap.get(key);
+                if (existingItem != null) {
+                    existingItem.setQuantity(existingItem.getQuantity() + 1);
+                } else {
+                    ShowOrderMenuItemDto newItem = new ShowOrderMenuItemDto();
+                    newItem.setMenuItemName(menuItem.getMenuItem().getName());
+                    newItem.setQuantity(1);
+                    newItem.setComment(menuItem.getComment());
+                    menuItemMap.put(key, newItem);
+                }
+            }
+        }
+
+        List<ShowOrderMenuItemDto> filteredMenuItems = new ArrayList<>(menuItemMap.values());
+
+        ShowOrderDto dto = new ShowOrderDto();
+        dto.setId(order.id);
+        dto.setTableId(order.getTable().getId());
+        dto.setDateAndTimeOrdered(order.getDateAndTimeOrdered());
+        dto.setWaiterFirstName(order.getWaiter().getFirstName());
+        dto.setMenuItems(filteredMenuItems);
+        return dto;
     }
 }

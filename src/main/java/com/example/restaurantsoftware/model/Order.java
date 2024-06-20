@@ -26,11 +26,11 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "waiter_id", referencedColumnName = "id")
     private Waiter waiter;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "order_menu_items",
     joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "menu_item_id", referencedColumnName = "id"))
-    private List<MenuItem> menuItems;
+    private List<MenuItemOrderStatus> menuItems;
 
     public LocalDateTime getDateAndTimeOrdered() {
         return dateAndTimeOrdered;
@@ -64,13 +64,11 @@ public class Order extends BaseEntity {
         this.waiter = waiter;
     }
 
-    public List<MenuItem> getMenuItems() {
+    public List<MenuItemOrderStatus> getMenuItems() {
         return menuItems;
     }
 
-    public void setMenuItems(List<MenuItem> menuItems) {
+    public void setMenuItems(List<MenuItemOrderStatus> menuItems) {
         this.menuItems = menuItems;
     }
-
-
 }

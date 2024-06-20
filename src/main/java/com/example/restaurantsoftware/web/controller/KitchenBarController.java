@@ -1,6 +1,7 @@
 package com.example.restaurantsoftware.web.controller;
 
 import com.example.restaurantsoftware.model.Order;
+import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderDto;
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.service.OrderService;
 import org.springframework.stereotype.Controller;
@@ -21,21 +22,17 @@ public class KitchenBarController {
 
     @GetMapping("/bar")
     public String getBarOrders(Model model){
-        List<Order> barOrders = orderService.getPendingOrders().stream()
-                .filter(order -> {
-                    boolean hasAlcoholic = order.getMenuItems().stream()
-                            .anyMatch(m -> m.getMenuItemCategory().equals(MenuItemCategory.ALCOHOL_BEVERAGES));
-                    boolean hasNonAlcoholic = order.getMenuItems().stream()
-                            .anyMatch(m -> m.getMenuItemCategory().equals(MenuItemCategory.NON_ALCOHOL_BEVERAGES));
-                    return hasAlcoholic || hasNonAlcoholic;
-                })
-                .collect(Collectors.toList());
+        List<ShowOrderDto> barOrders = orderService.getBarPendingOrders();
         model.addAttribute("barOrders", barOrders);
         return "bar";
     }
 
     @GetMapping("/kitchen")
-    public String getKitchenOrders(){
+    public String getKitchenOrders(Model model){
+        List<ShowOrderDto> coldKitchenOrders = orderService.getColdKitchenPendingOrders();
+        List<ShowOrderDto> hotKitchenOrders = orderService.getHotKitchenPendingOrders();
+        model.addAttribute("coldKitchenOrders", coldKitchenOrders);
+        model.addAttribute("hotKitchenOrders", hotKitchenOrders);
         return "kitchen";
     }
 

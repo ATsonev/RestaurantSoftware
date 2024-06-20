@@ -4,10 +4,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ShowOrderDto {
+    private long id;
     private LocalDateTime dateAndTimeOrdered;
     private long tableId;
     private String waiterFirstName;
     private List<ShowOrderMenuItemDto> menuItems;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public LocalDateTime getDateAndTimeOrdered() {
         return dateAndTimeOrdered;
