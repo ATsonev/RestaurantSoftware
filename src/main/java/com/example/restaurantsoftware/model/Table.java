@@ -15,7 +15,7 @@ public class Table extends BaseEntity {
     private TableStatus tableStatus;
     @Column
     private double bill;
-    @OneToMany(mappedBy = "table", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "table", cascade = CascadeType.ALL)
     private List<Order> orders;
 
     @ManyToOne

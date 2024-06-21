@@ -52,9 +52,9 @@ public class LoginController {
             return "redirect:/tables";
         } else if(staff.isPresent()){
             if(staff.get().getStaff().equals(Staff.KITCHEN)){
-                return "redirect:/kitchen";
+                return "redirect:/orders/kitchen";
             }
-            return "redirect:/bar";
+            return "redirect:/orders/bar";
         }else {
             redirectAttributes.addFlashAttribute("loginFailed", true);
             return "redirect:/login";

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order List</title>
+</head>
+<body>
+<div th:fragment="orderListFragment(orderList, barText, actionBaseUrl)">
+    <div class="container">
+        <div th:each="order : ${orderList}" class="order-box">
+            <!--<div class="order-time" th:text="${#dates.format(order.dateAndTimeOrdered, 'HH:mm')}">12:00</div>-->
+            <div class="order-bar" th:if="${barText != null}" th:text="${barText}">BAR</div>
+            <div class="order-table">Table <span th:text="${order.tableId}">1</span></div>
+            <div class="order-item">
+                <div th:each="item : ${order.menuItems}">
+                    <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
+                    <p th:if="${item.comment}" class="comment"><span th:text="${item.comment}">No ice</span></p>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="waiter-name" th:text="${'Waiter: ' + order.waiterFirstName}">John</div>
+                <!--<form th:action="${actionBaseUrl}(id=${order.id})" method="post">
+                    <button class="done-button">DONE</button>
+                </form>-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -59,11 +59,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void makeOrder(Waiter waiter, Table table, List<MenuItemsDto> orderItems) {
+    public void makeOrder(long waiterId, long tableId, List<MenuItemsDto> orderItems) {
         Order order = new Order();
         order.setDateAndTimeOrdered(LocalDateTime.now());
-        order.setWaiter(waiter);
-        order.setTable(table);
+        order.setWaiter(waiterRepository.getById(waiterId));
+        order.setTable(tableRepository.getById(tableId));
         List<MenuItemOrderStatus> menuItems = new LinkedList<>();
         for(MenuItemsDto item:orderItems) {
             MenuItem menuItem = menuItemRepository.findByName(item.getMenuItem()).get();
@@ -147,10 +147,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void finishTable(Long tableId, Long waiterId, String method, Double discount) {
+    public boolean finishTable(Long tableId, Long waiterId, String method, Double discount) {
         Table table = tableRepository.getById(tableId);
         Waiter waiter = waiterRepository.getById(waiterId);
         List<Order> orders = orderRepository.findAllByTable(table);
+        if(orders.stream().anyMatch(o -> o.getOrderStatus().equals(OrderStatus.PENDING))){
+            return false;
+        }
         double sum;
         double taxes;
         double appliedDiscount = 1 - discount/100;
@@ -191,7 +194,11 @@ public class OrderServiceImpl implements OrderService {
         table.getOrders().clear();
         table.setTableStatus(TableStatus.AVAILABLE);
         table.setWaiter(null);
+        List<Table> tables = waiter.getTables();
+        tables.remove(table);
+        waiterRepository.save(waiter);
         tableRepository.save(table);
+        return true;
     }
 
     @Override

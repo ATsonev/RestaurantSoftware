@@ -16,13 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 public class OrdersController {
-
+    private final String PAYMENT_ERROR_MESSAGE = "The table has pending orders. You can finish the table when all the orders are finished!";
     private final MenuItemService menuItemService;
     private final OrderService orderService;
     private final ModelMapper modelMapper;
@@ -65,9 +66,7 @@ public class OrdersController {
     @PostMapping("/order/makeOrder/{waiterId}/{tableId}")
     public String makeOrder(@PathVariable Long waiterId, @PathVariable Long tableId,
              @RequestBody List<MenuItemsDto> orderItems) {
-        Waiter waiter = waiterService.findWaiterByID(waiterId);
-        Table table = tableService.getTableById(tableId);
-        orderService.makeOrder(waiter, table, orderItems);
+        orderService.makeOrder(waiterId, tableId, orderItems);
         return "redirect:/table" + tableId + "-order/" + waiterId;
     }
 
@@ -97,17 +96,23 @@ public class OrdersController {
     }
 
     @PostMapping("/order/finishTableCash/{tableId}/{waiterId}")
-    private String finishTableWithCash(@PathVariable Long tableId, @PathVariable Long waiterId,
+    private ResponseEntity<String> finishTableWithCash(@PathVariable Long tableId, @PathVariable Long waiterId,
                                        @RequestParam(required = false, defaultValue = "0") Double discount){
-        orderService.finishTable(tableId, waiterId, "Cash", discount);
-        return "redirect:/table" + tableId + "-order/" + waiterId;
+        boolean success = orderService.finishTable(tableId, waiterId, "Card", discount);
+        if(!success){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The table has pending orders.");
+        }
+        return ResponseEntity.ok("Payment completed successfully!");
     }
 
     @PostMapping("/order/finishTableCard/{tableId}/{waiterId}")
-    private String finishTableWithCard(@PathVariable Long tableId, @PathVariable Long waiterId,
+    private ResponseEntity<String> finishTableWithCard(@PathVariable Long tableId, @PathVariable Long waiterId,
                                        @RequestParam(required = false, defaultValue = "0") Double discount){
-        orderService.finishTable(tableId, waiterId, "Card", discount);
-        return "redirect:/table" + tableId + "-order/" + waiterId;
+        boolean success = orderService.finishTable(tableId, waiterId, "Card", discount);
+        if(!success){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The table has pending orders.");
+        }
+        return ResponseEntity.ok("Payment completed successfully!");
     }
 
     @GetMapping("/turnovers")

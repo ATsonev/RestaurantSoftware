@@ -1,19 +1,18 @@
 package com.example.restaurantsoftware.web.controller;
 
-import com.example.restaurantsoftware.model.Order;
 import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderDto;
-import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.service.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/orders")
 public class KitchenBarController {
 
     private final OrderService orderService;
@@ -26,13 +25,13 @@ public class KitchenBarController {
     public String getBarOrders(Model model){
         List<ShowOrderDto> barOrders = orderService.getBarPendingOrders();
         model.addAttribute("barOrders", barOrders);
-        return "bar";
+        return "orders/bar";
     }
 
     @PostMapping("/order-done/bar/{id}")
     public String orderDone(@PathVariable Long id){
         orderService.orderDone(id, "bar");
-        return "redirect:/bar";
+        return "redirect:/orders/bar";
     }
 
     @GetMapping("/kitchen")
@@ -41,7 +40,19 @@ public class KitchenBarController {
         List<ShowOrderDto> hotKitchenOrders = orderService.getHotKitchenPendingOrders();
         model.addAttribute("coldKitchenOrders", coldKitchenOrders);
         model.addAttribute("hotKitchenOrders", hotKitchenOrders);
-        return "kitchen";
+        return "orders/kitchen";
+    }
+
+    @PostMapping("/order-done/hotKitchen/{id}")
+    public String orderHotKitchenDone(@PathVariable Long id){
+        orderService.orderDone(id, "hotKitchen");
+        return "redirect:/orders/kitchen";
+    }
+
+    @PostMapping("/order-done/coldKitchen/{id}")
+    public String orderColdKitchenDone(@PathVariable Long id){
+        orderService.orderDone(id, "coldKitchen");
+        return "redirect:/orders/kitchen";
     }
 
 }

@@ -477,6 +477,13 @@
   document.addEventListener("DOMContentLoaded", function() {
     addRowClickListeners();
     updateTotals();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMessage = urlParams.get('error');
+
+    if (errorMessage) {
+      alert(errorMessage);
+    }
   });
   function setWaiter(button){
     var waiterId = button.getAttribute("data-waiter-id");
@@ -852,7 +859,13 @@
                 updateTotals();
                 closePaymentModal();
               } else {
-                alert(`Failed to complete payment by ${paymentType.toLowerCase()}`);
+                response.text().then(text => {
+                  if (text.includes("The table has pending orders.")) {
+                    alert(text); // Display custom error message
+                  } else {
+                    alert(`Error completing payment by ${paymentType.toLowerCase()}: ${text}`);
+                  }
+                });
               }
             })
             .catch(error => console.error(`Error completing payment by ${paymentType.toLowerCase()}:`, error));

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kitchen Orders</title>
+    <style>
+        body {
+            background: url('/background.jpg');
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            max-width: 100%;
+        }
+        .order-box {
+            background-color: rgba(37, 50, 88, 0.85);
+            border-radius: 8px;
+            width: 18.6vw;
+            margin: 0.5vw;
+            padding: 0.5vw;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .order-time {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .order-bar {
+            position: absolute;
+            top: 35px;
+            left: 10px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .order-table {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .order-item {
+            margin-top: 50px;
+            background-color: white;
+            color: #253258;
+            padding: 10px;
+            font-size: 20px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .order-item p {
+            margin: 5px 0;
+        }
+        .order-item .comment {
+            display: flex;
+            align-items: center;
+            margin-left: 35px;
+            position: relative;
+        }
+        .order-item .comment::before {
+            content: '•';
+            position: absolute;
+            left: -20px;
+            font-size: 30px;
+            line-height: 1;
+            color: #253258;
+        }
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .order-footer .waiter-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .order-footer .done-button {
+            background-color: #D28F49;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .order-box-hot-kitchen {
+            background-color: #D28F49;
+            /*color: #253258;*/
+            border-radius: 8px;
+            width: 18.6vw;
+            margin: 0.5vw;
+            padding: 0.5vw;
+            box-sizing: border-box;
+            font-size: 20px;
+            position: relative;
+        }
+        .order-box-hot-kitchen .done-button {
+            background-color: #253258;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .order-item-hot-kitchen {
+            margin-top: 50px;
+            background-color: white;
+            color: #9E5911;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .order-item-hot-kitchen p {
+            margin: 5px 0;
+        }
+
+        .order-item-hot-kitchen .comment {
+            display: flex;
+            align-items: center;
+            margin-left: 35px;
+            position: relative;
+        }
+        .order-item-hot-kitchen .comment::before {
+            content: '•';
+            position: absolute;
+            left: -20px;
+            font-size: 30px;
+            line-height: 1;
+            color: #253258;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="orderListFragment(orderList, barText, actionUrl)">
+    <div class="container">
+        <div th:each="hotKitchen : ${hotKitchenOrders}" class="order-box-hot-kitchen">
+            <div class="order-time" th:text="${#temporals.format(hotKitchen.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
+            <div class="order-bar">Hot kitchen</div>
+            <div class="order-table">Table <span th:text="${hotKitchen.tableId}">1</span></div>
+            <div class="order-item-hot-kitchen">
+                <div th:each="item : ${hotKitchen.menuItems}" >
+                    <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
+                    <p th:if="${item.comment}" class="comment"><span th:text="${item.comment}">No ice</span></p>
+                </div>
+            </div>
+            <div class="order-footer">
+                <div class="waiter-name" th:text="${'Waiter: ' + hotKitchen.waiterFirstName}">John</div>
+                <form th:action="@{/orders/order-done/hotKitchen/{id}(id=${hotKitchen.id})}" method="post">
+                    <button class="done-button" >DONE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div th:each="coldKitchen : ${coldKitchenOrders}" class="order-box">
+        <div class="order-time" th:text="${#temporals.format(coldKitchen.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
+        <div class="order-bar">Cold Kitchen</div>
+        <div class="order-table">Table <span th:text="${coldKitchen.tableId}">1</span></div>
+        <div class="order-item">
+            <div th:each="item : ${coldKitchen.menuItems}" >
+                <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
+                <p th:if="${item.comment}" class="comment"><span th:text="${item.comment}">No ice</span></p>
+            </div>
+        </div>
+        <div class="order-footer">
+            <div class="waiter-name" th:text="${'Waiter: ' + coldKitchen.waiterFirstName}">John</div>
+            <form th:action="@{/orders/order-done/coldKitchen/{id}(id=${coldKitchen.id})}" method="post">
+                <button class="done-button" >DONE</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -9,7 +9,7 @@ import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderDto;
 import java.util.List;
 
 public interface OrderService {
-    void makeOrder(Waiter waiter, Table table, List<MenuItemsDto> orderItems);
+    void makeOrder(long waiterId, long tableId, List<MenuItemsDto> orderItems);
 
     List<MenuItemsDto> getCurrentOrdersForTable(Long tableId);
 
@@ -17,7 +17,7 @@ public interface OrderService {
 
     boolean moveOrderItem(Long fromTableId, Long toTableId, String menuItem, int quantity);
 
-    void finishTable(Long tableId, Long waiterId, String method, Double discount );
+    boolean finishTable(Long tableId, Long waiterId, String method, Double discount );
 
     List<ShowOrderDto> getBarPendingOrders();
     List<ShowOrderDto> getColdKitchenPendingOrders();

@@ -1,0 +1,88 @@
+body {
+    background: url('/background.jpg');
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-width: 100%;
+}
+.order-box {
+    background-color: rgba(37, 50, 88, 0.85);
+    border-radius: 8px;
+    width: 18.6vw;
+    margin: 0.5vw;
+    padding: 0.5vw;
+    font-size: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+.order-time {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.order-bar {
+    position: absolute;
+    top: 35px;
+    left: 10px;
+    font-size: 17px;
+    font-weight: bold;
+}
+.order-table {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.order-item {
+    margin-top: 50px;
+    background-color: white;
+    color: #253258;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+.order-item p {
+    margin: 5px 0;
+}
+.order-item .comment {
+    display: flex;
+    align-items: center;
+    margin-left: 35px;
+    position: relative;
+}
+.order-item .comment::before {
+    content: '•';
+    position: absolute;
+    left: -20px;
+    font-size: 30px;
+    line-height: 1;
+    color: #253258;
+}
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+.order-footer .waiter-name {
+    font-size: 18px;
+    font-weight: bold;
+}
+.order-footer .done-button {
+    background-color: #D28F49;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
