@@ -6,6 +6,7 @@ import com.example.restaurantsoftware.model.enums.OrderStatus;
 import javax.persistence.*;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,6 +19,7 @@ public class Order extends BaseEntity {
     @Column(name = "order_status")
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
     @ManyToOne
     @JoinColumn(name = "table_id", referencedColumnName = "id")
     private com.example.restaurantsoftware.model.Table table;
@@ -26,10 +28,7 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "waiter_id", referencedColumnName = "id")
     private Waiter waiter;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "order_menu_items",
-    joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
-    inverseJoinColumns = @JoinColumn(name = "menu_item_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItemOrderStatus> menuItems;
 
     public LocalDateTime getDateAndTimeOrdered() {

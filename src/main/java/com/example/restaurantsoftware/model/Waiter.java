@@ -2,6 +2,7 @@ package com.example.restaurantsoftware.model;
 
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
+import com.example.restaurantsoftware.model.enums.Role;
 
 import javax.persistence.*;
 import javax.persistence.Table;
@@ -18,8 +19,6 @@ public class Waiter extends BaseEntity {
     private String lastName;
     @Column(unique = true)
     private String password;
-    @Column
-    private double turnover;
     @Column(name = "is_admin")
     private boolean isAdmin;
     @OneToMany(mappedBy = "waiter", fetch = FetchType.EAGER)
@@ -52,14 +51,6 @@ public class Waiter extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public double getTurnover() {
-        return turnover;
-    }
-
-    public void setTurnover(double turnover) {
-        this.turnover = turnover;
     }
 
     public List<com.example.restaurantsoftware.model.Table> getTables() {

@@ -42,29 +42,33 @@ public class OrderServiceImpl implements OrderService {
     private final MenuItemRepository menuItemRepository;
     private final ProductRepository productRepository;
     private final WaiterRepository waiterRepository;
+    private final MenuItemOrderStatusRepository menuItemOrderStatusRepository;
     private final TableRepository tableRepository;
     private final BillRepository billRepository;
-    private final OrderMenuItemCommentRepository orderMenuItemCommentRepository;
     private final ModelMapper modelMapper;
 
-    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository, WaiterRepository waiterRepository, TableRepository tableRepository, BillRepository billRepository, OrderMenuItemCommentRepository orderMenuItemCommentRepository, ModelMapper modelMapper) {
+    public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository
+            , WaiterRepository waiterRepository, MenuItemOrderStatusRepository menuItemOrderStatusRepository
+            , TableRepository tableRepository, BillRepository billRepository, ModelMapper modelMapper) {
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
         this.productRepository = productRepository;
         this.waiterRepository = waiterRepository;
+        this.menuItemOrderStatusRepository = menuItemOrderStatusRepository;
         this.tableRepository = tableRepository;
         this.billRepository = billRepository;
-        this.orderMenuItemCommentRepository = orderMenuItemCommentRepository;
         this.modelMapper = modelMapper;
     }
 
     @Override
     public void makeOrder(long waiterId, long tableId, List<MenuItemsDto> orderItems) {
+        //TODO
         Order order = new Order();
         order.setDateAndTimeOrdered(LocalDateTime.now());
         order.setWaiter(waiterRepository.getById(waiterId));
         order.setTable(tableRepository.getById(tableId));
-        List<MenuItemOrderStatus> menuItems = new LinkedList<>();
+        order.setOrderStatus(OrderStatus.PENDING);
+        orderRepository.saveAndFlush(order);
         for(MenuItemsDto item:orderItems) {
             MenuItem menuItem = menuItemRepository.findByName(item.getMenuItem()).get();
             for(int i = 0; i < item.getQuantity(); i++){
@@ -73,12 +77,10 @@ public class OrderServiceImpl implements OrderService {
                     menuItemOrderStatus.setComment(item.getComment());
                     item.setComment("");
                 }
-                menuItems.add(menuItemOrderStatus);
+                menuItemOrderStatus.setOrder(order);
+                menuItemOrderStatusRepository.save(menuItemOrderStatus);
             }
         }
-        order.setMenuItems(menuItems);
-        order.setOrderStatus(OrderStatus.PENDING);
-        orderRepository.saveAndFlush(order);
     }
 
     @Override
@@ -125,24 +127,34 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean moveOrderItem(Long fromTableId, Long toTableId, String menuItem, int quantity) {
-        Table from = tableRepository.getById(fromTableId);
+        Table from = tableRepository.findById(fromTableId).get();
         Table to = tableRepository.getById(toTableId);
-        MenuItemOrderStatus movedMenuItem = new MenuItemOrderStatus(OrderStatus.PENDING);
+        Optional<MenuItem> byName = menuItemRepository.findByName(menuItem);
+
+        /*deleteOrderItem(fromTableId, menuItem, quantity);*/
+
+        Order newOrder = new Order();
+        newOrder.setDateAndTimeOrdered(LocalDateTime.now());
+        newOrder.setTable(to);
+        newOrder.setWaiter(to.getWaiter());
+        newOrder.setOrderStatus(OrderStatus.PENDING);
+        orderRepository.saveAndFlush(newOrder);
+
+        List<MenuItemOrderStatus> menuItems = new ArrayList<>();
         for (Order order : from.getOrders()) {
-            if(order.getMenuItems().stream().anyMatch(m -> m.getMenuItem().getName().equals(menuItem))){
-                movedMenuItem = order.getMenuItems().stream().filter(m -> m.getMenuItem().getName().equals(menuItem)).findFirst().get();
+            if (order.getMenuItems().stream().anyMatch(m -> m.getMenuItem().getName().equals(menuItem))) {
+                for (MenuItemOrderStatus item : order.getMenuItems()) {
+                    if (item.getMenuItem().equals(byName.get())) {
+                        item.setOrder(newOrder);
+                        menuItems.add(item);
+                    }
+                }
             }
         }
-        deleteOrderItem(fromTableId, menuItem, quantity);
-        Order order = new Order();
-        order.setDateAndTimeOrdered(LocalDateTime.now());
-        order.setWaiter(null);
-        order.setTable(to);
-        List<MenuItemOrderStatus> menuItems = new LinkedList<>();
-        menuItems.add(movedMenuItem);
-        order.setMenuItems(menuItems);
-        order.setOrderStatus(OrderStatus.PENDING);
-        orderRepository.saveAndFlush(order);
+        menuItemOrderStatusRepository.saveAll(menuItems);
+
+        newOrder.setMenuItems(menuItems);
+        orderRepository.save(newOrder);
         return true;
     }
 
@@ -217,8 +229,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void orderDone(Long id, String category) {
-        Order byId = orderRepository.getById(id);
+    public void orderDone(Long tableId, String category) {
+        Order byId = orderRepository.getById(tableId);
         List<MenuItemOrderStatus> menuItems = byId.getMenuItems();
         List<MenuItemCategory> list = categories.get(category);
         for (MenuItemOrderStatus menuItem : menuItems) {

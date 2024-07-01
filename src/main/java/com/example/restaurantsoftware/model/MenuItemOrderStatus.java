@@ -13,9 +13,15 @@ public class MenuItemOrderStatus extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "menu_item_id", referencedColumnName = "id")
     private MenuItem menuItem;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
     private String comment;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private Order order;
 
     public MenuItemOrderStatus() {
     }
@@ -51,5 +57,13 @@ public class MenuItemOrderStatus extends BaseEntity {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

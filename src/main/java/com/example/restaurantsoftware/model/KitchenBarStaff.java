@@ -1,7 +1,7 @@
 package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
-import com.example.restaurantsoftware.model.enums.Staff;
+import com.example.restaurantsoftware.model.enums.Role;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,14 +13,14 @@ import javax.persistence.Table;
 public class KitchenBarStaff extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
-    private Staff staff;
+    private Role staff;
     private String password;
 
-    public Staff getStaff() {
+    public Role getStaff() {
         return staff;
     }
 
-    public void setStaff(Staff staff) {
+    public void setStaff(Role staff) {
         this.staff = staff;
     }
 

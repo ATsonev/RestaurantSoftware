@@ -34,8 +34,8 @@ public class MenuItem extends BaseEntity {
     inverseJoinColumns = @JoinColumn(name = "menu_item_product_quantity_id", referencedColumnName = "id"))
     private Set<MenuItemProductQuantity> menuItemProductsQuantity = new HashSet<>();
 
-    @ManyToMany(mappedBy = "menuItems", fetch = FetchType.EAGER)
-    private List<Order> orders;
+    @OneToMany(mappedBy = "menuItem")
+    private List<MenuItemOrderStatus> menuItemOrderStatus;
 
     public String getName() {
         return name;
@@ -85,12 +85,12 @@ public class MenuItem extends BaseEntity {
         this.menuItemProductsQuantity = menuItemProductsQuantity;
     }
 
-    public List<Order> getOrders() {
-        return orders;
+    public List<MenuItemOrderStatus> getMenuItemOrderStatus() {
+        return menuItemOrderStatus;
     }
 
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
+    public void setMenuItemOrderStatus(List<MenuItemOrderStatus> menuItemOrderStatus) {
+        this.menuItemOrderStatus = menuItemOrderStatus;
     }
 
     public byte[] getImage() {

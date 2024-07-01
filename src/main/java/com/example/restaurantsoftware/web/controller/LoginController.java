@@ -2,7 +2,7 @@ package com.example.restaurantsoftware.web.controller;
 
 import com.example.restaurantsoftware.model.KitchenBarStaff;
 import com.example.restaurantsoftware.model.Waiter;
-import com.example.restaurantsoftware.model.enums.Staff;
+import com.example.restaurantsoftware.model.enums.Role;
 import com.example.restaurantsoftware.service.KitchenBarStaffService;
 import com.example.restaurantsoftware.service.WaiterService;
 import org.springframework.stereotype.Controller;
@@ -51,7 +51,7 @@ public class LoginController {
             session.setAttribute("waiterId", waiter.get().getId());
             return "redirect:/tables";
         } else if(staff.isPresent()){
-            if(staff.get().getStaff().equals(Staff.KITCHEN)){
+            if(staff.get().getStaff().equals(Role.KITCHEN)){
                 return "redirect:/orders/kitchen";
             }
             return "redirect:/orders/bar";
