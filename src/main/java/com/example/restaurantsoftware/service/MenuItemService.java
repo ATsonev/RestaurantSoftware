@@ -28,4 +28,7 @@ public interface MenuItemService {
 
     List<MenuItem> getMenuItemsByCategory(String category);
 
+    EditMenuItemDTO showMenuItem(MenuItem menuItem);
+
+    EditMenuItemProductsDTO getEditProductDto(Long id);
 }

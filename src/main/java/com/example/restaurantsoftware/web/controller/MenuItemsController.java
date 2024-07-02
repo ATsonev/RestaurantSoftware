@@ -31,12 +31,10 @@ public class MenuItemsController {
 
     private final MenuItemService menuItemService;
     private final ProductService productService;
-    private final ModelMapper modelMapper;
 
-    public MenuItemsController(MenuItemService menuItemService, ProductService productService, ModelMapper modelMapper) {
+    public MenuItemsController(MenuItemService menuItemService, ProductService productService) {
         this.menuItemService = menuItemService;
         this.productService = productService;
-        this.modelMapper = modelMapper;
     }
 
     @ModelAttribute("categories")
@@ -63,8 +61,7 @@ public class MenuItemsController {
             String base64Image = ImageUtils.encodeToBase64(menuItem.getImage());
             model.addAttribute("base64Image", base64Image);
         }
-        EditMenuItemDTO dto = modelMapper.map(menuItem, EditMenuItemDTO.class);
-        model.addAttribute("dto", dto);
+        model.addAttribute("dto", menuItemService.showMenuItem(menuItem));
         return "menuItem/edit-menu-item";
     }
 
@@ -94,15 +91,8 @@ public class MenuItemsController {
 
     @GetMapping("/edit-products/{id}")
     public String editMenuItemProducts(@PathVariable Long id, Model model) {
-        MenuItem menuItem = menuItemService.findById(id);
-        EditMenuItemProductsDTO dto = modelMapper.map(menuItem, EditMenuItemProductsDTO.class);
-        List<ProductQuantityDTO> productsWithQuantity = menuItem.getMenuItemProductsQuantity()
-                .stream()
-                .map(p -> modelMapper.map(p, ProductQuantityDTO.class))
-                .collect(Collectors.toList());
-        dto.setProductQuantities(productsWithQuantity);
         model.addAttribute("allProductCategories", ProductCategory.values());
-        model.addAttribute("menuItemDTO", dto);
+        model.addAttribute("menuItemDTO", menuItemService.getEditProductDto(id));
         return "menuItem/edit-products";
     }
 

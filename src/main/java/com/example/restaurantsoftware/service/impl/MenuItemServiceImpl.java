@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuItemServiceImpl implements MenuItemService {
@@ -124,5 +125,22 @@ public class MenuItemServiceImpl implements MenuItemService {
     @Override
     public List<MenuItem> getMenuItemsByCategory(String category) {
         return menuItemRepository.getMenuItemsByMenuItemCategory(MenuItemCategory.valueOf(category));
+    }
+
+    @Override
+    public EditMenuItemDTO showMenuItem(MenuItem menuItem) {
+        return modelMapper.map(menuItem, EditMenuItemDTO.class);
+    }
+
+    @Override
+    public EditMenuItemProductsDTO getEditProductDto(Long id) {
+        MenuItem menuItem = menuItemRepository.findById(id).get();
+        EditMenuItemProductsDTO dto = modelMapper.map(menuItem, EditMenuItemProductsDTO.class);
+        List<ProductQuantityDTO> productsWithQuantity = menuItem.getMenuItemProductsQuantity()
+                .stream()
+                .map(p -> modelMapper.map(p, ProductQuantityDTO.class))
+                .collect(Collectors.toList());
+        dto.setProductQuantities(productsWithQuantity);
+        return dto;
     }
 }

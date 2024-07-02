@@ -12,8 +12,8 @@ public interface ProductService {
     List<Product> getAllProducts();
     Product getProduct(Long id);
     void updateProductQuantity(AddQuantityDTO dto);
-
-    void editProductQuantity(String productName, double newQuantity);
+    void editProductQuantity(AddQuantityDTO dto);
     void addProduct(AddProductDto dto);
     void deleteProductById(long id);
+
 }

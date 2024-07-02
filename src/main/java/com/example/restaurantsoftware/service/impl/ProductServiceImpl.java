@@ -49,10 +49,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void editProductQuantity(String productName, double newQuantity) {
-        Product product = productRepository.findByName(productName).get();
-        product.setQuantityInStock(newQuantity);
-        productRepository.saveAndFlush(product);
+    public void editProductQuantity(AddQuantityDTO dto) {
+        Product product = productRepository.findByName(dto.getName()).get();
+        if(product.getProductUnit().name().equals("PIECE") && Math.floor(dto.getNewQuantity()) != dto.getNewQuantity()){
+            throw new InvalidProductException("The quantity should be integer number");
+        }else {
+            product.setQuantityInStock(dto.getNewQuantity());
+            productRepository.saveAndFlush(product);
+        }
     }
 
     @Override

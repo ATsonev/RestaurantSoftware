@@ -139,7 +139,7 @@
             width: 30px;
             height: 30px;
             padding: 8px 16px;
-            background-image: url("/search-button.png");
+            background-image: url("/images/search-button.png");
             display: inline-block;
             font-size: 14px;
             margin-left: 10px;
@@ -212,7 +212,7 @@
             </a>
         </td>
         <td>
-            <a th:href="@{'/products/edit-product-quantity?name=' + ${product.name} + '&quantity=' + ${product.quantityInStock}}">
+            <a th:href="@{'/products/edit-product-quantity/'+ ${product.id}}">
             <button class="button">Edit Quantity</button>
             </a>
         </td>

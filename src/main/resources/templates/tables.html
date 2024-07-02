@@ -21,7 +21,7 @@
             position: relative;
             width: 120px;
             height: 135px;
-            background-image: url("/tables.png");
+            background-image: url("/images/tables.png");
             background-size: cover;
             color: white;
             border: none;
@@ -35,7 +35,7 @@
             transition: transform 0.3s ease;
         }
 
-        .table-button.enabled:hover{
+        .table-button.enabled:hover {
             transform: scale(1.1);
         }
 
@@ -50,15 +50,15 @@
         }
 
         .table-button.disabled {
-            background-image: url("tables-disabled.png");
+            background-image: url("/images/tables-disabled.png");
             cursor: not-allowed;
         }
 
         .table-button.taken {
-            background-image: url("/tables-taken.png");
+            background-image: url("/images/tables-taken.png");
         }
 
-        .table-button.taken:hover{
+        .table-button.taken:hover {
             transform: scale(1.1);
         }
 
@@ -79,7 +79,7 @@
             height: 115px;
             border: none;
             border-radius: 5px;
-            background-image: url("exit-button.png");
+            background-image: url("/images/exit-button.png");
             background-position: center;
             padding: 10px 20px;
             font-size: 18px;
@@ -93,7 +93,7 @@
             height: 115px;
             border: none;
             border-radius: 5px;
-            background-image: url("tables-button.png");
+            background-image: url("/images/tables-button.png");
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
@@ -112,7 +112,7 @@
             height: 115px;
             border: none;
             border-radius: 5px;
-            background-image: url("products-button.png");
+            background-image: url("/images/products-button.png");
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
@@ -131,7 +131,7 @@
             height: 115px;
             border: none;
             border-radius: 5px;
-            background-image: url("menu-button.png");
+            background-image: url("/images/menu-button.png");
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
@@ -146,7 +146,7 @@
 
         .laminate-background {
             background-color: #D2B48C;
-            background-image: url("/background.jpg");
+            background-image: url("/images/background.jpg");
         }
 
         .center-text {
@@ -223,7 +223,8 @@
                     th:disabled="${!isWaiterNull && !isTableAssigned}">
                 <div class="table-info">
                     <span th:text="${tables[rowIdx].id}"></span>
-                    <span style="font-size: 14px" th:if="${tables[rowIdx].waiter != null}" th:text="${tables[rowIdx].waiter.getFirstName()}"></span>
+                    <span style="font-size: 14px" th:if="${tables[rowIdx].waiter != null}"
+                          th:text="${tables[rowIdx].waiter.getFirstName()}"></span>
                 </div>
             </button>
             <button class="table-button" th:if="${rowIdx + 1 < tables.size()}"
@@ -234,7 +235,8 @@
                     th:disabled="${!isWaiterNull && !isTableAssigned}">
                 <div class="table-info">
                     <span th:text="${tables[rowIdx].id + 1}"></span>
-                    <span style="font-size: 14px" th:if="${tables[rowIdx + 1].waiter != null}" th:text="${tables[rowIdx + 1].waiter.getFirstName()}"></span>
+                    <span style="font-size: 14px" th:if="${tables[rowIdx + 1].waiter != null}"
+                          th:text="${tables[rowIdx + 1].waiter.getFirstName()}"></span>
                 </div>
             </button>
         </div>
@@ -274,13 +276,14 @@
                         <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
                         <select id="waiterSelect" name="waiterId"
                                 style="width: 200px; height: 40px; font-size: 16px; text-align: center">
-                            <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}" th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
+                            <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}"
+                                    th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
                         </select>
                     </div>
                 </div>
                 <button type="submit"
-                        style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px">Assign
-                    Table
+                        style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px;
+                        background-color: #253258; color: white">Assign Table
                 </button>
             </form>
         </div>

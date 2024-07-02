@@ -15,7 +15,7 @@
             text-align: left;
         }
 
-        td{
+        td {
             font-size: 20px;
         }
 
@@ -42,6 +42,11 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 90px;
         }
 
         form button[type="submit"] {
@@ -103,7 +108,7 @@
             background-color: #253258;
         }
 
-        input{
+        input {
             font-size: 20px;
         }
 
@@ -120,6 +125,7 @@
             cursor: pointer;
             border-radius: 5px;
         }
+
         .remove-button:hover {
             background-color: #BE4634;
         }
@@ -150,14 +156,16 @@
 <body>
 <div class="container-head">
     <h1 th:text="${menuItemDTO.name}">Menu Item Name</h1>
-    <a th:href="@{'/menuItem/add-new-product/' + ${menuItemDTO.id}}">
-        <button class="add-product-button">Add product</button>
-    </a>
-    <button class="go-back-button" onclick="location.href='/menuItem/list-menu-items'">Go back to all items</button>
+    <div class="button-container">
+        <a th:href="@{'/menuItem/add-new-product/' + ${menuItemDTO.id}}">
+            <button class="add-product-button">Add product</button>
+        </a>
+        <button class="go-back-button" onclick="location.href='/menuItem/list-menu-items'">Go back to all items</button>
+    </div>
 </div>
 <form action="#" th:action="@{/menuItem/edit-products}" th:object="${menuItemDTO}" method="post">
-    <input type="hidden" th:field="*{id}" />
-    <input type="hidden" th:field="*{name}" />
+    <input type="hidden" th:field="*{id}"/>
+    <input type="hidden" th:field="*{name}"/>
     <table>
         <thead>
         <tr>
@@ -172,13 +180,16 @@
         <tr th:each="item, iterStat : ${menuItemDTO.productQuantities}">
             <td>
                 <span style="font-size: 20px" th:text="${item.productName}">Product Name</span>
-                <input type="hidden" th:field="*{productQuantities[__${iterStat.index}__].id}" th:value="${item.id}" id="itemID"/>
-                <input type="hidden" th:field="*{productQuantities[__${iterStat.index}__].productName}" th:value="${item.productName}" />
+                <input type="hidden" th:field="*{productQuantities[__${iterStat.index}__].id}" th:value="${item.id}"
+                       id="itemID"/>
+                <input type="hidden" th:field="*{productQuantities[__${iterStat.index}__].productName}"
+                       th:value="${item.productName}"/>
             </td>
             <td>
                 <div class="inline-container">
                     <label>
-                        <input type="number" th:field="*{productQuantities[__${iterStat.index}__].quantity}" th:value="${item.quantity}" step="0.001" />
+                        <input type="number" th:field="*{productQuantities[__${iterStat.index}__].quantity}"
+                               th:value="${item.quantity}" step="0.001"/>
                     </label>
                     <div th:if="${#httpServletRequest.getAttribute('errorMessage')}" class="error">
                         <ul>
@@ -189,19 +200,25 @@
             </td>
             <td>
                 <span th:text="${item.productUnit.name()}">Product Unit</span>
-                <input type="hidden" th:field="*{productQuantities[__${iterStat.index}__].productUnit}" th:value="${item.productUnit.name()}" />
+                <input type="hidden" th:field="*{productQuantities[__${iterStat.index}__].productUnit}"
+                       th:value="${item.productUnit.name()}"/>
             </td>
             <td>
                 <label>
-                    <select style="font-size: 20px" th:field="*{productQuantities[__${iterStat.index}__].productCategory}">
-                        <option th:each="category : ${allProductCategories}" th:value="${category}" th:text="${category.name()}" th:selected="${category == item.productCategory}">
+                    <select style="font-size: 20px"
+                            th:field="*{productQuantities[__${iterStat.index}__].productCategory}">
+                        <option th:each="category : ${allProductCategories}" th:value="${category}"
+                                th:text="${category.name()}" th:selected="${category == item.productCategory}">
                             Product Category
                         </option>
                     </select>
                 </label>
             </td>
             <td>
-                <button type="button" class="remove-button" th:attr="data-product-id=${item.id},  data-menu-item-id=${menuItemDTO.id}" onclick="confirmDelete(this)">Delete</button>
+                <button type="button" class="remove-button"
+                        th:attr="data-product-id=${item.id},  data-menu-item-id=${menuItemDTO.id}"
+                        onclick="confirmDelete(this)">Delete
+                </button>
             </td>
         </tr>
         </tbody>

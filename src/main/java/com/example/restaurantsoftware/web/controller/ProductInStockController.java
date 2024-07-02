@@ -58,19 +58,26 @@ public class ProductInStockController {
         return "redirect:/products/products-in-stock";
     }
 
-    @GetMapping("/edit-product-quantity")
-    public String showEditProductQuantityPage(@RequestParam("name") String productName,
-                                             @RequestParam("quantity") double currentQuantity,
-                                             Model model) {
-        model.addAttribute("productName", productName);
-        model.addAttribute("currentQuantity", currentQuantity);
+    @GetMapping("/edit-product-quantity/{id}")
+    public String showEditProductQuantityPage(Model model, @PathVariable Long id) {
+        if(!model.containsAttribute("dto")) {
+            Product product = productService.getProduct(id);
+            AddQuantityDTO dto = modelMapper.map(product, AddQuantityDTO.class);
+            model.addAttribute("dto", dto);
+        }
         return "products/edit-product-quantity";
     }
 
     @PostMapping("/edit-product-quantity")
-    public String editProductQuantity(@RequestParam("name") String productName,
-                                     @RequestParam("newQuantity") double newQuantity) {
-        productService.editProductQuantity(productName, newQuantity);
+    public String editProductQuantity(AddQuantityDTO dto,
+                                      RedirectAttributes redirectAttributes) {
+        try{
+            productService.editProductQuantity(dto);
+        }catch (InvalidProductException e){
+            redirectAttributes.addFlashAttribute("dto", dto);
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/products/edit-product-quantity/" + dto.getId();
+        }
         return "redirect:/products/products-in-stock";
     }
 

@@ -72,7 +72,7 @@ public class OrdersController {
 
     @PostMapping("/order/deleteOrderItem")
     public ResponseEntity<?> deleteOrderItem(@RequestBody DeleteOrderItemDTO request) {
-        boolean success = orderService.deleteOrderItem(request.getTableId(), request.getMenuItem(), request.getQuantity());
+        boolean success = orderService.deleteOrderItem(request);
         if (success) {
             return ResponseEntity.ok().build();
         } else {
@@ -81,13 +81,8 @@ public class OrdersController {
     }
 
     @PostMapping("/order/moveOrderItem")
-    public ResponseEntity<?> moveOrderItem(@RequestBody MoveOrderItemDTO request) {
-        boolean success = orderService.moveOrderItem(
-                request.getFromTableId(),
-                request.getToTableId(),
-                request.getMenuItem(),
-                request.getQuantity()
-        );
+    public ResponseEntity<?> moveOrderItem(@RequestBody MoveOrderItemDTO dto) {
+        boolean success = orderService.moveOrderItem(dto);
         if (success) {
             return ResponseEntity.ok().build();
         } else {

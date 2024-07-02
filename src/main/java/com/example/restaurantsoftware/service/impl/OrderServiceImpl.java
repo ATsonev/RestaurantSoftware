@@ -1,9 +1,7 @@
 package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.*;
-import com.example.restaurantsoftware.model.dto.orderDto.MenuItemsDto;
-import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderDto;
-import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderMenuItemDto;
+import com.example.restaurantsoftware.model.dto.orderDto.*;
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.model.enums.OrderStatus;
 import com.example.restaurantsoftware.model.enums.PaymentMethod;
@@ -13,6 +11,7 @@ import com.example.restaurantsoftware.service.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,7 +61,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void makeOrder(long waiterId, long tableId, List<MenuItemsDto> orderItems) {
-        //TODO
         Order order = new Order();
         order.setDateAndTimeOrdered(LocalDateTime.now());
         order.setWaiter(waiterRepository.getById(waiterId));
@@ -105,19 +103,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean deleteOrderItem(Long tableId, String menuItem, int quantity) {
-        Table table = tableRepository.getById(tableId);
-        List<Order> orders = table.getOrders();
+    public boolean deleteOrderItem(DeleteOrderItemDTO dto) {
+        Table table = tableRepository.getById(dto.getTableId());
+        List<Order> orders = orderRepository.findAllByTable(table);
+        int quantity = dto.getQuantity();
 
-        for (Order order : orders) {
+        Iterator<Order> orderIterator = orders.iterator();
+        while (orderIterator.hasNext()) {
+            Order order = orderIterator.next();
             List<MenuItemOrderStatus> menuItems = order.getMenuItems();
             Iterator<MenuItemOrderStatus> iterator = menuItems.iterator();
             while (iterator.hasNext() && quantity > 0) {
                 MenuItemOrderStatus menuItemEntity = iterator.next();
-                if (menuItemEntity.getMenuItem().getName().equals(menuItem)) {
+                if (menuItemEntity.getMenuItem().getName().equals(dto.getMenuItem())) {
                     iterator.remove();
                     quantity--;
                 }
+            }
+            if(order.getMenuItems().isEmpty()){
+                orderRepository.deleteById(order.getId());
+                orderIterator.remove();
             }
         }
         table.setOrders(orders);
@@ -126,12 +131,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean moveOrderItem(Long fromTableId, Long toTableId, String menuItem, int quantity) {
-        Table from = tableRepository.findById(fromTableId).get();
-        Table to = tableRepository.getById(toTableId);
-        Optional<MenuItem> byName = menuItemRepository.findByName(menuItem);
-
-        /*deleteOrderItem(fromTableId, menuItem, quantity);*/
+    public boolean moveOrderItem(MoveOrderItemDTO dto) {
+        Table from = tableRepository.findById(dto.getFromTableId()).get();
+        Table to = tableRepository.getById(dto.getToTableId());
+        Optional<MenuItem> byName = menuItemRepository.findByName(dto.getMenuItem());
 
         Order newOrder = new Order();
         newOrder.setDateAndTimeOrdered(LocalDateTime.now());
@@ -141,14 +144,22 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.saveAndFlush(newOrder);
 
         List<MenuItemOrderStatus> menuItems = new ArrayList<>();
+        int quantity = dto.getQuantity();
         for (Order order : from.getOrders()) {
-            if (order.getMenuItems().stream().anyMatch(m -> m.getMenuItem().getName().equals(menuItem))) {
-                for (MenuItemOrderStatus item : order.getMenuItems()) {
+            List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
+            if (orderMenuItems.stream().anyMatch(m -> m.getMenuItem().getName().equals(dto.getMenuItem()))) {
+                Iterator<MenuItemOrderStatus> iterator = orderMenuItems.iterator();
+                while (iterator.hasNext() && quantity > 0) {
+                    MenuItemOrderStatus item = iterator.next();
                     if (item.getMenuItem().equals(byName.get())) {
                         item.setOrder(newOrder);
                         menuItems.add(item);
+                        quantity--;
                     }
                 }
+            }
+            if(quantity == 0){
+                break;
             }
         }
         menuItemOrderStatusRepository.saveAll(menuItems);
