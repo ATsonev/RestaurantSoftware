@@ -3,9 +3,12 @@ package com.example.restaurantsoftware.web.controller;
 import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.dto.ShowWaiterTablesDTO;
+import com.example.restaurantsoftware.model.user.CurrentUserDetails;
 import com.example.restaurantsoftware.service.TableService;
 import com.example.restaurantsoftware.service.WaiterService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +32,8 @@ public class TablesController {
     }
 
     @GetMapping("/tables")
-    public String tables(Model model, HttpSession session){
-        Long waiterId = (Long) session.getAttribute("waiterId");
+    public String tables(Model model, @AuthenticationPrincipal CurrentUserDetails currentUserDetails){
+        Long waiterId = currentUserDetails.getId();
         Waiter waiter = waiterService.findWaiterByID(waiterId);
         ShowWaiterTablesDTO dto = modelMapper.map(waiter, ShowWaiterTablesDTO.class);
         List<Long> waiterTablesIds = waiter.getTables().stream().map(BaseEntity::getId).collect(Collectors.toList());

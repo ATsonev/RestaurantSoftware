@@ -34,31 +34,5 @@ public class LoginController {
         return "login";
     }
 
-    @RequestMapping("/login")
-    public String showLoginForm(Model model) {
-        model.addAttribute("password", ""); // Initialize the password field\
-        model.addAttribute("loginFailed", false);
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam("password") String password,
-                        HttpSession session, RedirectAttributes redirectAttributes) {
-        Optional<Waiter> waiter = waiterService.authenticateWaiter(password);
-        Optional<KitchenBarStaff> staff = kitchenBarStaffService.findByPassword(password);
-
-        if (waiter.isPresent()) {
-            session.setAttribute("waiterId", waiter.get().getId());
-            return "redirect:/tables";
-        } else if(staff.isPresent()){
-            if(staff.get().getStaff().equals(Role.KITCHEN)){
-                return "redirect:/orders/kitchen";
-            }
-            return "redirect:/orders/bar";
-        }else {
-            redirectAttributes.addFlashAttribute("loginFailed", true);
-            return "redirect:/login";
-        }
-    }
 
 }
