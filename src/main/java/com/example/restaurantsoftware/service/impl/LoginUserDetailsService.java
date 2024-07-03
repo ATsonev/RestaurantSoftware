@@ -49,7 +49,7 @@ public class LoginUserDetailsService implements UserDetailsService {
         return new CurrentUserDetails(
                 waiter.getFirstName(),
                 waiter.getPassword(),
-                List.of(new SimpleGrantedAuthority("ROLE_" + (waiter.isAdmin() ? "ADMIN" : "USER"))),
+                List.of(new SimpleGrantedAuthority("ROLE_" + (waiter.isAdmin() ? "ADMIN" : "USER")), new SimpleGrantedAuthority("ROLE_WAITER")),
                 waiter.getId()
         );
     }

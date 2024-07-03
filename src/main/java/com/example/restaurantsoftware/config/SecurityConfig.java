@@ -4,6 +4,7 @@ import com.example.restaurantsoftware.service.impl.LoginUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,26 +19,32 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final LoginUserDetailsService loginUserDetailsService;
+    private final CustomAuthenticationSuccessHandler successHandler;
 
-    public SecurityConfig(LoginUserDetailsService loginUserDetailsService) {
+    public SecurityConfig(LoginUserDetailsService loginUserDetailsService, CustomAuthenticationSuccessHandler successHandler) {
         this.loginUserDetailsService = loginUserDetailsService;
+        this.successHandler = successHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         CustomPasswordAuthenticationFilter customFilter = new CustomPasswordAuthenticationFilter(loginUserDetailsService);
         http
-                .authorizeRequests(authorize -> authorize
-                        .requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/"), new AntPathRequestMatcher("/login")).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .permitAll()
-                        .passwordParameter("password")
-                )
-                .logout(logout -> logout.permitAll())
+                .authorizeRequests()
+                    .antMatchers("/static/**").permitAll()
+                    .antMatchers("/", "/login").permitAll()
+                    .antMatchers("/orders/kitchen").hasRole("KITCHEN")
+                    .antMatchers("/orders/bar").hasRole("BAR")
+                    .anyRequest().hasRole("WAITER")
+                    .and()
+                .formLogin()
+                    .loginPage("/login")
+                    .successHandler(successHandler)
+                    .permitAll()
+                    .passwordParameter("password")
+                    .and()
+                .logout().permitAll()
+                    .and()
                 .addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
