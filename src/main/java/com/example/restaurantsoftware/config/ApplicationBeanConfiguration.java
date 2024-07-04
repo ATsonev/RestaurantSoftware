@@ -34,4 +34,8 @@ public class ApplicationBeanConfiguration {
         multipartResolver.setMaxUploadSize(2097152); // 2MB
         return multipartResolver;
     }
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }

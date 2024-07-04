@@ -16,6 +16,14 @@ public class KitchenBarStaff extends BaseEntity {
     private Role staff;
     private String password;
 
+    public KitchenBarStaff() {
+    }
+
+    public KitchenBarStaff(Role staff, String password) {
+        this.staff = staff;
+        this.password = password;
+    }
+
     public Role getStaff() {
         return staff;
     }

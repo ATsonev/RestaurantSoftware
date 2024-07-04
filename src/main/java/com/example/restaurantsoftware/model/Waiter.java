@@ -6,6 +6,8 @@ import com.example.restaurantsoftware.model.enums.Role;
 
 import javax.persistence.*;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +30,20 @@ public class Waiter extends BaseEntity {
     private Set<Order> orders;
     @OneToMany(mappedBy = "waiter", fetch = FetchType.EAGER)
     private Set<Bill> bills;
+
+    public Waiter() {
+        this.tables = new ArrayList<>();
+        this.orders = new HashSet<>();
+        this.bills = new HashSet<>();
+    }
+
+    public Waiter(String firstName, String lastName, String password, boolean isAdmin) {
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.isAdmin = isAdmin;
+    }
 
     public String getFirstName() {
         return firstName;

@@ -244,17 +244,20 @@
 </div>
 
 <div class="menu-column laminate-background">
-    <button class="logout-button" onclick="location.href='/login';"></button>
-    <button class="set-tables-button"
+    <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+    </form>
+    <button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
+    <button class="set-tables-button" sec:authorize="hasRole('ROLE_ADMIN')"
             th:class="${waiterDto.admin ? 'set-tables-button enabled' : 'set-tables-button disabled'}"
             th:disabled="${not waiterDto.admin}">
     </button>
-    <button class="add-products-in-stock-button"
+    <button class="add-products-in-stock-button" sec:authorize="hasRole('ROLE_ADMIN')"
             th:class="${waiterDto.admin ? 'add-products-in-stock-button enabled' : 'add-products-in-stock-button disabled'}"
             th:disabled="${not waiterDto.admin}"
             onclick="location.href='/products/products-in-stock';">
     </button>
-    <button class="list-menu-items-button"
+    <button class="list-menu-items-button" sec:authorize="hasRole('ROLE_ADMIN')"
             th:class="${waiterDto.admin ? 'list-menu-items-button enabled' : 'list-menu-items-button disabled'}"
             th:disabled="${not waiterDto.admin}"
             onclick="location.href='/menuItem/list-menu-items';">

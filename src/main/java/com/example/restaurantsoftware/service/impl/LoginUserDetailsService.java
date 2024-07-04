@@ -6,43 +6,41 @@ import com.example.restaurantsoftware.model.user.CurrentUserDetails;
 import com.example.restaurantsoftware.repository.KitchenBarStaffRepository;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LoginUserDetailsService implements UserDetailsService {
 
     private final WaiterRepository waiterRepository;
     private final KitchenBarStaffRepository kitchenBarStaffRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public LoginUserDetailsService(WaiterRepository waiterRepository, KitchenBarStaffRepository kitchenBarStaffRepository) {
+    public LoginUserDetailsService(WaiterRepository waiterRepository, KitchenBarStaffRepository kitchenBarStaffRepository, PasswordEncoder passwordEncoder) {
         this.waiterRepository = waiterRepository;
         this.kitchenBarStaffRepository = kitchenBarStaffRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        throw new UnsupportedOperationException("Password-based authentication is not supported here");
-    }
-
-    public UserDetails loadUserByPassword(String password) throws UsernameNotFoundException {
-        Optional<Waiter> waiter = waiterRepository.findWaiterByPassword(password);
-        if (waiter.isPresent()) {
-            return mapToUserDetails(waiter.get());
+    public UserDetails loadUserByUsername(String password) throws UsernameNotFoundException {
+        for (Waiter waiter : waiterRepository.findAll()) {
+            if(passwordEncoder.matches(password, waiter.getPassword())){
+                return mapToUserDetails(waiter);
+            }
         }
 
-        Optional<KitchenBarStaff> kitchenBarStaff = kitchenBarStaffRepository.findByPassword(password);
-        if (kitchenBarStaff.isPresent()) {
-            return mapToUserDetails(kitchenBarStaff.get());
+        for (KitchenBarStaff kitchenBarStaff : kitchenBarStaffRepository.findAll()) {
+            if(passwordEncoder.matches(password, kitchenBarStaff.getPassword())){
+                return mapToUserDetails(kitchenBarStaff);
+            }
         }
-
-        throw new UsernameNotFoundException("User with the given password not found");
+        throw new UsernameNotFoundException("User not found with password: " + password);
     }
 
     private UserDetails mapToUserDetails(Waiter waiter) {
