@@ -28,7 +28,7 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "waiter_id", referencedColumnName = "id")
     private Waiter waiter;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order")
     private List<MenuItemOrderStatus> menuItems;
 
     public LocalDateTime getDateAndTimeOrdered() {

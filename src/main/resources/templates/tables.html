@@ -64,12 +64,24 @@
 
         .menu-column {
             width: 120px;
-            position: absolute;
+            position: fixed;
+            bottom: 0;
             right: 0;
-            top: 0;
-            height: 695px;
             display: flex;
             flex-direction: column-reverse;
+        }
+
+        .base-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 115px;
+            border: none;
+            border-radius: 5px;
+            background-position: center;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
         }
 
         .logout-button {
@@ -94,6 +106,7 @@
             border: none;
             border-radius: 5px;
             background-image: url("/images/tables-button.png");
+            background-position: center;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
@@ -113,6 +126,7 @@
             border: none;
             border-radius: 5px;
             background-image: url("/images/products-button.png");
+            background-position: center;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
@@ -157,16 +171,6 @@
         .bold {
             font-size: 36px;
             font-weight: bold;
-        }
-
-        .status-circle {
-            position: absolute;
-            top: 55px;
-            right: 5px;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background-color: green;
         }
 
         .modal {
@@ -214,7 +218,6 @@
 <div th:each="rowIdx : ${#numbers.sequence(0, tables.size()-1, 2)}">
     <div class="table-container">
         <div class="row">
-            <span class="status-circle"></span>
             <button class="table-button"
                     th:with="isWaiterNull=${tables[rowIdx].waiter == null},
                         isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx].id)}"
@@ -245,7 +248,7 @@
 
 <div class="menu-column laminate-background">
     <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
-        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+        <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
     </form>
     <button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
     <button class="set-tables-button" sec:authorize="hasRole('ROLE_ADMIN')"

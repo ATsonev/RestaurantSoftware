@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Table Order</title>
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
         body {
             margin: 0;
@@ -356,7 +354,6 @@
     <button class="header-button" onclick="showDiscountModal()">DISCOUNT</button>
     <button class="header-button" onclick="showPaymentModal()">BILL</button>
     <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
-        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
     </form>
     <button onclick="document.getElementById('logout-form').submit();" class="logout-button"></button>
 </div>
@@ -507,14 +504,6 @@
         }
     });
 
-    function getCsrfTokenAndHeader() {
-        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-        return {
-            csrfToken,
-            csrfHeader
-        };
-    }
 
     function setWaiter(button) {
         var waiterId = button.getAttribute("data-waiter-id");
@@ -653,13 +642,11 @@
             if (quantityToDelete <= currentQuantity) {
                 const menuItem = selectedRow.cells[0].textContent;
                 const tableId = document.querySelector('.table-button').getAttribute('data-table-id');
-                const { csrfToken, csrfHeader } = getCsrfTokenAndHeader();
                 if (selectedRow.closest('#current-orders')) {
                     fetch('/order/deleteOrderItem', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            [csrfHeader]: csrfToken
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({tableId: tableId, menuItem: menuItem, quantity: quantityToDelete})
                     })
@@ -743,13 +730,10 @@
             setWaiter(tableButton);
         }
 
-        const { csrfToken, csrfHeader } = getCsrfTokenAndHeader();
-
         fetch(`/order/makeOrder/${waiterId}/${tableId}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(orderItems)
         })
@@ -856,14 +840,12 @@
         selectedTable = document.getElementById('tableSelect').value;
         const menuItem = selectedRow.cells[0].textContent;
         const tableId = document.querySelector('.table-button').getAttribute('data-table-id');
-        const { csrfToken, csrfHeader } = getCsrfTokenAndHeader();
 
         if (selectedTable) {
             fetch('/order/moveOrderItem', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    [csrfHeader]: csrfToken
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     fromTableId: tableId,
@@ -897,14 +879,10 @@
         const waiterId = document.querySelector('.table-button').getAttribute('data-waiter-id');
         const discountPercentage = appliedDiscount;
         const url = `/order/finishTable${paymentType}/${tableId}/${waiterId}?discount=${discountPercentage}`;
-        const { csrfToken, csrfHeader } = getCsrfTokenAndHeader();
 
 
         fetch(url, {
-            method: 'POST',
-            headers: {
-                [csrfHeader]: csrfToken // Include the CSRF token in the headers
-            }
+            method: 'POST'
         })
             .then(response => {
                 if (response.ok) {

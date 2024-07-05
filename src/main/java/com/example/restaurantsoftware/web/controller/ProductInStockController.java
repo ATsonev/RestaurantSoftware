@@ -108,7 +108,7 @@ public class ProductInStockController {
         }
     }
 
-    @GetMapping("/deleteProduct/{id}")
+    @DeleteMapping("/deleteProduct/{id}")
     public String deleteProduct(@PathVariable (value = "id") Long id){
         this.productService.deleteProductById(id);
         return "redirect:/products/products-in-stock";

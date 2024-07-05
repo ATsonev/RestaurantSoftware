@@ -217,9 +217,9 @@
             </a>
         </td>
         <td>
-            <a th:href="@{'/products/deleteProduct/' + ${product.id}}" onclick="confirmDelete('${product.name}', '${product.id}')">
-                <button class="delete-button">Delete</button>
-            </a>
+            <form th:method="delete" th:action="@{/products/deleteProduct/{id}(id=*{product.id})}">
+                <input class="delete-button" type="submit" value = "Delete">
+            </form>
         </td>
     </tr>
     </tbody>

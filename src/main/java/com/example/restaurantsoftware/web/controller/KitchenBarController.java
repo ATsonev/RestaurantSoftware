@@ -2,6 +2,7 @@ package com.example.restaurantsoftware.web.controller;
 
 import com.example.restaurantsoftware.model.dto.orderDto.ShowOrderDto;
 import com.example.restaurantsoftware.service.OrderService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class KitchenBarController {
     }
 
     @PostMapping("/order-done/bar/{id}")
+    @PreAuthorize("hasRole('BAR')")
     public String orderDone(@PathVariable Long id){
         orderService.orderDone(id, "bar");
         return "redirect:/orders/bar";

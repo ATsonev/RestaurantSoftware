@@ -19,7 +19,7 @@ public class MenuItemOrderStatus extends BaseEntity {
 
     private String comment;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 

@@ -27,13 +27,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().and()
+                .csrf().disable()
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                                 .antMatchers("/login").permitAll()
                                 .antMatchers("/orders/kitchen").hasRole("KITCHEN")
+                                .antMatchers("/orders/order-done/hotKitchen/**").hasRole("KITCHEN")
+                                .antMatchers("/orders/order-done/coldKitchen/**").hasRole("KITCHEN")
                                 .antMatchers("/orders/bar").hasRole("BAR")
+                                .antMatchers("/orders/order-done/bar/**").hasRole("BAR")
                                 .anyRequest().hasRole("WAITER")
                 )
                 .formLogin(form -> form
