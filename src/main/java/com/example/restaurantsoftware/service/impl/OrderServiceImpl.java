@@ -127,43 +127,20 @@ public class OrderServiceImpl implements OrderService {
             List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
 
             for (MenuItemOrderStatus item : orderMenuItems) {
-                if(allMenuItems.get(currentMenuItem).getMenuItem().equals(item.getMenuItem()) && quantity > 0){
-                    //TODO
-                    /*MenuItemOrderStatus menuItemOrderStatus = allMenuItems.get(currentMenuItem);*/
+                if(allMenuItems.get(currentMenuItem).equals(item) && quantity > 0){
                     quantity--;
                     currentMenuItem++;
                     menuItemOrderStatusRepository.deleteById(item.getId());
                     orderMenuItems.remove(item);
                     if(orderMenuItems.isEmpty()){
-                        orderRepository.deleteById(order.getId());
                         break;
                     }
                 }
             }
-            /*order.setMenuItems(orderMenuItems);*/
-            /*orderRepository.save(order);*/
             if (quantity == 0) {
                 break;
             }
         }
-
-        /*Iterator<Order> orderIterator = orders.iterator();
-        while (orderIterator.hasNext()) {
-            Order order = orderIterator.next();
-            List<MenuItemOrderStatus> menuItems = order.getMenuItems();
-            Iterator<MenuItemOrderStatus> iterator = menuItems.iterator();
-            while (iterator.hasNext() && quantity > 0) {
-                MenuItemOrderStatus menuItemEntity = iterator.next();
-                if (menuItemEntity.getMenuItem().getName().equals(dto.getMenuItem())) {
-                    iterator.remove();
-                    quantity--;
-                }
-            }
-            if (order.getMenuItems().isEmpty()) {
-                orderRepository.deleteById(order.getId());
-                orderIterator.remove();
-            }
-        }*/
         return true;
     }
 
@@ -197,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
             List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
 
             for (MenuItemOrderStatus item : orderMenuItems) {
-                if(allMenuItems.get(currentMenuItem).getMenuItem().equals(item.getMenuItem()) && quantity > 0){
+                if(allMenuItems.get(currentMenuItem).equals(item) && quantity > 0){
                     MenuItemOrderStatus menuItemOrderStatus = allMenuItems.get(currentMenuItem);
                     menuItemOrderStatus.setOrder(newOrder);
                     menuItemOrderStatusRepository.save(menuItemOrderStatus);
