@@ -125,13 +125,15 @@ public class OrderServiceImpl implements OrderService {
 
         for (Order order : orders) {
             List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
+            Iterator<MenuItemOrderStatus> iterator = orderMenuItems.iterator();
 
-            for (MenuItemOrderStatus item : orderMenuItems) {
+            while (iterator.hasNext()) {
+                MenuItemOrderStatus item = iterator.next();
                 if(allMenuItems.get(currentMenuItem).equals(item) && quantity > 0){
                     quantity--;
                     currentMenuItem++;
                     menuItemOrderStatusRepository.deleteById(item.getId());
-                    orderMenuItems.remove(item);
+                    iterator.remove();
                     if(orderMenuItems.isEmpty()){
                         break;
                     }
