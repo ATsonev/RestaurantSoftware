@@ -27,14 +27,12 @@ public class OrdersController {
     private final MenuItemService menuItemService;
     private final OrderService orderService;
     private final ModelMapper modelMapper;
-    private final WaiterService waiterService;
     private final TableService tableService;
 
-    public OrdersController(MenuItemService menuItemService, OrderService orderService, ModelMapper modelMapper, WaiterService waiterService, TableService tableService) {
+    public OrdersController(MenuItemService menuItemService, OrderService orderService, ModelMapper modelMapper, TableService tableService) {
         this.menuItemService = menuItemService;
         this.orderService = orderService;
         this.modelMapper = modelMapper;
-        this.waiterService = waiterService;
         this.tableService = tableService;
     }
 

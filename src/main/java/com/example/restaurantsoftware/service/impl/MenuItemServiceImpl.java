@@ -143,4 +143,9 @@ public class MenuItemServiceImpl implements MenuItemService {
         dto.setProductQuantities(productsWithQuantity);
         return dto;
     }
+
+    @Override
+    public List<MenuItem> getCustomerOrderMenuItems() {
+        return menuItemRepository.findAll();
+    }
 }

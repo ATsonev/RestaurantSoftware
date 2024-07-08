@@ -6,6 +6,7 @@ public class ShowMenuItemJSONDTo {
     private Long id;
     private String name;
     private MenuItemCategory menuItemCategory;
+    private String description;
     private double price;
     private String image;
 
@@ -23,6 +24,14 @@ public class ShowMenuItemJSONDTo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public MenuItemCategory getMenuItemCategory() {

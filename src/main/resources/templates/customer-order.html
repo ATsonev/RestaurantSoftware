@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .menu-item-card {
+            margin: 15px;
+            width: 18rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .menu-item-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .menu-item-description {
+            height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0;
+            color: #555;
+        }
+
+        .menu-item-button {
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item-button:hover {
+            background-color: #0056b3;
+        }
+
+        .menu-item-title {
+            font-size: 1.25rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .menu-item-card-body {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        .category-button {
+            font-size: 1rem;
+            padding: 10px 20px;
+            margin: 10px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .category-button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .category-title {
+            margin-top: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Menu</h1>
+    <div id="category-buttons" class="row">
+        <div th:each="category : ${categories}">
+            <button class="btn btn-primary category-button m-2"
+                    th:text="${category.name}"
+                    th:attr="data-category-name=${category.name}"
+                    onclick="showMenuItems(this)"></button>
+        </div>
+    </div>
+    <h2 id="category-title" class="text-center mt-4"></h2>
+    <div id="menu-items" class="row" style="display: none;">
+    </div>
+    <button class="btn btn-secondary mt-4" onclick="showCategories()">Back to Categories</button>
+</div>
+<script>
+    function showMenuItems(buttonElement) {
+        const categoryName = buttonElement.getAttribute('data-category-name');
+        console.log("Fetching items for category: " + categoryName); // Logging for debugging
+        fetch(`/menu-items?category=${encodeURIComponent(categoryName)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data received: ", data); // Logging for debugging
+                if (!Array.isArray(data)) {
+                    throw new Error('Response is not an array');
+                }
+                const menuItemsContainer = document.getElementById('menu-items');
+                const categoryButtons = document.getElementById('category-buttons');
+                const categoryTitle = document.getElementById('category-title');
+
+                categoryButtons.style.display = 'none';
+                menuItemsContainer.style.display = 'flex';
+                menuItemsContainer.style.flexWrap = 'wrap';
+                menuItemsContainer.innerHTML = '';
+                categoryTitle.innerHTML = categoryName;
+
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.classList.add('menu-item-card');
+
+                    const img = document.createElement('img');
+                    img.classList.add('menu-item-img');
+                    img.src = item.image || 'placeholder.jpg';
+                    img.alt = item.name;
+                    card.appendChild(img);
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('menu-item-card-body');
+
+                    const cardTitle = document.createElement('h5');
+                    cardTitle.classList.add('menu-item-title');
+                    cardTitle.textContent = item.name;
+                    cardBody.appendChild(cardTitle);
+
+                    const cardText = document.createElement('p');
+                    cardText.classList.add('menu-item-description');
+                    cardText.textContent = item.description;
+                    cardBody.appendChild(cardText);
+
+                    const button = document.createElement('button');
+                    button.classList.add('menu-item-button');
+                    button.textContent = 'Add to Order';
+                    button.onclick = function () {
+                        addToOrder(item);
+                    };
+                    cardBody.appendChild(button);
+
+                    card.appendChild(cardBody);
+                    menuItemsContainer.appendChild(card);
+                });
+            })
+            .catch(error => console.error('Error fetching menu items:', error));
+    }
+
+    function showCategories() {
+        const categoryButtons = document.getElementById('category-buttons');
+        const menuItemsContainer = document.getElementById('menu-items');
+        const categoryTitle = document.getElementById('category-title');
+
+        categoryButtons.style.display = 'flex';
+        menuItemsContainer.style.display = 'none';
+        categoryTitle.innerHTML = '';
+    }
+
+</script>
+</body>
+</html>

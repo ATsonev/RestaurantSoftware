@@ -31,4 +31,6 @@ public interface MenuItemService {
     EditMenuItemDTO showMenuItem(MenuItem menuItem);
 
     EditMenuItemProductsDTO getEditProductDto(Long id);
+
+    List<MenuItem> getCustomerOrderMenuItems();
 }

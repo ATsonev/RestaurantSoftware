@@ -15,9 +15,10 @@ public class Table extends BaseEntity {
     private TableStatus tableStatus;
     @Column
     private double bill;
+    @Column(name = "qr_code_path")
+    private String qrCodePath;
     @OneToMany(mappedBy = "table", cascade = CascadeType.ALL)
     private List<Order> orders;
-
     @ManyToOne
     @JoinColumn(name = "waiter_id", referencedColumnName = "id")
     private Waiter waiter;
@@ -60,6 +61,14 @@ public class Table extends BaseEntity {
 
     public void setWaiter(Waiter waiter) {
         this.waiter = waiter;
+    }
+
+    public String getQrCodePath() {
+        return qrCodePath;
+    }
+
+    public void setQrCodePath(String qrCodePath) {
+        this.qrCodePath = qrCodePath;
     }
 }
 

@@ -11,12 +11,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 
 @Configuration
-public class ApplicationBeanConfiguration {
+public class ApplicationBeanConfiguration implements WebMvcConfigurer {
 
     @Bean
     public ModelMapper modelMapper(){
@@ -37,5 +39,11 @@ public class ApplicationBeanConfiguration {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/qr_codes/**")
+                .addResourceLocations("classpath:/static/qr_codes/");
     }
 }
