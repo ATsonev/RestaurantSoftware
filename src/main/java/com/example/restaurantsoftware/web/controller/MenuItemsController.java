@@ -83,7 +83,7 @@ public class MenuItemsController {
         return "redirect:/menuItem/list-menu-items";
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public String deleteMenuItem(@PathVariable Long id) {
         menuItemService.deleteMenuItem(id);
         return "redirect:/menuItem/list-menu-items";
