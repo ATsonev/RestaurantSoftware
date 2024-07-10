@@ -34,6 +34,12 @@
             color: #555;
         }
 
+        .menu-item-price {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
         .menu-item-button {
             width: 100%;
             text-align: center;
@@ -82,6 +88,60 @@
             font-size: 2rem;
             color: #333;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;  /* Make the modal smaller */
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -100,10 +160,25 @@
     </div>
     <button class="btn btn-secondary mt-4" onclick="showCategories()">Back to Categories</button>
 </div>
+
+<div id="quantityModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Enter Quantity</h2>
+        <form id="orderForm" th:action="@{/order-menuItem}" th:method="post">
+            <input type="hidden" id="menuItemId" name="menuItemId">
+            <input type="hidden" id="tableId" name="tableId" th:value="${tableId}">
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" required min="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Add to Order</button>
+        </form>
+    </div>
+</div>
 <script>
     function showMenuItems(buttonElement) {
         const categoryName = buttonElement.getAttribute('data-category-name');
-        console.log("Fetching items for category: " + categoryName); // Logging for debugging
         fetch(`/menu-items?category=${encodeURIComponent(categoryName)}`)
             .then(response => {
                 if (!response.ok) {
@@ -112,7 +187,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log("Data received: ", data); // Logging for debugging
                 if (!Array.isArray(data)) {
                     throw new Error('Response is not an array');
                 }
@@ -149,11 +223,16 @@
                     cardText.textContent = item.description;
                     cardBody.appendChild(cardText);
 
+                    const cardPrice = document.createElement('p');
+                    cardPrice.classList.add('menu-item-price');
+                    cardPrice.textContent = `${item.price.toFixed(2)} lv.`;
+                    cardBody.appendChild(cardPrice);
+
                     const button = document.createElement('button');
                     button.classList.add('menu-item-button');
                     button.textContent = 'Add to Order';
                     button.onclick = function () {
-                        addToOrder(item);
+                        openQuantityModal(item.id);
                     };
                     cardBody.appendChild(button);
 
@@ -174,6 +253,26 @@
         categoryTitle.innerHTML = '';
     }
 
+    function openQuantityModal(menuItemId) {
+        const modal = document.getElementById('quantityModal');
+        modal.style.display = 'block';
+        document.getElementById('menuItemId').value = menuItemId;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('quantityModal');
+        const span = document.getElementsByClassName('close')[0];
+
+        span.onclick = function () {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+    });
 </script>
 </body>
 </html>

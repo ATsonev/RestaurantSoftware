@@ -8,6 +8,7 @@ import com.example.restaurantsoftware.model.enums.PaymentMethod;
 import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.repository.*;
 import com.example.restaurantsoftware.service.OrderService;
+import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -280,6 +281,28 @@ public class OrderServiceImpl implements OrderService {
         }
         byId.setMenuItems(menuItems);
         orderRepository.save(byId);
+    }
+
+    @Override
+    public void orderMenuItem(Long menuItemId, int quantity, Long tableId) {
+        MenuItem menuItem = menuItemRepository.findById(menuItemId)
+                .orElseThrow(() -> new NoSuchElementException("Item not found"));
+        Table table = tableRepository.findById(tableId)
+                .orElseThrow(() -> new NoSuchElementException("Table not found"));
+        Order order = new Order();
+        order.setWaiter(table.getWaiter());
+        order.setTable(table);
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setDateAndTimeOrdered(LocalDateTime.now());
+        orderRepository.saveAndFlush(order);
+
+        for(int i = 0; i < quantity; i++){
+            MenuItemOrderStatus menuItemOrderStatus = new MenuItemOrderStatus();
+            menuItemOrderStatus.setMenuItem(menuItem);
+            menuItemOrderStatus.setOrderStatus(OrderStatus.PENDING);
+            menuItemOrderStatus.setOrder(order);
+            menuItemOrderStatusRepository.save(menuItemOrderStatus);
+        }
     }
 
 

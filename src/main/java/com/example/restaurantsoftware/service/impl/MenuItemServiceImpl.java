@@ -148,4 +148,5 @@ public class MenuItemServiceImpl implements MenuItemService {
     public List<MenuItem> getCustomerOrderMenuItems() {
         return menuItemRepository.findAll();
     }
+
 }

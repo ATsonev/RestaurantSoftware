@@ -26,4 +26,6 @@ public interface OrderService {
     List<ShowOrderDto> getHotKitchenPendingOrders();
 
     void orderDone(Long id, String bar);
+
+    void orderMenuItem(Long menuItemId, int quantity, Long tableId);
 }

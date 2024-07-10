@@ -31,7 +31,7 @@ public class SecurityConfig {
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                                .antMatchers("/login", "/customer-order/**").permitAll()
+                                .antMatchers("/login", "/customer-order/**","/menu-items", "/order-menuItem").permitAll()
                                 .antMatchers("/orders/kitchen").hasRole("KITCHEN")
                                 .antMatchers("/orders/order-done/hotKitchen/**").hasRole("KITCHEN")
                                 .antMatchers("/orders/order-done/coldKitchen/**").hasRole("KITCHEN")
