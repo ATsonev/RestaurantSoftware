@@ -8,4 +8,5 @@ public interface BillService {
 
     TurnoverDto getTurnoverBetweenDates(LocalDateTime startDate, LocalDateTime endDate, String waiterId, String paymentMethod);
 
+    String getTurnover(LocalDateTime startDate, LocalDateTime endDate, String waiterId, String paymentMethod);
 }

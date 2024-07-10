@@ -39,4 +39,13 @@ public class BillServiceImpl implements BillService {
 
         return turnoverDto;
     }
+
+    @Override
+    public String getTurnover(LocalDateTime startDate, LocalDateTime endDate, String waiterId, String paymentMethod) {
+        double v = getTurnoverBetweenDates(startDate, endDate, waiterId, paymentMethod).getTaxesPaid()
+                + getTurnoverBetweenDates(startDate, endDate, waiterId, paymentMethod).getTotalTurnover();
+        return String.valueOf(Math.round((v)* 100.0) / 100.0);
+    }
+
+
 }
