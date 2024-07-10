@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="order-footer">
-            <div class="waiter-name" th:text="${'Waiter: ' + order.waiterFirstName}">John</div>
+            <div class="waiter-name" th:if="${order.waiterFirstName != null}" th:text="${'Waiter: ' + order.waiterFirstName}"></div>
             <form th:action="@{/orders/order-done/bar/{id}(id=${order.id})}" method="post">
                 <button class="done-button" >DONE</button>
             </form>

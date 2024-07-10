@@ -38,7 +38,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 return;
             }
         }
-        response.sendRedirect("/default");
+        response.sendRedirect("/login");
     }
 }
 

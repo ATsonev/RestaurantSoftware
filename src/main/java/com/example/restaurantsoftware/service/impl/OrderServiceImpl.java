@@ -284,11 +284,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void orderMenuItem(Long menuItemId, int quantity, Long tableId) {
+    public boolean orderMenuItem(Long menuItemId, int quantity, Long tableId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
                 .orElseThrow(() -> new NoSuchElementException("Item not found"));
         Table table = tableRepository.findById(tableId)
                 .orElseThrow(() -> new NoSuchElementException("Table not found"));
+        if(table.getWaiter() == null){
+            return false;
+        }
         Order order = new Order();
         order.setWaiter(table.getWaiter());
         order.setTable(table);
@@ -303,6 +306,7 @@ public class OrderServiceImpl implements OrderService {
             menuItemOrderStatus.setOrder(order);
             menuItemOrderStatusRepository.save(menuItemOrderStatus);
         }
+        return true;
     }
 
 

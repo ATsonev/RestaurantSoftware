@@ -27,5 +27,5 @@ public interface OrderService {
 
     void orderDone(Long id, String bar);
 
-    void orderMenuItem(Long menuItemId, int quantity, Long tableId);
+    boolean orderMenuItem(Long menuItemId, int quantity, Long tableId);
 }

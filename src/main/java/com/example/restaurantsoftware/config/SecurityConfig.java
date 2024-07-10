@@ -26,6 +26,35 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        /*http
+                .csrf().disable()
+                .authorizeRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                                .antMatchers("/login", "/customer-order/**","/menu-items", "/order-menuItem").permitAll()
+                                .antMatchers("/orders/order-done/hotKitchen/**").hasRole("KITCHEN")
+                                .antMatchers("/orders/order-done/coldKitchen/**").hasRole("KITCHEN")
+                                .antMatchers("/orders/bar").hasRole("BAR")
+                                .antMatchers("/orders/order-done/bar/**").hasRole("BAR")
+                                .antMatchers("/orders/kitchen").permitAll()
+                                .anyRequest().hasRole("WAITER")
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler(customAuthenticationSuccessHandler())
+                        .permitAll()
+                        .usernameParameter("password")
+                        .passwordParameter("password")
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                );
+
+        return http.build();*/
         http
                 .csrf().disable()
                 .authorizeRequests(authorizeRequests ->
@@ -43,14 +72,14 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .successHandler(customAuthenticationSuccessHandler())
                         .permitAll()
-                        .usernameParameter("password") // Use password as username parameter
+                        .usernameParameter("password")
                         .passwordParameter("password")
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // Set the logout URL
-                        .logoutSuccessUrl("/login?logout") // Redirect to login page after logout
-                        .invalidateHttpSession(true) // Invalidate the session
-                        .deleteCookies("JSESSIONID") // Delete session cookies
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll()
                 );
 

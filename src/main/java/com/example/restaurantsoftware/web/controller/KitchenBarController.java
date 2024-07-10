@@ -23,6 +23,7 @@ public class KitchenBarController {
     }
 
     @GetMapping("/bar")
+    @PreAuthorize("hasRole('BAR')")
     public String getBarOrders(Model model){
         List<ShowOrderDto> barOrders = orderService.getBarPendingOrders();
         model.addAttribute("barOrders", barOrders);
@@ -37,6 +38,7 @@ public class KitchenBarController {
     }
 
     @GetMapping("/kitchen")
+    @PreAuthorize("hasRole('KITCHEN')")
     public String getKitchenOrders(Model model){
         List<ShowOrderDto> coldKitchenOrders = orderService.getColdKitchenPendingOrders();
         List<ShowOrderDto> hotKitchenOrders = orderService.getHotKitchenPendingOrders();
@@ -46,12 +48,14 @@ public class KitchenBarController {
     }
 
     @PostMapping("/order-done/hotKitchen/{id}")
+    @PreAuthorize("hasRole('KITCHEN')")
     public String orderHotKitchenDone(@PathVariable Long id){
         orderService.orderDone(id, "hotKitchen");
         return "redirect:/orders/kitchen";
     }
 
     @PostMapping("/order-done/coldKitchen/{id}")
+    @PreAuthorize("hasRole('KITCHEN')")
     public String orderColdKitchenDone(@PathVariable Long id){
         orderService.orderDone(id, "coldKitchen");
         return "redirect:/orders/kitchen";

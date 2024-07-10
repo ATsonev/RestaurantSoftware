@@ -156,7 +156,7 @@
                 </div>
             </div>
             <div class="order-footer">
-                <div class="waiter-name" th:text="${'Waiter: ' + hotKitchen.waiterFirstName}">John</div>
+                <div class="waiter-name" th:if="${hotKitchen.waiterFirstName != null}" th:text="${'Waiter: ' + hotKitchen.waiterFirstName}"></div>
                 <form th:action="@{/orders/order-done/hotKitchen/{id}(id=${hotKitchen.id})}" method="post">
                     <button class="done-button" >DONE</button>
                 </form>
@@ -176,7 +176,7 @@
             </div>
         </div>
         <div class="order-footer">
-            <div class="waiter-name" th:text="${'Waiter: ' + coldKitchen.waiterFirstName}">John</div>
+            <div class="waiter-name" th:if="${coldKitchen.waiterFirstName != null}" th:text="${'Waiter: ' + coldKitchen.waiterFirstName}"></div>
             <form th:action="@{/orders/order-done/coldKitchen/{id}(id=${coldKitchen.id})}" method="post">
                 <button class="done-button" >DONE</button>
             </form>

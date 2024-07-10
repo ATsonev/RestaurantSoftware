@@ -82,7 +82,7 @@
             <input type="password" id="password" name="password" th:value="${password}" required>
             <button type="button" id="show-password-btn" onmousedown="showPassword()" onmouseup="hidePassword()" onmouseleave="hidePassword()">👁</button>
         </div>
-        <div th:if="${param.error}" class="error-message">Login failed. Please try again.</div>
+            <div th:if="${param.error}" class="error-message">Login failed. Please try again.</div>
         <div th:if="${param.logout}" class="error-message">You have been logged out.</div>
         <br>
         <div>
