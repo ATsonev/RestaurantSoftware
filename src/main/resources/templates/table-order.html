@@ -352,7 +352,10 @@
     </button>
     <button class="header-button" onclick="location.href='/turnovers-page'">TURNOVER</button>
     <button class="header-button" onclick="showDiscountModal()">DISCOUNT</button>
-    <button class="header-button" onclick="showPaymentModal()">BILL</button>
+    <button class="header-button"
+            th:classappend="${tableWaiterId=='null' ? 'disabled-button' : ''}"
+            th:disabled="${tableWaiterId=='null'}"
+            onclick="showPaymentModal()">BILL</button>
     <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
     </form>
     <button onclick="document.getElementById('logout-form').submit();" class="logout-button"></button>
@@ -708,7 +711,6 @@
         const orderItems = [];
 
         if (rows.length === 0) {
-            console.error('No items for order');
             return;
         }
 
@@ -737,11 +739,13 @@
             },
             body: JSON.stringify(orderItems)
         })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect) {
                     alert('Order sent successfully!');
                     clearOrderTable();
                     updateTotals();
+                    window.location.href = data.redirect;
                 } else {
                     alert('Failed to send order');
                 }
@@ -877,9 +881,13 @@
     function completePayment(paymentType) {
         const tableId = document.querySelector('.table-button').getAttribute('data-table-id');
         const waiterId = document.querySelector('.table-button').getAttribute('data-waiter-id');
+        const currentOrderRows = document.querySelectorAll('#current-orders tr');
         const discountPercentage = appliedDiscount;
         const url = `/order/finishTable${paymentType}/${tableId}/${waiterId}?discount=${discountPercentage}`;
 
+        if(currentOrderRows.length === 0){
+            return;
+        }
 
         fetch(url, {
             method: 'POST'

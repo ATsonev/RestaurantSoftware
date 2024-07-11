@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @Controller
 public class OrdersController {
-    private final String PAYMENT_ERROR_MESSAGE = "The table has pending orders. You can finish the table when all the orders are finished!";
     private final MenuItemService menuItemService;
     private final OrderService orderService;
     private final ModelMapper modelMapper;
@@ -62,10 +61,11 @@ public class OrdersController {
     }
 
     @PostMapping("/order/makeOrder/{waiterId}/{tableId}")
-    public String makeOrder(@PathVariable Long waiterId, @PathVariable Long tableId,
-             @RequestBody List<MenuItemsDto> orderItems) {
+    public ResponseEntity<?> makeOrder(@PathVariable Long waiterId, @PathVariable Long tableId,
+                                       @RequestBody List<MenuItemsDto> orderItems) {
         orderService.makeOrder(waiterId, tableId, orderItems);
-        return "redirect:/table" + tableId + "-order/" + waiterId;
+        String redirectUrl = "/table" + tableId + "-order/" + waiterId;
+        return ResponseEntity.ok().body("{\"redirect\":\"" + redirectUrl + "\"}");
     }
 
     @PostMapping("/order/deleteOrderItem")
