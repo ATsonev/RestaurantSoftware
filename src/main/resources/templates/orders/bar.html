@@ -7,25 +7,37 @@
 </head>
 <body>
 <div th:fragment="orderListFragment(orderList, barText, actionUrl)">
-<div class="container">
-    <div th:each="order : ${barOrders}" class="order-box">
-        <div class="order-time" th:text="${#temporals.format(order.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
-        <div class="order-bar">BAR</div>
-        <div class="order-table">Table <span th:text="${order.tableId}">1</span></div>
-        <div class="order-item">
-            <div th:each="item : ${order.menuItems}" >
-                <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
-                <p th:if="${item.comment}" class="comment"><span th:text="${item.comment}">No ice</span></p>
+    <div class="container">
+        <div th:each="order : ${barOrders}" class="order-box">
+            <div class="order-time" th:text="${#temporals.format(order.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
+            <div class="order-bar">BAR</div>
+            <div class="order-table">Table <span th:text="${order.tableId}">1</span></div>
+            <div class="order-item">
+                <div th:each="item : ${order.menuItems}" >
+                    <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
+                    <p th:if="${item.comment}" class="comment"><span th:text="${item.comment}">No ice</span></p>
+                </div>
             </div>
-        </div>
-        <div class="order-footer">
-            <div class="waiter-name" th:if="${order.waiterFirstName != null}" th:text="${'Waiter: ' + order.waiterFirstName}"></div>
-            <form th:action="@{/orders/order-done/bar/{id}(id=${order.id})}" method="post">
-                <button class="done-button" >DONE</button>
-            </form>
+            <div class="order-footer">
+                <div class="waiter-name" th:if="${order.waiterFirstName != null}" th:text="${'Waiter: ' + order.waiterFirstName}"></div>
+                <form th:action="@{/orders/order-done/bar/{id}(id=${order.id})}" method="post">
+                    <button class="done-button">DONE</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-</div>
+<form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
+    <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
+</form>
+<button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
+<script>
+    function refreshPage() {
+        setInterval(function() {
+            window.location.reload();
+        }, 5000);
+    }
+    window.onload = refreshPage;
+</script>
 </body>
 </html>

@@ -23,7 +23,8 @@ public class OrderServiceImpl implements OrderService {
     private final Map<String, List<MenuItemCategory>> categories = Map.of(
             "bar", Arrays.asList(
                     MenuItemCategory.ALCOHOL_BEVERAGES,
-                    MenuItemCategory.NON_ALCOHOL_BEVERAGES),
+                    MenuItemCategory.NON_ALCOHOL_BEVERAGES,
+                    MenuItemCategory.SUM),
             "hotKitchen", Arrays.asList(
                     MenuItemCategory.PIZZAS,
                     MenuItemCategory.PASTA,
@@ -124,13 +125,13 @@ public class OrderServiceImpl implements OrderService {
         allMenuItems.sort(Comparator.comparing(m -> m.getOrderStatus() == OrderStatus.PENDING ? 0 : 1));
         int currentMenuItem = 0;
 
-        for (Order order : orders) {
+            for (Order order : orders) {
             List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
             Iterator<MenuItemOrderStatus> iterator = orderMenuItems.iterator();
 
             while (iterator.hasNext()) {
                 MenuItemOrderStatus item = iterator.next();
-                if(allMenuItems.get(currentMenuItem).equals(item) && quantity > 0){
+                if(quantity > 0 && allMenuItems.get(currentMenuItem).equals(item)){
                     quantity--;
                     currentMenuItem++;
                     menuItemOrderStatusRepository.deleteById(item.getId());
@@ -177,7 +178,7 @@ public class OrderServiceImpl implements OrderService {
             List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
 
             for (MenuItemOrderStatus item : orderMenuItems) {
-                if(allMenuItems.get(currentMenuItem).equals(item) && quantity > 0){
+                if(quantity > 0 && allMenuItems.get(currentMenuItem).equals(item)){
                     MenuItemOrderStatus menuItemOrderStatus = allMenuItems.get(currentMenuItem);
                     menuItemOrderStatus.setOrder(newOrder);
                     menuItemOrderStatusRepository.save(menuItemOrderStatus);
