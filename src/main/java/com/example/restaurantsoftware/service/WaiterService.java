@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WaiterService {
-    Optional<Waiter> authenticateWaiter(String enteredPassword);
-    List<Waiter> getAllWaiters();
     Waiter findWaiterByID(long waiterID);
     List<WaiterTurnoverDto> showWaiters();
 }

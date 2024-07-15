@@ -38,7 +38,7 @@ public class ProductInStockController {
     @GetMapping("/add-product-quantity/{id}")
     public String showAddProductQuantityPage(@PathVariable Long id, Model model) {
         if(!model.containsAttribute("dto")){
-            Product product = productService.getProduct(id);
+            Product product = productService.getProductById(id);
             AddQuantityDTO dto = modelMapper.map(product, AddQuantityDTO.class);
             model.addAttribute("dto", dto);
         }
@@ -49,7 +49,7 @@ public class ProductInStockController {
     public String addProductQuantity(@ModelAttribute("dto") AddQuantityDTO dto,
                                      RedirectAttributes redirectAttributes) {
         try {
-            productService.updateProductQuantity(dto);
+            productService.addProductQuantity(dto);
         }catch (InvalidProductException e){
             redirectAttributes.addFlashAttribute("dto", dto);
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
@@ -61,7 +61,7 @@ public class ProductInStockController {
     @GetMapping("/edit-product-quantity/{id}")
     public String showEditProductQuantityPage(Model model, @PathVariable Long id) {
         if(!model.containsAttribute("dto")) {
-            Product product = productService.getProduct(id);
+            Product product = productService.getProductById(id);
             AddQuantityDTO dto = modelMapper.map(product, AddQuantityDTO.class);
             model.addAttribute("dto", dto);
         }
@@ -98,7 +98,7 @@ public class ProductInStockController {
             return "redirect:/products/add-product";
         }else {
             try{
-                productService.addProduct(dto);
+                productService.addNewProduct(dto);
             }catch (InvalidProductException e){
                 return getString(dto, redirectAttributes, e, "errorMessage");
             }catch (ExistingProductException e){

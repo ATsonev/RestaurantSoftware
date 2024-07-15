@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,19 +24,8 @@ public class WaiterServiceImpl implements WaiterService {
     }
 
     @Override
-    public Optional<Waiter> authenticateWaiter(String enteredPassword) {
-        Optional<Waiter> waiterByPassword = waiterRepository.findWaiterByPassword(enteredPassword);
-        return waiterByPassword;
-    }
-
-    @Override
-    public List<Waiter> getAllWaiters() {
-        return waiterRepository.findAll();
-    }
-
-    @Override
     public Waiter findWaiterByID(long waiterID) {
-        return waiterRepository.getById(waiterID);
+        return waiterRepository.findById(waiterID).orElseThrow(NoSuchElementException::new);
     }
 
     @Override

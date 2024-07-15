@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -30,12 +31,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProduct(Long id) {
-        return productRepository.getById(id);
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public void updateProductQuantity(AddQuantityDTO dto) {
+    public void addProductQuantity(AddQuantityDTO dto) {
         Product product = productRepository.findByName(dto.getName()).get();
         if(dto.getNewQuantity() < 0){
             throw new InvalidProductException("The quantity should be positive number");
@@ -60,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void addProduct(AddProductDto dto) {
+    public void addNewProduct(AddProductDto dto) {
         Optional<Product> byName = productRepository.findByName(dto.getName());
         if(byName.isPresent()){
             throw new ExistingProductException("Product with such name already exist");

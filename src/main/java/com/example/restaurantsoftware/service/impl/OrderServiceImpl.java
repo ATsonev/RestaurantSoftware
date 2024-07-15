@@ -20,25 +20,25 @@ import java.util.stream.Collectors;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private final Map<String, List<MenuItemCategory>> categories = Map.of(
-            "bar", Arrays.asList(
-                    MenuItemCategory.ALCOHOL_BEVERAGES,
-                    MenuItemCategory.NON_ALCOHOL_BEVERAGES,
-                    MenuItemCategory.SUM),
-            "hotKitchen", Arrays.asList(
-                    MenuItemCategory.PIZZAS,
-                    MenuItemCategory.PASTA,
-                    MenuItemCategory.GRILLED_DISHES,
-                    MenuItemCategory.MAIN_COURSES,
-                    MenuItemCategory.SIDE_DISHES,
-                    MenuItemCategory.BREADS),
-            "coldKitchen", Arrays.asList(
-                    MenuItemCategory.SALADS,
-                    MenuItemCategory.SAUCES,
-                    MenuItemCategory.DESSERTS,
-                    MenuItemCategory.SOUPS,
-                    MenuItemCategory.LUNCH,
-                    MenuItemCategory.APPETIZERS));
+        private final Map<String, List<MenuItemCategory>> categories = Map.of(
+                "bar", Arrays.asList(
+                        MenuItemCategory.ALCOHOL_BEVERAGES,
+                        MenuItemCategory.NON_ALCOHOL_BEVERAGES,
+                        MenuItemCategory.SUM),
+                "hotKitchen", Arrays.asList(
+                        MenuItemCategory.PIZZAS,
+                        MenuItemCategory.PASTA,
+                        MenuItemCategory.GRILLED_DISHES,
+                        MenuItemCategory.MAIN_COURSES,
+                        MenuItemCategory.SIDE_DISHES,
+                        MenuItemCategory.BREADS),
+                "coldKitchen", Arrays.asList(
+                        MenuItemCategory.SALADS,
+                        MenuItemCategory.SAUCES,
+                        MenuItemCategory.DESSERTS,
+                        MenuItemCategory.SOUPS,
+                        MenuItemCategory.LUNCH,
+                        MenuItemCategory.APPETIZERS));
     private final OrderRepository orderRepository;
     private final MenuItemRepository menuItemRepository;
     private final ProductRepository productRepository;
@@ -65,8 +65,8 @@ public class OrderServiceImpl implements OrderService {
     public void makeOrder(long waiterId, long tableId, List<MenuItemsDto> orderItems) {
         Order order = new Order();
         order.setDateAndTimeOrdered(LocalDateTime.now());
-        order.setWaiter(waiterRepository.getById(waiterId));
-        order.setTable(tableRepository.getById(tableId));
+        order.setWaiter(waiterRepository.findById(waiterId).orElseThrow(NoSuchElementException::new));
+        order.setTable(tableRepository.findById(tableId).orElseThrow(NoSuchElementException::new));
         order.setOrderStatus(OrderStatus.PENDING);
         orderRepository.saveAndFlush(order);
         for (MenuItemsDto item : orderItems) {
@@ -86,7 +86,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<MenuItemsDto> getCurrentOrdersForTable(Long tableId) {
         List<MenuItemsDto> dtos = new LinkedList<>();
-        List<Order> orders = tableRepository.getById(tableId).getOrders();
+        List<Order> orders = tableRepository.findById(tableId).orElseThrow(NoSuchElementException::new)
+                .getOrders();
         for (Order order : orders) {
             for (MenuItemOrderStatus menuItem : order.getMenuItems()) {
                 boolean exist = dtos.stream()
@@ -106,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean deleteOrderItem(DeleteOrderItemDTO dto) {
-        Table table = tableRepository.getById(dto.getTableId());
+        Table table = tableRepository.findById(dto.getTableId()).orElseThrow(NoSuchElementException::new);
         List<Order> orders = orderRepository.findAllByTable(table);
         MenuItem menuItem = menuItemRepository.findByName(dto.getMenuItem()).orElseThrow(() -> new NoSuchElementException("Menu item not found"));
 
@@ -114,7 +115,8 @@ public class OrderServiceImpl implements OrderService {
         int quantity = dto.getQuantity();
 
         for (Order order : orders) {
-            List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
+            List<MenuItemOrderStatus> orderMenuItems = new ArrayList<>(order.getMenuItems());
+            order.setMenuItems(orderMenuItems);
             orderMenuItems.forEach(orderMenuItem -> {
                 if (orderMenuItem.getMenuItem().getName().equals(menuItem.getName())) {
                     allMenuItems.add(orderMenuItem);
@@ -150,8 +152,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean moveOrderItem(MoveOrderItemDTO dto) {
-        Table from = tableRepository.findById(dto.getFromTableId()).get();
-        Table to = tableRepository.getById(dto.getToTableId());
+        Table from = tableRepository.findById(dto.getFromTableId()).orElseThrow(NoSuchElementException::new);
+        Table to = tableRepository.findById(dto.getToTableId()).orElseThrow(NoSuchElementException::new);
         MenuItem menuItem = menuItemRepository.findByName(dto.getMenuItem()).orElseThrow(() -> new NoSuchElementException("Menu item not found"));
 
         Order newOrder = new Order();
@@ -176,12 +178,14 @@ public class OrderServiceImpl implements OrderService {
         int currentMenuItem = 0;
         for (Order order : from.getOrders()) {
             List<MenuItemOrderStatus> orderMenuItems = order.getMenuItems();
-
-            for (MenuItemOrderStatus item : orderMenuItems) {
+            Iterator<MenuItemOrderStatus> iterator = orderMenuItems.iterator();
+            while (iterator.hasNext()) {
+                MenuItemOrderStatus item = iterator.next();
                 if(quantity > 0 && allMenuItems.get(currentMenuItem).equals(item)){
                     MenuItemOrderStatus menuItemOrderStatus = allMenuItems.get(currentMenuItem);
                     menuItemOrderStatus.setOrder(newOrder);
                     menuItemOrderStatusRepository.save(menuItemOrderStatus);
+                    iterator.remove();
                     currentMenuItem++;
                     quantity--;
                 }
@@ -199,8 +203,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean finishTable(Long tableId, Long waiterId, String method, Double discount) {
-        Table table = tableRepository.getById(tableId);
-        Waiter waiter = waiterRepository.getById(waiterId);
+        Table table = tableRepository.findById(tableId).orElseThrow(NoSuchElementException::new);
+        Waiter waiter = waiterRepository.findById(waiterId).orElseThrow(NoSuchElementException::new);
         List<Order> orders = orderRepository.findAllByTable(table);
         if (orders.stream().anyMatch(o -> o.getOrderStatus().equals(OrderStatus.PENDING))) {
             return false;
@@ -253,23 +257,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<ShowOrderDto> getBarPendingOrders() {
-        return getPendingOrders(categories.get("bar"));
-    }
-
-    @Override
-    public List<ShowOrderDto> getColdKitchenPendingOrders() {
-        return getPendingOrders(categories.get("coldKitchen"));
-    }
-
-    @Override
-    public List<ShowOrderDto> getHotKitchenPendingOrders() {
-        return getPendingOrders(categories.get("hotKitchen"));
-    }
-
-    @Override
-    public void orderDone(Long tableId, String category) {
-        Order byId = orderRepository.getById(tableId);
+    public void orderDone(Long orderId, String category) {
+        Order byId = orderRepository.findById(orderId).orElseThrow(NoSuchElementException::new);
         List<MenuItemOrderStatus> menuItems = byId.getMenuItems();
         List<MenuItemCategory> list = categories.get(category);
         for (MenuItemOrderStatus menuItem : menuItems) {
@@ -310,6 +299,20 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
+    @Override
+    public List<ShowOrderDto> getBarPendingOrders() {
+        return getPendingOrders(categories.get("bar"));
+    }
+
+    @Override
+    public List<ShowOrderDto> getColdKitchenPendingOrders() {
+        return getPendingOrders(categories.get("coldKitchen"));
+    }
+
+    @Override
+    public List<ShowOrderDto> getHotKitchenPendingOrders() {
+        return getPendingOrders(categories.get("hotKitchen"));
+    }
 
     public List<ShowOrderDto> getPendingOrders(List<MenuItemCategory> categoriesToCheck) {
         List<ShowOrderDto> collect = orderRepository.findAllByOrderStatus(OrderStatus.PENDING).stream()
