@@ -34,9 +34,8 @@ public class LoginUserDetailsService implements UserDetailsService {
                 return mapToUserDetails(waiter);
             }
         }
-
         for (KitchenBarStaff kitchenBarStaff : kitchenBarStaffRepository.findAll()) {
-            if(passwordEncoder.matches(password, kitchenBarStaff.getPassword())){
+            if(passwordEncoder.matches(password, kitchenBarStaff.getPassword())) {
                 return mapToUserDetails(kitchenBarStaff);
             }
         }

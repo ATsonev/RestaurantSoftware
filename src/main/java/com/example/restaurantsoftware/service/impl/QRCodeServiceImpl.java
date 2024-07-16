@@ -40,7 +40,7 @@ public class QRCodeServiceImpl {
         }
     }
 
-    private void generateQRCodeImage(String text, int width, int height, String filePath)
+    protected void generateQRCodeImage(String text, int width, int height, String filePath)
             throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);

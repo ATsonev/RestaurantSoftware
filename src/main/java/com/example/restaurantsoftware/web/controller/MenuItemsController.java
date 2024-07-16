@@ -99,9 +99,8 @@ public class MenuItemsController {
     @PostMapping("/edit-products")
     public String updateMenuItemProducts(@ModelAttribute EditMenuItemProductsDTO menuItemDTO,
                                          RedirectAttributes redirectAttributes) {
-        MenuItem menuItem = menuItemService.findById(menuItemDTO.getId());
         try {
-            menuItemService.save(menuItem, menuItemDTO);
+            menuItemService. save(menuItemDTO);
         }catch (InvalidProductException e){
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/menuItem/edit-products/" + menuItemDTO.getId();
@@ -129,7 +128,12 @@ public class MenuItemsController {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.dto", bindingResult);
             return "redirect:/menuItem/add-new-product/" + dto.getMenuItemId();
         }
-        menuItemService.addProduct(dto);
+        try {
+            menuItemService.addProduct(dto);
+        }catch (InvalidProductException e){
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/menuItem/add-new-product/" + dto.getMenuItemId();
+        }
         return "redirect:/menuItem/edit-products/" + dto.getMenuItemId();
     }
 

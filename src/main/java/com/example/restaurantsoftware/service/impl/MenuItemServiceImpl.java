@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,8 +66,12 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public void save(MenuItem menuItem, EditMenuItemProductsDTO menuItemForm) {
-        Set<MenuItemProductQuantity> menuItemProductQuantities = menuItem.getMenuItemProductsQuantity();
+    public void save(EditMenuItemProductsDTO menuItemForm) {
+        MenuItem menuItem = menuItemRepository.findById(menuItemForm.getId())
+                .orElseThrow(NoSuchElementException::new);
+
+        Set<MenuItemProductQuantity> menuItemProductQuantities =
+                menuItem.getMenuItemProductsQuantity();
 
         for (MenuItemProductQuantity mipq : menuItemProductQuantities) {
             for (ProductQuantityDTO pq : menuItemForm.getProductQuantities()) {
@@ -81,18 +86,21 @@ public class MenuItemServiceImpl implements MenuItemService {
             }
         }
         menuItemRepository.saveAndFlush(menuItem);
-
     }
 
     @Override
     public void addProduct(MenuItemAddProductDTO dto) {
         MenuItem menuItem = menuItemRepository.findById(dto.getMenuItemId()).get();
         Set<MenuItemProductQuantity> menuItemProductsQuantity = menuItem.getMenuItemProductsQuantity();
-        Optional<MenuItemProductQuantity> product = menuItemProductQuantityRepository.findByProductAndQuantityAndProductCategory(dto.getProduct(), dto.getQuantity(), dto.getProductCategory());
+        Optional<MenuItemProductQuantity> product = menuItemProductQuantityRepository
+                .findByProductAndQuantityAndProductCategory(dto.getProduct(), dto.getQuantity(), dto.getProductCategory());
         if(product.isPresent()){
             menuItemProductsQuantity.add(product.get());
         }else {
             MenuItemProductQuantity newProduct = new MenuItemProductQuantity(dto.getProduct(), dto.getQuantity(), dto.getProductCategory());
+            if(dto.getProduct().getProductUnit().equals(ProductUnit.PIECE) && Math.floor(dto.getQuantity()) != dto.getQuantity()){
+                throw new InvalidProductException("The quantity for this product must be an integer!");
+            }
             menuItemProductQuantityRepository.saveAndFlush(newProduct);
             menuItemProductsQuantity.add(newProduct);
         }
@@ -102,14 +110,21 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public void removeProduct(Long id, Long menuItemId) {
-        MenuItemProductQuantity menuItemProductQuantity = menuItemProductQuantityRepository.findById(id).get();
-        MenuItem menuItem = menuItemRepository.getById(menuItemId);
+        MenuItemProductQuantity menuItemProductQuantity =
+                    menuItemProductQuantityRepository.findById(id).get();
+        MenuItem menuItem = menuItemRepository.findById(menuItemId)
+                .orElseThrow(NoSuchElementException::new );
         Set<MenuItemProductQuantity> products = menuItem.getMenuItemProductsQuantity();
         products.remove(menuItemProductQuantity);
         menuItem.setMenuItemProductsQuantity(products);
         menuItemRepository.save(menuItem);
-        if(menuItemProductQuantity.getMenuItems().isEmpty()){
+        Set<MenuItem> menuItems = menuItemProductQuantity.getMenuItems();
+        menuItems.remove(menuItem);
+        if(menuItems.isEmpty()){
             menuItemProductQuantityRepository.delete(menuItemProductQuantity);
+        }else {
+            menuItemProductQuantity.setMenuItems(menuItems);
+            menuItemProductQuantityRepository.save(menuItemProductQuantity);
         }
     }
 
@@ -124,7 +139,8 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public List<MenuItem> getMenuItemsByCategory(String category) {
-        return menuItemRepository.getMenuItemsByMenuItemCategory(MenuItemCategory.valueOf(category));
+        return menuItemRepository
+                .getMenuItemsByMenuItemCategory(MenuItemCategory.valueOf(category));
     }
 
     @Override
@@ -136,7 +152,8 @@ public class MenuItemServiceImpl implements MenuItemService {
     public EditMenuItemProductsDTO getEditProductDto(Long id) {
         MenuItem menuItem = menuItemRepository.findById(id).get();
         EditMenuItemProductsDTO dto = modelMapper.map(menuItem, EditMenuItemProductsDTO.class);
-        List<ProductQuantityDTO> productsWithQuantity = menuItem.getMenuItemProductsQuantity()
+        List<ProductQuantityDTO> productsWithQuantity =
+                menuItem.getMenuItemProductsQuantity()
                 .stream()
                 .map(p -> modelMapper.map(p, ProductQuantityDTO.class))
                 .collect(Collectors.toList());

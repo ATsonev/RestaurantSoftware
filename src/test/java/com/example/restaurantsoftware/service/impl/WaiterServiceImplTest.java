@@ -1,6 +1,7 @@
 package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.Waiter;
+import com.example.restaurantsoftware.model.dto.WaiterTurnoverDto;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -22,9 +24,12 @@ public class WaiterServiceImplTest {
 
     @Mock
     private WaiterRepository waiterRepository;
+    @Mock
+    private ModelMapper modelMapper;
     @InjectMocks
     private WaiterServiceImpl waiterService;
     private Waiter testWaiter;
+    private WaiterTurnoverDto waiterDto;
 
 
     @BeforeEach
@@ -39,6 +44,11 @@ public class WaiterServiceImplTest {
                 setAdmin(true);
             }
         };
+
+        waiterDto = new WaiterTurnoverDto();
+        waiterDto.setId(1L);
+        waiterDto.setFirstName("Pesho");
+        waiterDto.setLastName("Peshov");
     }
     @Test
     public void findWaiterByID_shouldReturnPresentWaiter(){
@@ -63,19 +73,30 @@ public class WaiterServiceImplTest {
     }
 
     @Test
-    public void showWaiters_shouldReturnAllWaiters(){
+    public void showWaiters_shouldReturnAllWaiters() {
         Waiter waiter2 = new Waiter();
-        waiter2.setId(2);
+        waiter2.setId(2L);
         waiter2.setFirstName("Gosho");
+
+        WaiterTurnoverDto waiterDto2 = new WaiterTurnoverDto();
+        waiterDto2.setId(2L);
+        waiterDto2.setFirstName("Gosho");
+
         List<Waiter> waiters = List.of(testWaiter, waiter2);
+        List<WaiterTurnoverDto> waiterDtos = List.of(waiterDto, waiterDto2);
+
         when(waiterRepository.findAll()).thenReturn(waiters);
+        when(modelMapper.map(testWaiter, WaiterTurnoverDto.class)).thenReturn(waiterDto);
+        when(modelMapper.map(waiter2, WaiterTurnoverDto.class)).thenReturn(waiterDto2);
 
-        List<Waiter> all = waiterRepository.findAll();
-        assertEquals(2, all.size());
+        List<WaiterTurnoverDto> result = waiterService.showWaiters();
+
+        assertEquals(2, result.size());
+        assertEquals(waiterDtos, result);
+
         verify(waiterRepository, times(1)).findAll();
+        verify(modelMapper, times(1)).map(testWaiter, WaiterTurnoverDto.class);
+        verify(modelMapper, times(1)).map(waiter2, WaiterTurnoverDto.class);
     }
-
-
-
 
 }

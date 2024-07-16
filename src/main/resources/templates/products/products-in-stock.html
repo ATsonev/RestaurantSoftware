@@ -172,30 +172,43 @@
     </style>
 </head>
 <body>
+    <div class="language-selector">
+        <form action="#" method="get">
+            <label>
+                <select name="lang" onchange="this.form.submit()">
+                    <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                    <option value="bg" th:selected="${#locale.language == 'bg'}">Български</option>
+                </select>
+            </label>
+        </form>
+    </div>
 <div class="container">
-<h1>Products in Stock</h1>
-<button class="add-product-button" onclick="location.href='/products/add-product';">Add product</button>
-<button class="go-back-button" onclick="location.href='/tables'">Go back to tables</button>
+<h1 th:text="#{products.products.in.stock}">Products in Stock</h1>
+<button class="add-product-button" onclick="location.href='/products/add-product';"
+        th:text="#{products.add.product}">Add product</button>
+<button class="go-back-button" onclick="location.href='/tables'"
+        th:text="#{products.go.back.to.tables}">Go back to tables</button>
 </div>
 
-<div class="search-container">
-</div>
 
 <table>
     <thead>
     <tr>
-        <th style="font-size: 24px; display: flex; align-items: center;" >Name
+        <th style="font-size: 24px; display: flex; align-items: center;">
+            <span th:text="#{products.name}">Name</span>
             <button class="search-button" onclick="toggleSearch()"></button>
             <div class="search-container" style="margin-left: 10px; margin-top: 20px">
-                <label for="searchInput"></label><input type="text" id="searchInput" class="search-input" onkeyup="filterTable()" placeholder="Search products..">
+                <label for="searchInput"></label>
+                <input type="text" id="searchInput" class="search-input" onkeyup="filterTable()"
+                       th:placeholder="#{products.search.products}">
                 <button class="close-button" onclick="closeSearch()">✖</button>
             </div>
         </th>
-        <th style="font-size: 24px">Quantity in Stock</th>
-        <th style="font-size: 24px">Product Unit</th>
-        <th style="font-size: 24px">Add Quantity</th>
-        <th style="font-size: 24px">Edit Quantity</th>
-        <th style="font-size: 24px">Delete Product</th>
+        <th style="font-size: 24px" th:text="#{products.quantity.in.stock}">Quantity in Stock</th>
+        <th style="font-size: 24px" th:text="#{products.product.unit}">Product Unit</th>
+        <th style="font-size: 24px" th:text="#{products.add.quantity}">Add Quantity</th>
+        <th style="font-size: 24px" th:text="#{products.edit.quantity}">Edit Quantity</th>
+        <th style="font-size: 24px" th:text="#{products.delete.product}">Delete Product</th>
     </tr>
     </thead>
     <tbody id="productTable">
@@ -208,17 +221,17 @@
         (${product.getProductUnit().name()} == 'LITER' ? 'Liter' :'Piece')">></td>
         <td>
             <a th:href="@{'/products/add-product-quantity/' + ${product.id}}">
-                <button class="button">Add Quantity</button>
+                <button class="button" th:text="#{products.add.quantity}">Add Quantity</button>
             </a>
         </td>
         <td>
             <a th:href="@{'/products/edit-product-quantity/'+ ${product.id}}">
-            <button class="button">Edit Quantity</button>
+            <button class="button" th:text="#{products.edit.quantity}">Edit Quantity</button>
             </a>
         </td>
         <td>
             <form th:method="delete" th:action="@{/products/deleteProduct/{id}(id=*{product.id})}">
-                <input class="delete-button" type="submit" value = "Delete">
+                <input class="delete-button" type="submit" th:value="#{products.delete.button}">
             </form>
         </td>
     </tr>

@@ -37,6 +37,14 @@ public class MenuItem extends BaseEntity {
     @OneToMany(mappedBy = "menuItem")
     private List<MenuItemOrderStatus> menuItemOrderStatus;
 
+    public MenuItem() {
+    }
+
+    public MenuItem(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public String getName() {
         return name;
     }

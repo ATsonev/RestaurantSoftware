@@ -163,6 +163,11 @@
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" th:field="*{quantity}" step="0.0001" required>
         <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="error">Quantity error</div>
+        <div th:if="${#httpServletRequest.getAttribute('errorMessage')}" class="error">
+            <ul>
+                <li th:text="${#httpServletRequest.getAttribute('errorMessage')}"></li>
+            </ul>
+        </div>
     </div>
     <div>
         <label for="productCategory"> Product Category:</label>

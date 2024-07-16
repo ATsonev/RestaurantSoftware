@@ -18,7 +18,7 @@ public interface MenuItemService {
 
     void editMenuItem(EditMenuItemDTO dto) throws IOException;
 
-    void save(MenuItem menuItem, EditMenuItemProductsDTO menuItemForm);
+    void save(EditMenuItemProductsDTO menuItemForm);
 
     void addProduct(MenuItemAddProductDTO dto);
 
