@@ -54,8 +54,8 @@
       color: white;
       border: none;
       padding: 10px 20px;
-      width: 120px;
-      height: 60px;
+      width: 145px;
+      height: 65px;
       text-align: center;
       text-decoration: none;
       display: inline-block;
@@ -106,29 +106,30 @@
 </head>
 <body>
 <div class="container-head">
-<h1>Add Product Quantity</h1>
-<button class="go-back-button" onclick="location.href='/products/products-in-stock'"> Go back to all products</button>
+<h1 th:text="#{products.add.product.quantity}">Add Product Quantity</h1>
+<button class="go-back-button" onclick="location.href='/products/products-in-stock'"
+        th:text="#{products.go.back.to.products}"> Go back to all products</button>
 </div>
 <form class="container" action="/products/add-product-quantity" th:object="${dto}" method="post">
   <input type="hidden" id="productName" name="name" th:field="*{name}" th:value="${dto.name}">
   <input type="hidden" id="productId" name="id" th:field="*{id}" th:value="${dto.id}">
   <input type="hidden" th:field="*{quantity}" id="quantity" name="quantity" th:value="${dto.quantity}">
   <div>
-    <label for="productName">Name:</label>
+    <label for="productName" th:text="#{products.name}">Name:</label>
     <span th:text="${dto.name}" id="name"></span>
   </div>
   <div>
-    <label for="currentQuantity">Quantity:</label>
+    <label for="currentQuantity" th:text="#{products.quantity}">Quantity:</label>
     <span th:text="${dto.quantity}" id="currentQuantity"></span>
   </div>
   <div>
-    <label for="newQuantity">Add Quantity:</label>
+    <label for="newQuantity" th:text="#{products.add.quantity}">Add Quantity:</label>
     <input type="number" id="newQuantity" name="newQuantity" th:field="*{newQuantity}" step="0.0001" required>
     <div th:if="${errorMessage}" class="error-message">
       <p th:text="${errorMessage}"></p>
     </div>
   </div>
-  <button type="submit">Submit</button>
+  <button type="submit" th:text="#{products.submit}">Submit</button>
 </form>
 </body>
 </html>

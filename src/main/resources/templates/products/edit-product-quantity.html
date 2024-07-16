@@ -54,8 +54,8 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            width: 120px;
-            height: 60px;
+            width: 145px;
+            height: 65px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
@@ -111,29 +111,30 @@
 </head>
 <body>
 <div class="container-head">
-    <h1>Edit Product Quantity</h1>
-    <button class="go-back-button" onclick="location.href='/products/products-in-stock'"> Go back to all products</button>
+    <h1 th:text="#{products.edit.product.quantity}">Edit Product Quantity</h1>
+    <button class="go-back-button" onclick="location.href='/products/products-in-stock'"
+            th:text="#{products.go.back.to.products}"> Go back to all products</button>
 </div>
 <form class="container" th:action="@{/products/edit-product-quantity}" th:method="POST" th:object = "${dto}">
     <input type="hidden" id="productName" name="name" th:value="*{name}">
     <input type="hidden" id="productId" name="id" th:field="*{id}" th:value="${dto.id}">
     <input type="hidden" th:field="*{quantity}" id="quantity" name="quantity" th:value="${dto.quantity}">
     <div>
-        <label class="label-text" for="name">Name:</label>
+        <label class="label-text" for="name" th:text="#{products.name}">Name:</label>
         <span th:text="*{name}" id="name" name="name"></span>
     </div>
     <div>
-        <label class="label-text" for="quantity">Quantity:</label>
+        <label class="label-text" for="quantity" th:text="#{products.quantity}">Quantity:</label>
         <span th:text="*{quantity}" id="currentQuantity"></span>
     </div>
     <div>
-        <label class="label-text" for="newQuantity">Edit Quantity:</label>
+        <label class="label-text" for="newQuantity" th:text="#{products.edit.quantity}">Edit Quantity:</label>
         <input type="number" id="newQuantity" name="newQuantity" th:field="*{newQuantity}" step="0.0001" required>
         <div th:if="${errorMessage}" class="error-message">
             <p th:text="${errorMessage}"></p>
         </div>
     </div>
-    <button type="submit">Submit</button>
+    <button type="submit" th:text="#{products.submit}">Submit</button>
 </form>
 </body>
 </html>

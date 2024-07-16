@@ -99,8 +99,8 @@
             color: white;
             border: none;
             padding: 10px 20px;
-            width: 120px;
-            height: 60px;
+            width: 145px;
+            height: 65px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
@@ -123,31 +123,33 @@
 </head>
 <body>
 <div class="container-head">
-    <h1>Add Product</h1>
-    <button class="go-back-button" onclick="location.href='/products/products-in-stock'"> Go back to all products</button>
+    <h1 th:text="#{products.add.product}"></h1>
+    <button class="go-back-button" onclick="location.href='/products/products-in-stock'"
+            th:text="#{products.go.back.to.products}"> Go back to all products</button>
 </div>
 <form class="container" th:object="${dto}" action="/products/add-product" method="post">
     <div>
-        <label for="productName">Name:</label>
+        <label for="productName" th:text="#{products.name}">Name:</label>
         <input type="text" id="productName" th:field="*{name}" name="productName" required>
         <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error">Price Error</div>
         <div th:if="${nameErrorMassage}" class="error"><p th:text="${nameErrorMassage}"></p></div>
     </div>
     <div>
-        <label for="quantity">Quantity:</label>
+        <label for="quantity" th:text="#{products.quantity}">Quantity:</label>
         <input type="number" id="quantity" th:field="*{quantityInStock}" name="quantity" step="0.0001" required>
         <div th:if="${#fields.hasErrors('quantityInStock')}" th:errors="*{quantityInStock}" class="error">Price Error</div>
         <div th:if="${errorMessage}" class="error"><p th:text="${errorMessage}"></p></div>
     </div>
     <div>
-        <label for="productUnit">Product Unit:</label>
+        <label for="productUnit" th:text="#{products.product.unit}">Product Unit:</label>
         <select id="productUnit" name="productUnit" th:field="*{productUnit}" style="font-size: 18px" required>
             <option value="KILOGRAM">Kilogram</option>
             <option value="LITER">Liter</option>
             <option value="PIECE">Piece</option>
         </select>
     </div>
-    <button class="button" onclick="confirmAddProduct()">Submit</button>
+    <button class="button" onclick="confirmAddProduct()"
+            th:text="#{products.submit}">Submit</button>
 </form>
 
 <script>
