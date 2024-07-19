@@ -8,4 +8,6 @@ import java.util.Optional;
 @Repository
 public interface WaiterRepository extends JpaRepository<Waiter, Long> {
     Optional<Waiter> findWaiterByPassword(String password);
+
+    boolean existsWaiterByPassword(String password);
 }

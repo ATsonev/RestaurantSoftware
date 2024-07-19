@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #253258;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #253258;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #253258;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #253258;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #1e2a44;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+    <script>
+        function toggleFields() {
+            const role = document.getElementById('role').value;
+            const waiterFields = document.getElementById('waiterFields');
+            const kitchenStaffFields = document.getElementById('kitchenStaffFields');
+            const commonFields = document.getElementById('commonFields');
+
+            waiterFields.classList.add('hidden');
+            kitchenStaffFields.classList.add('hidden');
+            commonFields.classList.add('hidden');
+
+            if (role === 'waiter') {
+                waiterFields.classList.remove('hidden');
+                commonFields.classList.remove('hidden');
+            } else if (role === 'kitchenStaff') {
+                kitchenStaffFields.classList.remove('hidden');
+                commonFields.classList.remove('hidden');
+            }
+        }
+    </script>
+</head>
+<body th:classappend="${param.lang == 'bg' ? 'bg-lang' : ''}">
+<div class="form-container">
+    <div th:if="${errorMessage}" class="error">
+        <p th:text="${errorMessage}"></p>
+    </div>
+    <h2>Register New Account</h2>
+    <form th:action="@{/add-new-account}" th:method="POST" th:object="${registerDto}">
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" name="role" th:field="*{role}" onchange="toggleFields()">
+                <option value="">Select Role</option>
+                <option value="waiter" th:selected="${registerDto.role == 'waiter'}">Waiter</option>
+                <option value="kitchenStaff" th:selected="${registerDto.role == 'kitchenStaff'}">Kitchen staff</option>
+            </select>
+        </div>
+
+        <div id="waiterFields" th:classappend="${registerDto.role == 'waiter'} ? '' : 'hidden'">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" th:field="*{firstName}">
+                <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"
+                     class="error">First name Error</div>
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" th:field="*{lastName}">
+                <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"
+                     class="error">Last name Error</div>
+            </div>
+            <div class="form-group">
+                <label for="admin">Admin</label>
+                <select id="admin" name="admin" th:field="*{admin}">
+                    <option value="false" th:selected="${registerDto.admin == false}">No</option>
+                    <option value="true" th:selected="${registerDto.admin == true}">Yes</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="kitchenStaffFields" th:classappend="${registerDto.role == 'kitchenStaff'} ? '' : 'hidden'">
+            <div class="form-group">
+                <label for="staffRole">Staff Role</label>
+                <select id="staffRole" name="staffRole" th:field="*{staffRole}">
+                    <option value="kitchen" th:selected="${registerDto.staffRole == 'kitchen'}">Kitchen</option>
+                    <option value="bar" th:selected="${registerDto.staffRole == 'bar'}">Bar</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="commonFields" th:classappend="${registerDto.role == 'waiter' || registerDto.role == 'kitchenStaff'} ? '' : 'hidden'">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" th:field="*{password}">
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                     class="error">Password Error</div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" th:field="*{confirmPassword}">
+                <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                     class="error">Password Error</div>
+            </div>
+            <button type="submit">Register</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

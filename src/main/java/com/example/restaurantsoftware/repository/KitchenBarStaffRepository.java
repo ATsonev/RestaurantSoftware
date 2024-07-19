@@ -11,4 +11,6 @@ public interface KitchenBarStaffRepository extends JpaRepository<KitchenBarStaff
 
     Optional<KitchenBarStaff> findByPassword(String password);
 
+    boolean existsByPassword(String password);
+
 }

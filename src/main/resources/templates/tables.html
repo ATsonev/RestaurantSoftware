@@ -151,6 +151,20 @@
             cursor: pointer;
         }
 
+        .add-account-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 108px;
+            border: none;
+            border-radius: 5px;
+            background-image: url("/images/add-new-account.png");
+            background-repeat: no-repeat;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
         .list-menu-items-button.disabled {
             background-color: rgb(128, 128, 128);
             opacity: 0.5;
@@ -252,19 +266,18 @@
     </form>
     <button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
     <button class="set-tables-button" sec:authorize="hasRole('ROLE_ADMIN')"
-            th:class="${waiterDto.admin ? 'set-tables-button enabled' : 'set-tables-button disabled'}"
-            th:disabled="${not waiterDto.admin}">
+            th:class="${waiterDto.admin ? 'set-tables-button enabled' : 'set-tables-button disabled'}">
     </button>
     <button class="add-products-in-stock-button" sec:authorize="hasRole('ROLE_ADMIN')"
             th:class="${waiterDto.admin ? 'add-products-in-stock-button enabled' : 'add-products-in-stock-button disabled'}"
-            th:disabled="${not waiterDto.admin}"
             onclick="location.href='/products/products-in-stock';">
     </button>
     <button class="list-menu-items-button" sec:authorize="hasRole('ROLE_ADMIN')"
             th:class="${waiterDto.admin ? 'list-menu-items-button enabled' : 'list-menu-items-button disabled'}"
-            th:disabled="${not waiterDto.admin}"
             onclick="location.href='/menuItem/list-menu-items';">
     </button>
+    <a class="add-account-button" sec:authorize="hasRole('ROLE_ADMIN')"
+             th:href="@{/add-new-account}"></a>
 
     <div id="myModal" class="modal">
         <div class="modal-content">

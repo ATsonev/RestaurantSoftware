@@ -1,5 +1,6 @@
 package com.example.restaurantsoftware.util;
 
+import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.repository.KitchenBarStaffRepository;
 import com.example.restaurantsoftware.repository.TableRepository;
 import com.example.restaurantsoftware.repository.WaiterRepository;
@@ -28,5 +29,13 @@ public class ApplicationInit implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         /*qrCodeService.generateAndSaveQRCodes();*/
+        if(waiterRepository.count() == 0){
+            Waiter waiter = new Waiter();
+            waiter.setFirstName("admin");
+            waiter.setLastName("admin");
+            waiter.setPassword(passwordEncoder.encode("7777"));
+            waiter.setAdmin(true);
+            waiterRepository.save(waiter);
+        }
     }
 }
