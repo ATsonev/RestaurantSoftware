@@ -1,11 +1,14 @@
 package com.example.restaurantsoftware.service;
 
-import com.example.restaurantsoftware.model.KitchenBarStaff;
+import com.example.restaurantsoftware.model.dto.staffDto.AddKitchenBarStaffDTO;
+import com.example.restaurantsoftware.model.dto.staffDto.KitchenBarStaffDto;
 
 import java.util.Optional;
 
 public interface KitchenBarStaffService {
 
-    Optional<KitchenBarStaff> findByPassword(String password);
+    Optional<KitchenBarStaffDto> findByPassword(String password);
+
+    KitchenBarStaffDto addStaff(AddKitchenBarStaffDTO addKitchenBarStaffDto);
 
 }

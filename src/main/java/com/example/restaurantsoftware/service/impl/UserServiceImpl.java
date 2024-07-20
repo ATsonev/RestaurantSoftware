@@ -1,27 +1,28 @@
 package com.example.restaurantsoftware.service.impl;
 
-import com.example.restaurantsoftware.model.KitchenBarStaff;
 import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.model.customExceptions.ExistingUserException;
 import com.example.restaurantsoftware.model.dto.RegisterUserDto;
-import com.example.restaurantsoftware.model.enums.Role;
-import com.example.restaurantsoftware.repository.KitchenBarStaffRepository;
+import com.example.restaurantsoftware.model.dto.staffDto.AddKitchenBarStaffDTO;
+import com.example.restaurantsoftware.model.dto.staffDto.KitchenBarStaffDto;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl {
 
     private final WaiterRepository waiterRepository;
-    private final KitchenBarStaffRepository kitchenBarStaffRepository;
+    private final KitchenBarStaffServiceImpl kitchenBarStaffService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(WaiterRepository waiterRepository, KitchenBarStaffRepository kitchenBarStaffRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(WaiterRepository waiterRepository, KitchenBarStaffServiceImpl kitchenBarStaffService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.waiterRepository = waiterRepository;
-        this.kitchenBarStaffRepository = kitchenBarStaffRepository;
+        this.kitchenBarStaffService = kitchenBarStaffService;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
     }
@@ -29,10 +30,9 @@ public class UserServiceImpl {
     public void registerUser(RegisterUserDto dto){
         boolean waiterExists = waiterRepository.findAll().stream()
                 .anyMatch(w -> passwordEncoder.matches(dto.getPassword(), w.getPassword()));
-        boolean kitchenExists = kitchenBarStaffRepository.findAll().stream()
-                .anyMatch(w -> passwordEncoder.matches(dto.getPassword(), w.getPassword()));
+        Optional<KitchenBarStaffDto> byPassword = kitchenBarStaffService.findByPassword(dto.getPassword());
 
-        if(waiterExists || kitchenExists){
+        if(waiterExists || byPassword.isPresent()){
             throw new ExistingUserException("User with this password already exists");
         }
         if(dto.getRole().equals("waiter")){
@@ -40,10 +40,10 @@ public class UserServiceImpl {
             waiter.setPassword(passwordEncoder.encode(dto.getPassword()));
             waiterRepository.save(waiter);
         }else {
-            KitchenBarStaff kitchenBarStaff = new KitchenBarStaff();
-            kitchenBarStaff.setPassword(passwordEncoder.encode(dto.getPassword()));
-            kitchenBarStaff.setStaff(Role.valueOf(dto.getStaffRole().toUpperCase()));
-            kitchenBarStaffRepository.save(kitchenBarStaff);
+            AddKitchenBarStaffDTO staffDTO = new AddKitchenBarStaffDTO();
+            staffDTO.setStaff(dto.getStaffRole());
+            staffDTO.setPassword(dto.getPassword());
+            KitchenBarStaffDto kitchenBarStaffDto = kitchenBarStaffService.addStaff(staffDTO);
         }
     }
 }

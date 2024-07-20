@@ -1,9 +1,7 @@
 package com.example.restaurantsoftware.service.impl;
 
-import com.example.restaurantsoftware.model.KitchenBarStaff;
 import com.example.restaurantsoftware.model.Waiter;
-import com.example.restaurantsoftware.model.enums.Role;
-import com.example.restaurantsoftware.repository.KitchenBarStaffRepository;
+import com.example.restaurantsoftware.model.dto.staffDto.KitchenBarStaffDto;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +25,7 @@ public class LoginUserDetailsServiceTest {
     private WaiterRepository waiterRepository;
 
     @Mock
-    private KitchenBarStaffRepository kitchenBarStaffRepository;
+    private KitchenBarStaffServiceImpl kitchenBarStaffService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -36,7 +34,6 @@ public class LoginUserDetailsServiceTest {
     private LoginUserDetailsService userService;
 
     private Waiter testWaiter;
-    private KitchenBarStaff testKitchenBarStaff;
 
     @BeforeEach
     public void setUp() {
@@ -47,11 +44,6 @@ public class LoginUserDetailsServiceTest {
         testWaiter.setFirstName("Pesho");
         testWaiter.setPassword("encodedPassword");
         testWaiter.setAdmin(true);
-
-        testKitchenBarStaff = new KitchenBarStaff();
-        testKitchenBarStaff.setId(1L);
-        testKitchenBarStaff.setStaff(Role.KITCHEN);
-        testKitchenBarStaff.setPassword("encodedPassword");
     }
 
     @Test
@@ -59,7 +51,7 @@ public class LoginUserDetailsServiceTest {
         String rawPassword = "rawPassword";
 
         when(waiterRepository.findAll()).thenReturn(List.of(testWaiter));
-        when(kitchenBarStaffRepository.findAll()).thenReturn(List.of());
+        when(kitchenBarStaffService.findByPassword(rawPassword)).thenReturn(Optional.empty());
         when(passwordEncoder.matches(rawPassword, testWaiter.getPassword())).thenReturn(true);
 
         UserDetails userDetails = userService.loadUserByUsername(rawPassword);
@@ -71,42 +63,41 @@ public class LoginUserDetailsServiceTest {
         assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_WAITER")));
 
         verify(waiterRepository, times(1)).findAll();
-        verify(kitchenBarStaffRepository, never()).findAll();
+        verify(kitchenBarStaffService, never()).findByPassword(rawPassword);
         verify(passwordEncoder, times(1))
                 .matches(rawPassword, testWaiter.getPassword());
     }
 
-    @Test
+   @Test
     public void testLoadUserByUsername_KitchenBarStaff() {
         String rawPassword = "rawPassword";
+       KitchenBarStaffDto kitchenBarStaffDto = new KitchenBarStaffDto(1L, "BAR", rawPassword);
 
         when(waiterRepository.findAll()).thenReturn(List.of());
-        when(kitchenBarStaffRepository.findAll()).thenReturn(List.of(testKitchenBarStaff));
-        when(passwordEncoder.matches(rawPassword, testKitchenBarStaff.getPassword())).thenReturn(true);
+        when(kitchenBarStaffService.findByPassword(rawPassword)).thenReturn(Optional.of(kitchenBarStaffDto));
+        when(passwordEncoder.matches(rawPassword, kitchenBarStaffDto.getPassword())).thenReturn(true);
 
         UserDetails userDetails = userService.loadUserByUsername(rawPassword);
 
         assertNotNull(userDetails);
-        assertEquals(testKitchenBarStaff.getStaff().toString(), userDetails.getUsername());
-        assertEquals(testKitchenBarStaff.getPassword(), userDetails.getPassword());
-        assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_KITCHEN")));
+        assertEquals("BAR", userDetails.getUsername());
+        assertEquals(rawPassword, userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BAR")));
 
         verify(waiterRepository, times(1)).findAll();
-        verify(kitchenBarStaffRepository, times(1)).findAll();
-        verify(passwordEncoder, times(1)).matches(rawPassword, testKitchenBarStaff.getPassword());
+        verify(kitchenBarStaffService, times(1)).findByPassword(rawPassword);
     }
-
     @Test
     public void testLoadUserByUsername_NotFound() {
         String rawPassword = "rawPassword";
 
         when(waiterRepository.findAll()).thenReturn(List.of());
-        when(kitchenBarStaffRepository.findAll()).thenReturn(List.of());
+        when(kitchenBarStaffService.findByPassword(rawPassword)).thenReturn(Optional.empty());
 
         assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(rawPassword));
 
         verify(waiterRepository, times(1)).findAll();
-        verify(kitchenBarStaffRepository, times(1)).findAll();
+        verify(kitchenBarStaffService, times(1)).findByPassword(rawPassword);
         verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
 }
