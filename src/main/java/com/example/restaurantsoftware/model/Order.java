@@ -2,15 +2,15 @@ package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.OrderStatus;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
-import javax.persistence.Table;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@jakarta.persistence.Table(name = "orders")
 public class Order extends BaseEntity {
 
     @Column(name = "date_and_time_ordered")

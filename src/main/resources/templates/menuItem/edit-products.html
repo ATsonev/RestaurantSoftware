@@ -191,10 +191,8 @@
                         <input type="number" th:field="*{productQuantities[__${iterStat.index}__].quantity}"
                                th:value="${item.quantity}" step="0.001"/>
                     </label>
-                    <div th:if="${#httpServletRequest.getAttribute('errorMessage')}" class="error">
-                        <ul>
-                            <li th:text="${#httpServletRequest.getAttribute('errorMessage')}"></li>
-                        </ul>
+                    <div th:if="${errorMessage}" class="error">
+                        <p th:text="${errorMessage}"></p>
                     </div>
                 </div>
             </td>

@@ -3,9 +3,9 @@ package com.example.restaurantsoftware.model;
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.model.enums.VAT;
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
-import javax.persistence.Table;
 import java.util.*;
 
 @Entity

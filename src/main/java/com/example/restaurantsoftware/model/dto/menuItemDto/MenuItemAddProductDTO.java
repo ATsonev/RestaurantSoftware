@@ -3,7 +3,7 @@ package com.example.restaurantsoftware.model.dto.menuItemDto;
 import com.example.restaurantsoftware.model.Product;
 import com.example.restaurantsoftware.model.enums.ProductCategory;
 
-import javax.validation.constraints.Positive;
+import jakarta.validation.constraints.Positive;
 
 public class MenuItemAddProductDTO {
 

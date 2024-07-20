@@ -2,9 +2,11 @@ package com.example.restaurantsoftware.model.dto.menuItemDto;
 
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.model.enums.VAT;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.constraints.*;
 
 public class AddMenuItemDTO {
 

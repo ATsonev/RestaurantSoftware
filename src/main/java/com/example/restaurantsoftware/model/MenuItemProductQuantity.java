@@ -1,18 +1,17 @@
 package com.example.restaurantsoftware.model;
 
+import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.ProductCategory;
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
-import javax.persistence.Table;
+
 import java.util.Set;
 
 @Entity
 @Table(name = "product_quantity_for_menu_items")
-public class MenuItemProductQuantity {
+public class MenuItemProductQuantity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
 
     @Column(name = "product_category")
     @Enumerated(EnumType.STRING)

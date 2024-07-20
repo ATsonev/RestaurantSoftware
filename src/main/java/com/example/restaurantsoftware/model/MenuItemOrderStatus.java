@@ -2,10 +2,8 @@ package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.OrderStatus;
-
-import javax.persistence.*;
-import javax.persistence.Table;
-import java.util.List;
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
 
 @Table
 @Entity(name = "menu_items_orders_status")

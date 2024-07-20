@@ -110,7 +110,7 @@
 <button class="go-back-button" onclick="location.href='/products/products-in-stock'"
         th:text="#{products.go.back.to.products}"> Go back to all products</button>
 </div>
-<form class="container" action="/products/add-product-quantity" th:object="${dto}" method="post">
+<form class="container" th:action="@{/products/add-product-quantity}" th:object="${dto}" th:method="post">
   <input type="hidden" id="productName" name="name" th:field="*{name}" th:value="${dto.name}">
   <input type="hidden" id="productId" name="id" th:field="*{id}" th:value="${dto.id}">
   <input type="hidden" th:field="*{quantity}" id="quantity" name="quantity" th:value="${dto.quantity}">

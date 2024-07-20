@@ -282,7 +282,7 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <form action="/setWaiter" method="post">
+            <form th:action="@{/setWaiter}" th:method="post">
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <div style="margin-bottom: 10px;">
                         <label for="tableSelect" class="bold" style="font-size: 24px">Select Table:</label>
@@ -309,9 +309,6 @@
     </div>
 </div>
 <script>
-    function navigateToTableOrder(tableId, waiterId) {
-        window.location.href = "/table" + tableId + "-order/" + waiterId;
-    }
 
     document.addEventListener("DOMContentLoaded", function () {
         var modal = document.getElementById("myModal");

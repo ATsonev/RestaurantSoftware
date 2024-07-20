@@ -3,16 +3,19 @@ package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.Role;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 
-import javax.persistence.*;
-import javax.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "waiters")
+@jakarta.persistence.Table(name = "waiters")
 public class Waiter extends BaseEntity {
 
     @Column(name = "first_name")

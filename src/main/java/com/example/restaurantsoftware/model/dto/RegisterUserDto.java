@@ -3,17 +3,17 @@ package com.example.restaurantsoftware.model.dto;
 import com.example.restaurantsoftware.util.annotation.PasswordMatches;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @PasswordMatches(message = "The passwords doesn't match")
 public class RegisterUserDto {
     private String role;
     private String firstName;
     private String lastName;
-    @Length(min = 4, message = "The password length should be more than 4")
+    @Length(min = 4, max = 6, message = "The password length should be between 4 and 6 numbers")
     @Pattern(regexp = "\\d+", message = "Password must contain only numbers")
     private String password;
     private String confirmPassword;

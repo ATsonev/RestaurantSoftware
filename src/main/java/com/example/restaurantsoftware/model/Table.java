@@ -2,11 +2,12 @@ package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.TableStatus;
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
-@javax.persistence.Table(name = "tables")
+@jakarta.persistence.Table(name = "tables")
 public class Table extends BaseEntity {
     @Column
     private int capacity;

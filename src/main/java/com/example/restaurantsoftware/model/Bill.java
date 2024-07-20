@@ -2,9 +2,10 @@ package com.example.restaurantsoftware.model;
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
 import com.example.restaurantsoftware.model.enums.PaymentMethod;
+import jakarta.persistence.*;
+import jakarta.persistence.Table;
 
-import javax.persistence.*;
-import javax.persistence.Table;
+
 import java.time.LocalDateTime;
 
 @Table

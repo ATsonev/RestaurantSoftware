@@ -2,10 +2,10 @@ package com.example.restaurantsoftware.model.dto.menuItemDto;
 
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.model.enums.VAT;
+import jakarta.validation.constraints.Min;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.Min;
 
 public class EditMenuItemDTO {
 

@@ -12,7 +12,6 @@ import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -348,7 +347,11 @@ public class OrderServiceImpl implements OrderService {
         dto.setId(order.id);
         dto.setTableId(order.getTable().getId());
         dto.setDateAndTimeOrdered(order.getDateAndTimeOrdered());
-        dto.setWaiterFirstName(order.getWaiter().getFirstName());
+        if(order.getWaiter() == null){
+            dto.setWaiterFirstName("");
+        }else {
+            dto.setWaiterFirstName(order.getWaiter().getFirstName());
+        }
         dto.setMenuItems(filteredMenuItems);
         return dto;
     }

@@ -2,11 +2,11 @@ package com.example.restaurantsoftware.util.validator;
 
 import com.example.restaurantsoftware.model.dto.RegisterUserDto;
 import com.example.restaurantsoftware.util.annotation.PasswordMatches;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
 import org.springframework.stereotype.Component;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 
 @Component
 public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, RegisterUserDto> {

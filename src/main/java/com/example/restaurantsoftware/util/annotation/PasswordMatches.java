@@ -1,9 +1,9 @@
 package com.example.restaurantsoftware.util.annotation;
 
 import com.example.restaurantsoftware.util.validator.PasswordMatchesValidator;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented

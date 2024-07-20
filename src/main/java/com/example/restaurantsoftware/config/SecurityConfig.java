@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,16 +28,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                                .antMatchers("/login", "/customer-order/**","/menu-items", "/order-menuItem").permitAll()
-                                .antMatchers("/orders/kitchen").hasRole("KITCHEN")
-                                .antMatchers("/orders/order-done/hotKitchen/**").hasRole("KITCHEN")
-                                .antMatchers("/orders/order-done/coldKitchen/**").hasRole("KITCHEN")
-                                .antMatchers("/orders/bar").hasRole("BAR")
-                                .antMatchers("/orders/order-done/bar/**").hasRole("BAR")
+                                .requestMatchers("/login", "/customer-order/**","/menu-items", "/order-menuItem").permitAll()
+                                .requestMatchers("/orders/kitchen").hasRole("KITCHEN")
+                                .requestMatchers("/orders/order-done/hotKitchen/**").hasRole("KITCHEN")
+                                .requestMatchers("/orders/order-done/coldKitchen/**").hasRole("KITCHEN")
+                                .requestMatchers("/orders/bar").hasRole("BAR")
+                                .requestMatchers("/orders/order-done/bar/**").hasRole("BAR")
                                 .anyRequest().hasRole("WAITER")
                 )
                 .formLogin(form -> form
@@ -52,7 +52,7 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
-                );
+                ).csrf(Customizer.withDefaults());
 
         return http.build();
     }

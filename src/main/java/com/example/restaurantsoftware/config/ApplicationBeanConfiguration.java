@@ -1,5 +1,7 @@
 package com.example.restaurantsoftware.config;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -7,14 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import javax.validation.Validation;
-import javax.validation.Validator;
+
 
 @Configuration
 @EnableConfigurationProperties(KitchenBarStaffApiConfig.class)
@@ -36,12 +36,6 @@ public class ApplicationBeanConfiguration implements WebMvcConfigurer {
         return Validation.buildDefaultValidatorFactory().getValidator();
     }
 
-    @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-        multipartResolver.setMaxUploadSize(2097152); // 2MB
-        return multipartResolver;
-    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
