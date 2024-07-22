@@ -1,10 +1,9 @@
 package com.example.restaurantsoftware.service;
 
 import com.example.restaurantsoftware.model.MenuItem;
-import com.example.restaurantsoftware.model.dto.menuItemDto.AddMenuItemDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.EditMenuItemDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.EditMenuItemProductsDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.MenuItemAddProductDTO;
+import com.example.restaurantsoftware.model.dto.menuItemDto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +31,6 @@ public interface MenuItemService {
 
     EditMenuItemProductsDTO getEditProductDto(Long id);
 
-    List<MenuItem> getCustomerOrderMenuItems();
+    Page<ShowMenuItemJSONDTo> getMenuItemsByCategory(String category, Pageable pageable);
 
 }

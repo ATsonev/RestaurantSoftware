@@ -3,17 +3,16 @@ package com.example.restaurantsoftware.service.impl;
 import com.example.restaurantsoftware.model.MenuItem;
 import com.example.restaurantsoftware.model.MenuItemProductQuantity;
 import com.example.restaurantsoftware.model.customExceptions.InvalidProductException;
-import com.example.restaurantsoftware.model.dto.menuItemDto.AddMenuItemDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.EditMenuItemDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.EditMenuItemProductsDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.MenuItemAddProductDTO;
-import com.example.restaurantsoftware.model.dto.menuItemDto.ProductQuantityDTO;
+import com.example.restaurantsoftware.model.dto.menuItemDto.*;
 import com.example.restaurantsoftware.model.enums.MenuItemCategory;
 import com.example.restaurantsoftware.model.enums.ProductUnit;
 import com.example.restaurantsoftware.repository.MenuItemProductQuantityRepository;
 import com.example.restaurantsoftware.repository.MenuItemRepository;
 import com.example.restaurantsoftware.service.MenuItemService;
+import com.example.restaurantsoftware.util.ImageUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -162,8 +161,18 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public List<MenuItem> getCustomerOrderMenuItems() {
-        return menuItemRepository.findAll();
+    public Page<ShowMenuItemJSONDTo> getMenuItemsByCategory(String category, Pageable pageable) {
+        Page<MenuItem> menuItemsPage = menuItemRepository.findAllByMenuItemCategory(MenuItemCategory.valueOf(category), pageable);
+        return menuItemsPage.map(this::convertToDto);
     }
+
+    private ShowMenuItemJSONDTo convertToDto(MenuItem menuItem){
+        ShowMenuItemJSONDTo map = modelMapper.map(menuItem, ShowMenuItemJSONDTo.class);
+        if(menuItem.getImage() != null){
+            map.setImage("data:image/png;base64," + ImageUtils.encodeToBase64(menuItem.getImage()));
+        }
+        return map;
+    }
+
 
 }

@@ -132,7 +132,7 @@
         .menu-item {
             background-color: #D28F49;
             color: white;
-            height: 20.85vh;
+            height: 19.85vh;
             width: 10.735vw;
             font-size: 20px;
             display: flex;
@@ -339,6 +339,44 @@
             background-color: #FFE4C7;
         }
 
+        .pagination-controls {
+            position: absolute;
+            display: none;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .pagination-controls button {
+            background-color: #253258;
+            color: white;
+            height: 4vh;
+            border: none;
+            text-align: center;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .pagination-controls button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .pagination-controls span {
+            flex: 2;
+            text-align: center;
+            align-self: center;
+        }
+        .menu-items-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
+
     </style>
 </head>
 <body>
@@ -435,7 +473,14 @@
             Desserts
         </button>
     </div>
-    <div class="menu-items" id="menu-items"></div>
+    <div class="menu-items-container">
+        <div class="menu-items" id="menu-items"></div>
+        <div class="pagination-controls">
+            <button id="prev-page" onclick="prevPage()">Previous</button>
+            <span id="page-info"></span>
+            <button id="next-page" onclick="nextPage()">Next</button>
+        </div>
+    </div>
 </div>
 
 <div id="discountModal" class="modal">
@@ -543,18 +588,29 @@
 
         document.getElementById('category-buttons').style.display = 'flex';
         document.getElementById('menu-items').style.display = 'none';
+        document.querySelector('.pagination-controls').style.display = 'none';
     }
 
-    function showMenuItems(category) {
-        fetch(`/menu-items?category=${category}`)
+    let currentPage = 0;
+    let totalPages = 0;
+    const pageSize = 16;
+
+    function showMenuItems(category, page = 0) {
+        currentCategory = category;
+        fetch(`/menu-items?category=${category}&page=${page}&size=${pageSize}`)
             .then(response => response.json())
             .then(data => {
                 const menuItemsContainer = document.getElementById('menu-items');
                 const categoryButtons = document.getElementById('category-buttons');
+                const paginationControls = document.querySelector('.pagination-controls');
+
                 categoryButtons.style.display = 'none';
                 menuItemsContainer.style.display = 'flex';
+                paginationControls.style.display = 'flex';
+
                 menuItemsContainer.innerHTML = '';
-                data.forEach(item => {
+
+                data.content.forEach(item => {
                     const menuItemButton = document.createElement('button');
                     menuItemButton.classList.add('menu-item');
                     menuItemButton.innerHTML = `<p>${item.name}</p>`;
@@ -566,9 +622,32 @@
                     };
                     menuItemsContainer.appendChild(menuItemButton);
                 });
+
+                currentPage = data.number;
+                totalPages = data.totalPages;
+                updatePaginationControls();
             })
             .catch(error => console.error('Error fetching menu items:', error));
     }
+
+    function updatePaginationControls() {
+        document.getElementById('page-info').innerText = `Page ${currentPage + 1} of ${totalPages}`;
+        document.getElementById('prev-page').disabled = currentPage === 0;
+        document.getElementById('next-page').disabled = currentPage === totalPages - 1;
+    }
+
+    function prevPage() {
+        if (currentPage > 0) {
+            showMenuItems(currentCategory, currentPage - 1);
+        }
+    }
+
+    function nextPage() {
+        if (currentPage < totalPages - 1) {
+            showMenuItems(currentCategory, currentPage + 1);
+        }
+    }
+    let currentCategory = '';
 
     function addToOrder(item) {
         const orderItemsContainer = document.getElementById('new-order-items');
