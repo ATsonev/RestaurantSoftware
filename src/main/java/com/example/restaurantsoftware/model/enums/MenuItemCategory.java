@@ -14,6 +14,7 @@ public enum MenuItemCategory {
     DESSERTS,
     NON_ALCOHOL_BEVERAGES,
     ALCOHOL_BEVERAGES,
+    COFFEE,
     LUNCH,
     SUM
 }

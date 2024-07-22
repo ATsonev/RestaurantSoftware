@@ -406,8 +406,11 @@
         <button class="category-button left-button" data-category="NON_ALCOHOL_BEVERAGES"
                 onclick="showMenuItems('NON_ALCOHOL_BEVERAGES')">Non-Alcohol Beverages
         </button>
-        <button class="category-button right-button" data-category="ALCOHOL_BEVERAGES"
+        <button class="category-button" data-category="ALCOHOL_BEVERAGES"
                 onclick="showMenuItems('ALCOHOL_BEVERAGES')">Alcohol Beverages
+        </button>
+        <button class="category-button right-button" data-category="COFFEE"
+                onclick="showMenuItems('COFFEE')">Coffee
         </button>
         <button class="category-button left-button" data-category="APPETIZERS" onclick="showMenuItems('APPETIZERS')">
             Appetizers
@@ -523,9 +526,11 @@
     function showCategory(category) {
         var buttons = document.querySelectorAll('.category-button');
         buttons.forEach(function (button) {
-            if (category === 'BAR' && (button.dataset.category === 'NON_ALCOHOL_BEVERAGES' || button.dataset.category === 'ALCOHOL_BEVERAGES')) {
+            if (category === 'BAR' && (button.dataset.category === 'NON_ALCOHOL_BEVERAGES' || button.dataset.category === 'ALCOHOL_BEVERAGES' ||
+                                            button.dataset.category === 'COFFEE')) {
                 button.style.display = 'block';
-            } else if (category === 'KITCHEN' && button.dataset.category !== 'NON_ALCOHOL_BEVERAGES' && button.dataset.category !== 'ALCOHOL_BEVERAGES') {
+            } else if (category === 'KITCHEN' && button.dataset.category !== 'NON_ALCOHOL_BEVERAGES' && button.dataset.category !== 'ALCOHOL_BEVERAGES'
+                            && button.dataset.category !== 'COFFEE') {
                 button.style.display = 'block';
             } else if (category === 'LUNCH' && button.dataset.category === 'LUNCH') {
                 button.style.display = 'block';

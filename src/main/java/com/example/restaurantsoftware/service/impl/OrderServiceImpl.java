@@ -22,6 +22,7 @@ public class OrderServiceImpl implements OrderService {
         private final Map<String, List<MenuItemCategory>> categories = Map.of(
                 "bar", Arrays.asList(
                         MenuItemCategory.ALCOHOL_BEVERAGES,
+                        MenuItemCategory.COFFEE,
                         MenuItemCategory.NON_ALCOHOL_BEVERAGES,
                         MenuItemCategory.SUM),
                 "hotKitchen", Arrays.asList(
@@ -68,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTable(tableRepository.findById(tableId).orElseThrow(NoSuchElementException::new));
         order.setOrderStatus(OrderStatus.PENDING);
         orderRepository.saveAndFlush(order);
+        List<MenuItemOrderStatus> menuItems= new ArrayList<>();
         for (MenuItemsDto item : orderItems) {
             MenuItem menuItem = menuItemRepository.findByName(item.getMenuItem()).get();
             for (int i = 0; i < item.getQuantity(); i++) {
@@ -77,9 +79,10 @@ public class OrderServiceImpl implements OrderService {
                     item.setComment("");
                 }
                 menuItemOrderStatus.setOrder(order);
-                menuItemOrderStatusRepository.save(menuItemOrderStatus);
+                menuItems.add(menuItemOrderStatus);
             }
         }
+        menuItemOrderStatusRepository.saveAll(menuItems);
     }
 
     @Override

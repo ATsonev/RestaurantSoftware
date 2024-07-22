@@ -310,6 +310,10 @@
 </div>
 <script>
 
+    function navigateToTableOrder(tableId, waiterId) {
+        window.location.href = "/table" + tableId + "-order/" + waiterId;
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         var modal = document.getElementById("myModal");
         var btn = document.querySelector(".set-tables-button");
