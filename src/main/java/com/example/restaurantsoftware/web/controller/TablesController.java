@@ -51,4 +51,10 @@ public class TablesController {
         return "redirect:/tables";
     }
 
+    @PostMapping("/add-table")
+    public String addTable(@RequestParam("capacity")int capacity){
+        tableService.addTable(capacity);
+        return "redirect:/tables";
+    }
+
 }

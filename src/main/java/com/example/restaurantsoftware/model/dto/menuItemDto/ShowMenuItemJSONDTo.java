@@ -10,6 +10,13 @@ public class ShowMenuItemJSONDTo {
     private double price;
     private String image;
 
+    public ShowMenuItemJSONDTo() {
+    }
+
+    public ShowMenuItemJSONDTo(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

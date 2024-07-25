@@ -31,12 +31,14 @@ public class QRCodeServiceImpl {
 
         List<Table> tables = tableRepository.findAll();
         for (Table table : tables) {
-            String url = baseUrl + table.getId();
-            String filePath = "src/main/resources/static/qr_codes/table_" + table.getId() + "_qr_code.png";
-            generateQRCodeImage(url, width, height, filePath);
-            table.setQrCodePath("/qr_codes/table_" + table.getId() + "_qr_code.png");
-            tableRepository.save(table);
-            System.out.println("QR Code for table " + table.getId() + " generated and saved as " + filePath);
+            if(table.getQrCodePath() == null) {
+                String url = baseUrl + table.getId();
+                String filePath = "src/main/resources/static/qr_codes/table_" + table.getId() + "_qr_code.png";
+                generateQRCodeImage(url, width, height, filePath);
+                table.setQrCodePath("/qr_codes/table_" + table.getId() + "_qr_code.png");
+                tableRepository.save(table);
+                System.out.println("QR Code for table " + table.getId() + " generated and saved as " + filePath);
+            }
         }
     }
 

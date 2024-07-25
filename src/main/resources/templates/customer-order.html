@@ -7,7 +7,7 @@
     <style>
         .menu-item-card {
             margin: 15px;
-            width: 18rem;
+            width: 15vw;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border: none;
             border-radius: 10px;
@@ -182,7 +182,7 @@
 <script>
     function showMenuItems(buttonElement) {
         const categoryName = buttonElement.getAttribute('data-category-name');
-        fetch(`/menu-items?category=${encodeURIComponent(categoryName)}`)
+        fetch(`/menu-items?category=${encodeURIComponent(categoryName)}&page=0&size=9999`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok ' + response.statusText);
@@ -190,8 +190,8 @@
                 return response.json();
             })
             .then(data => {
-                if (!Array.isArray(data)) {
-                    throw new Error('Response is not an array');
+                if (!data || !data.content || !Array.isArray(data.content)) {
+                    throw new Error('Response is not a valid paginated response');
                 }
                 const menuItemsContainer = document.getElementById('menu-items');
                 const categoryButtons = document.getElementById('category-buttons');
@@ -203,7 +203,7 @@
                 menuItemsContainer.innerHTML = '';
                 categoryTitle.innerHTML = categoryName;
 
-                data.forEach(item => {
+                data.content.forEach(item => {
                     const card = document.createElement('div');
                     card.classList.add('menu-item-card');
 
@@ -243,7 +243,10 @@
                     menuItemsContainer.appendChild(card);
                 });
             })
-            .catch(error => console.error('Error fetching menu items:', error));
+            .catch(error => {
+                console.error('Error fetching menu items:', error);
+                alert('There was an error fetching the menu items. Please try again later.');
+            });
     }
 
     function showCategories() {

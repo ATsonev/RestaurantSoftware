@@ -6,6 +6,7 @@ import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.repository.TableRepository;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import com.example.restaurantsoftware.service.TableService;
+import javafx.scene.control.Tab;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,6 +39,15 @@ public class TableServiceImpl implements TableService {
     @Override
     public Table getTableById(Long id) {
         return tableRepository.findById(id).get();
+    }
+
+    @Override
+    public void addTable(int capacity) {
+        Table table = new Table();
+        table.setCapacity(capacity);
+        table.setTableStatus(TableStatus.AVAILABLE);
+        table.setBill(0);
+        tableRepository.save(table);
     }
 
 

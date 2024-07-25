@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +8,13 @@
         .table-container {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-around;
+            justify-content: flex-start;
             margin-top: 50px;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
+            position: relative; /* Added for positioning */
         }
 
         .table-button {
-            position: relative;
+            position: absolute;
             width: 120px;
             height: 135px;
             background-image: url("/images/tables.png");
@@ -27,12 +23,13 @@
             border: none;
             border-radius: 10px;
             font-size: 28px;
-            margin: -10px 300px;
+            margin: 10px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.3s ease;
+            z-index: 10;
         }
 
         .table-button.enabled:hover {
@@ -63,35 +60,26 @@
         }
 
         .menu-column {
-            width: 120px;
+            width: 7.8vw;
             position: fixed;
-            bottom: 0;
+            top: 50%;
             right: 0;
+            transform: translateY(-50%);
             display: flex;
             flex-direction: column-reverse;
-        }
-
-        .base-button {
-            background-color: #253258;
-            color: white;
-            width: 100%;
-            height: 115px;
-            border: none;
-            border-radius: 5px;
-            background-position: center;
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
+            justify-content: center;
+            align-items: center;
         }
 
         .logout-button {
             background-color: #253258;
             color: white;
             width: 100%;
-            height: 115px;
+            height: 16.7vh;
             border: none;
             border-radius: 5px;
             background-image: url("/images/exit-button.png");
+            background-repeat: no-repeat;
             background-position: center;
             padding: 10px 20px;
             font-size: 18px;
@@ -102,50 +90,42 @@
             background-color: #253258;
             color: white;
             width: 100%;
-            height: 115px;
+            height: 16.7vh;
             border: none;
             border-radius: 5px;
             background-image: url("/images/tables-button.png");
+            background-repeat: no-repeat;
             background-position: center;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
-        }
-
-        .set-tables-button.disabled {
-            background-color: rgb(128, 128, 128);
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .add-products-in-stock-button {
             background-color: #253258;
             color: white;
             width: 100%;
-            height: 115px;
+            height: 16.7vh;
             border: none;
             border-radius: 5px;
             background-image: url("/images/products-button.png");
+            background-repeat: no-repeat;
             background-position: center;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
         }
 
-        .add-products-in-stock-button.disabled {
-            background-color: rgb(128, 128, 128);
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
         .list-menu-items-button {
             background-color: #253258;
             color: white;
             width: 100%;
-            height: 115px;
+            height: 16.6vh;
             border: none;
             border-radius: 5px;
             background-image: url("/images/menu-button.png");
+            background-repeat: no-repeat;
+            background-position: center;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
@@ -155,22 +135,30 @@
             background-color: #253258;
             color: white;
             width: 100%;
-            height: 108px;
+            height: 16.7vh;
             border: none;
             border-radius: 5px;
             background-image: url("/images/add-new-account.png");
             background-repeat: no-repeat;
+            background-position: center;
             padding: 10px 20px;
             font-size: 18px;
             cursor: pointer;
         }
 
-        .list-menu-items-button.disabled {
-            background-color: rgb(128, 128, 128);
-            opacity: 0.5;
-            cursor: not-allowed;
+        .add-table-button {
+            background-color: #253258;
+            color: white;
+            width: 100%;
+            height: 16.6vh;
+            border: none;
+            border-radius: 5px;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
         }
-
 
         .laminate-background {
             background-color: #D2B48C;
@@ -190,21 +178,22 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
-            top: 100px;
+            top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
         }
 
         .modal-content {
             background-color: #fefefe;
-            margin: auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 250px;
-            height: 250px;
+            width: 300px;
             border-radius: 10px;
             text-align: center;
         }
@@ -214,125 +203,180 @@
             float: right;
             font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
         }
 
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
-            cursor: pointer;
         }
-
     </style>
 </head>
 <body class="laminate-background">
 <div class="center-text" style="margin-top: -25px; margin-bottom: -40px" th:if="${(waiterDto.firstName) != null}">
     <p class="bold"><span th:text="${waiterDto.firstName}"></span>'s tables</p>
 </div>
-<div th:each="rowIdx : ${#numbers.sequence(0, tables.size()-1, 2)}">
-    <div class="table-container">
-        <div class="row">
-            <button class="table-button"
-                    th:with="isWaiterNull=${tables[rowIdx].waiter == null},
-                        isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx].id)}"
-                    th:attr="onclick='navigateToTableOrder(' + ${tables[rowIdx].id} + ',' + ${waiterDto.id} + ')'"
-                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
-                    th:disabled="${!isWaiterNull && !isTableAssigned}">
-                <div class="table-info">
-                    <span th:text="${tables[rowIdx].id}"></span>
-                    <span style="font-size: 14px" th:if="${tables[rowIdx].waiter != null}"
-                          th:text="${tables[rowIdx].waiter.getFirstName()}"></span>
-                </div>
-            </button>
-            <button class="table-button" th:if="${rowIdx + 1 < tables.size()}"
-                    th:with="isWaiterNull=${tables[rowIdx + 1].waiter == null},
-                        isTableAssigned=${#lists.contains(waiterDto.getTableIds(), tables[rowIdx + 1].id)}"
-                    th:attr="onclick='navigateToTableOrder(' + ${tables[rowIdx].id + 1} + ',' + ${waiterDto.id} + ')'"
-                    th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
-                    th:disabled="${!isWaiterNull && !isTableAssigned}">
-                <div class="table-info">
-                    <span th:text="${tables[rowIdx].id + 1}"></span>
-                    <span style="font-size: 14px" th:if="${tables[rowIdx + 1].waiter != null}"
-                          th:text="${tables[rowIdx + 1].waiter.getFirstName()}"></span>
-                </div>
-            </button>
-        </div>
+<div class="table-container" id="table-container">
+    <div th:each="table, rowStat : ${tables}" th:attr="style=${rowStat.index < 4 ? 'position:relative;' : ''}">
+        <button class="table-button"
+                draggable="true"
+                th:attr="id='table-' + ${table.id}" th:attrappend="onclick='navigateToTableOrder(' + ${table.id} + ',' + ${waiterDto.id} + ')'"
+                th:with="isWaiterNull=${table.waiter == null},
+                    isTableAssigned=${#lists.contains(waiterDto.getTableIds(), table.id)}"
+                th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
+                th:disabled="${!isWaiterNull && !isTableAssigned}">
+            <div class="table-info">
+                <span th:text="${table.id}"></span>
+                <span style="font-size: 14px" th:if="${table.waiter != null}" th:text="${table.waiter.getFirstName()}"></span>
+            </div>
+        </button>
     </div>
 </div>
 
 <div class="menu-column laminate-background">
     <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
-        <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
     </form>
     <button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
-    <button class="set-tables-button" sec:authorize="hasRole('ROLE_ADMIN')"
-            th:class="${waiterDto.admin ? 'set-tables-button enabled' : 'set-tables-button disabled'}">
-    </button>
+    <button class="set-tables-button" sec:authorize="hasRole('ROLE_ADMIN')"></button>
     <button class="add-products-in-stock-button" sec:authorize="hasRole('ROLE_ADMIN')"
-            th:class="${waiterDto.admin ? 'add-products-in-stock-button enabled' : 'add-products-in-stock-button disabled'}"
             onclick="location.href='/products/products-in-stock';">
     </button>
     <button class="list-menu-items-button" sec:authorize="hasRole('ROLE_ADMIN')"
-            th:class="${waiterDto.admin ? 'list-menu-items-button enabled' : 'list-menu-items-button disabled'}"
             onclick="location.href='/menuItem/list-menu-items';">
     </button>
-    <a class="add-account-button" sec:authorize="hasRole('ROLE_ADMIN')"
-             th:href="@{/add-new-account}"></a>
+    <button class="add-account-button" sec:authorize="hasRole('ROLE_ADMIN')"
+            onclick="window.location.href='/add-new-account'"></button>
+    <button class="add-table-button" sec:authorize="hasRole('ROLE_ADMIN')" onclick="openAddTableModal()"></button>
+</div>
 
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <form th:action="@{/setWaiter}" th:method="post">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <div style="margin-bottom: 10px;">
-                        <label for="tableSelect" class="bold" style="font-size: 24px">Select Table:</label>
-                        <select id="tableSelect" name="tableId"
-                                style="width: 200px; height: 40px; font-size: 16px; text-align: center">
-                            <option th:each="table : ${tables}" th:value="${table.id}" th:text="${table.id}"></option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom: 10px;">
-                        <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
-                        <select id="waiterSelect" name="waiterId"
-                                style="width: 200px; height: 40px; font-size: 16px; text-align: center">
-                            <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}"
-                                    th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
-                        </select>
-                    </div>
+<div id="addTableModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('addTableModal')">&times;</span>
+        <h2 style="margin-top: -15px">Add Table</h2>
+        <form th:action="@{/add-table}" th:method="post">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="margin-bottom: 10px;">
+                    <label for="capacity" class="bold" style="font-size: 24px">Capacity:</label>
+                    <input type="number" id="capacity" name="capacity" style="width: 200px; height: 40px; font-size: 16px; text-align: center" required>
                 </div>
-                <button type="submit"
-                        style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px;
+            </div>
+            <button type="submit"
+                    style="width: 200px; height: 40px; font-size: 16px; margin-top: 20px;
+                        background-color: #253258; color: white">Submit
+            </button>
+        </form>
+    </div>
+</div>
+
+
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('myModal')">&times;</span>
+        <form th:action="@{/setWaiter}" th:method="post">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="margin-bottom: 10px;">
+                    <label for="tableSelect" class="bold" style="font-size: 24px">Select Table:</label>
+                    <select id="tableSelect" name="tableId"
+                            style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                        <option th:each="table : ${tables}" th:value="${table.id}" th:text="${table.id}"></option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
+                    <select id="waiterSelect" name="waiterId"
+                            style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                        <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}"
+                                th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit"
+                    style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px;
                         background-color: #253258; color: white">Assign Table
-                </button>
-            </form>
-        </div>
+            </button>
+        </form>
     </div>
 </div>
 <script>
-
     function navigateToTableOrder(tableId, waiterId) {
         window.location.href = "/table" + tableId + "-order/" + waiterId;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        var modal = document.getElementById("myModal");
-        var btn = document.querySelector(".set-tables-button");
-        var span = document.querySelector(".close");
+        var modals = document.querySelectorAll(".modal");
+        var setTablesBtn = document.querySelector(".set-tables-button");
+        var addTableBtn = document.querySelector(".add-table-button");
+        var closeBtns = document.querySelectorAll(".close");
 
-        btn.addEventListener("click", function () {
-            modal.style.display = "block";
+        if (setTablesBtn) {
+            setTablesBtn.addEventListener("click", function () {
+                document.getElementById("myModal").style.display = "flex";
+            });
+        }
+
+        if (addTableBtn) {
+            addTableBtn.addEventListener("click", function () {
+                document.getElementById("addTableModal").style.display = "flex";
+            });
+        }
+
+        closeBtns.forEach(function (closeBtn) {
+            closeBtn.addEventListener("click", function () {
+                closeBtn.closest('.modal').style.display = 'none';
+            });
         });
 
-        span.onclick = function () {
-            modal.style.display = "none";
+        window.onclick = function (event) {
+            modals.forEach(function (modal) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            });
         }
 
-        window.onclick = function (event) {
-            if (event.target === modal) {
-                modal.style.display = "none";
+        var tableContainer = document.getElementById('table-container');
+
+        // Load saved positions from local storage
+        var tables = document.querySelectorAll('.table-button');
+        tables.forEach(function(table) {
+            var id = table.id;
+            var position = JSON.parse(localStorage.getItem(id));
+            if (position) {
+                table.style.left = position.left + 'px';
+                table.style.top = position.top + 'px';
             }
-        }
+        });
+
+        tableContainer.addEventListener('dragstart', function(e) {
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', null); // for Firefox
+        });
+
+        tableContainer.addEventListener('dragend', function(e) {
+            e.target.classList.remove('dragging');
+            var x = parseInt(e.target.style.left, 10);
+            var y = parseInt(e.target.style.top, 10);
+            localStorage.setItem(e.target.id, JSON.stringify({ left: x, top: y }));
+        });
+
+        tableContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            var dragging = document.querySelector('.dragging');
+            var x = e.clientX - tableContainer.offsetLeft - dragging.offsetWidth / 2;
+            var y = e.clientY - tableContainer.offsetTop - dragging.offsetHeight / 2;
+            dragging.style.left = x + 'px';
+            dragging.style.top = y + 'px';
+        });
     });
+
+    function openAddTableModal() {
+        document.getElementById("addTableModal").style.display = "flex";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
 </script>
 </body>
 </html>

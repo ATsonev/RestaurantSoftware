@@ -110,7 +110,7 @@ public class OrderServiceImplTest {
         orderService.makeOrder(waiterId, tableId, orderItems);
 
         verify(orderRepository, times(1)).saveAndFlush(any(Order.class));
-        verify(menuItemOrderStatusRepository, times(5)).save(any(MenuItemOrderStatus.class));
+        verify(menuItemOrderStatusRepository, times(1)).saveAll(any(Iterable.class));
     }
 
     @Test

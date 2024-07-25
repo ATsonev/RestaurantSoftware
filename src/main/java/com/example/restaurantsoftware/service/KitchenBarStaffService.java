@@ -9,6 +9,6 @@ public interface KitchenBarStaffService {
 
     Optional<KitchenBarStaffDto> findByPassword(String password);
 
-    KitchenBarStaffDto addStaff(AddKitchenBarStaffDTO addKitchenBarStaffDto);
+    void addStaff(AddKitchenBarStaffDTO addKitchenBarStaffDto);
 
 }

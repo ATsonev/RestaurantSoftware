@@ -8,6 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Controller
 public class CustomerOrderController {
 
@@ -24,8 +28,11 @@ public class CustomerOrderController {
         if(model.containsAttribute("errorMessage")){
             System.out.println();
         }
+        List<MenuItemCategory> categories = Arrays.stream(MenuItemCategory.values())
+                .filter(category -> category != MenuItemCategory.SUM)
+                .collect(Collectors.toList());
         model.addAttribute("menuItems", menuItemService.getAllMenuItems());
-        model.addAttribute("categories", MenuItemCategory.values());
+        model.addAttribute("categories", categories);
         model.addAttribute("tableId", id);
         return "customer-order";
     }

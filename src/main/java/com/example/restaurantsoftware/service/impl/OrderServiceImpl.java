@@ -111,7 +111,8 @@ public class OrderServiceImpl implements OrderService {
     public boolean deleteOrderItem(DeleteOrderItemDTO dto) {
         Table table = tableRepository.findById(dto.getTableId()).orElseThrow(NoSuchElementException::new);
         List<Order> orders = orderRepository.findAllByTable(table);
-        MenuItem menuItem = menuItemRepository.findByName(dto.getMenuItem()).orElseThrow(() -> new NoSuchElementException("Menu item not found"));
+        MenuItem menuItem = menuItemRepository.findByName(dto.getMenuItem()).orElseThrow(() ->
+                new NoSuchElementException("Menu item not found"));
 
         List<MenuItemOrderStatus> allMenuItems = new ArrayList<>();
         int quantity = dto.getQuantity();
@@ -162,7 +163,7 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setDateAndTimeOrdered(LocalDateTime.now());
         newOrder.setTable(to);
         newOrder.setWaiter(to.getWaiter());
-        newOrder.setOrderStatus(OrderStatus.PENDING);
+        newOrder.setOrderStatus(OrderStatus.FINISHED);
         orderRepository.saveAndFlush(newOrder);
 
         List<MenuItemOrderStatus> allMenuItems = new ArrayList<>();
@@ -186,6 +187,9 @@ public class OrderServiceImpl implements OrderService {
                 if(quantity > 0 && allMenuItems.get(currentMenuItem).equals(item)){
                     MenuItemOrderStatus menuItemOrderStatus = allMenuItems.get(currentMenuItem);
                     menuItemOrderStatus.setOrder(newOrder);
+                    if(menuItemOrderStatus.getOrderStatus().equals(OrderStatus.PENDING)){
+                        newOrder.setOrderStatus(OrderStatus.PENDING);
+                    }
                     menuItemOrderStatusRepository.save(menuItemOrderStatus);
                     iterator.remove();
                     currentMenuItem++;
@@ -199,6 +203,9 @@ public class OrderServiceImpl implements OrderService {
             if (quantity == 0) {
                 break;
             }
+        }
+        if(newOrder.getOrderStatus().equals(OrderStatus.PENDING)){
+            orderRepository.save(newOrder);
         }
         return true;
     }

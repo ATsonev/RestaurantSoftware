@@ -6,6 +6,7 @@ import com.example.restaurantsoftware.model.dto.RegisterUserDto;
 import com.example.restaurantsoftware.model.dto.staffDto.AddKitchenBarStaffDTO;
 import com.example.restaurantsoftware.model.dto.staffDto.KitchenBarStaffDto;
 import com.example.restaurantsoftware.repository.WaiterRepository;
+import com.example.restaurantsoftware.service.KitchenBarStaffService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +17,11 @@ import java.util.Optional;
 public class UserServiceImpl {
 
     private final WaiterRepository waiterRepository;
-    private final KitchenBarStaffServiceImpl kitchenBarStaffService;
+    private final KitchenBarStaffService kitchenBarStaffService;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(WaiterRepository waiterRepository, KitchenBarStaffServiceImpl kitchenBarStaffService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(WaiterRepository waiterRepository, KitchenBarStaffService kitchenBarStaffService, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
         this.waiterRepository = waiterRepository;
         this.kitchenBarStaffService = kitchenBarStaffService;
         this.modelMapper = modelMapper;
@@ -43,7 +44,7 @@ public class UserServiceImpl {
             AddKitchenBarStaffDTO staffDTO = new AddKitchenBarStaffDTO();
             staffDTO.setStaff(dto.getStaffRole());
             staffDTO.setPassword(dto.getPassword());
-            KitchenBarStaffDto kitchenBarStaffDto = kitchenBarStaffService.addStaff(staffDTO);
+            kitchenBarStaffService.addStaff(staffDTO);
         }
     }
 }

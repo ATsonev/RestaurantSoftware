@@ -127,7 +127,7 @@
     <button class="go-back-button" onclick="location.href='/products/products-in-stock'"
             th:text="#{products.go.back.to.products}"> Go back to all products</button>
 </div>
-<form class="container" th:object="${dto}" action="/products/add-product" method="post">
+<form class="container" th:object="${dto}" th:action="@{/products/add-product}" th:method="post">
     <div>
         <label for="productName" th:text="#{products.name}">Name:</label>
         <input type="text" id="productName" th:field="*{name}" name="productName" required>

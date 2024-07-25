@@ -125,11 +125,6 @@
             width: 120px;
         }
 
-        .filter-container {
-            display: inline-block;
-            position: relative;
-        }
-
         .dropdown {
             display: inline-block;
             position: relative;
@@ -172,6 +167,63 @@
         .dropdown-content input[type="checkbox"] {
             margin-right: 5px;
         }
+
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .search-input {
+            width: 200px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+            position: absolute;
+            left: -4px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .search-button {
+            background-color: #304174;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            padding: 8px 16px;
+            background-image: url("/images/search-button.png");
+            display: inline-block;
+            font-size: 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .search-button:hover {
+            background-color: #253258;
+        }
+
+        .close-button {
+            position: absolute;
+            background-color: transparent;
+            color: black;
+            border: none;
+            padding: 8px 16px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 380px;
+            margin-top: -18px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -183,7 +235,16 @@
 <table>
     <thead>
     <tr>
-        <th>Name</th>
+        <th style="font-size: 24px; display: flex; align-items: center;;height: 63px">
+            <span>Name</span>
+            <button class="search-button" onclick="toggleSearch()"></button>
+            <div class="search-container" style="margin-left: 10px; margin-top: 20px">
+                <label for="searchInput"></label>
+                <input type="text" id="searchInput" class="search-input" onkeyup="filterTable()"
+                       placeholder="Search menu items...">
+                <button class="close-button" onclick="closeSearch()">✖</button>
+            </div>
+        </th>
         <th>Description</th>
         <th>Category
             <div class="dropdown">
@@ -302,6 +363,51 @@
             });
         }
     });
+
+    function toggleSearch() {
+        var searchInput = document.getElementById("searchInput");
+        var searchButton = document.querySelector(".search-button");
+        var closeButton = document.querySelector(".close-button");
+
+        if (searchInput.style.display === "none" || searchInput.style.display === "") {
+            searchInput.style.display = "inline-block";
+            searchButton.style.display = "none";
+            closeButton.style.display = "inline-block";
+            searchInput.focus();
+        }
+    }
+
+    function closeSearch() {
+        var searchInput = document.getElementById("searchInput");
+        var searchButton = document.querySelector(".search-button");
+        var closeButton = document.querySelector(".close-button");
+
+        searchInput.style.display = "none";
+        searchButton.style.display = "inline-block";
+        closeButton.style.display = "none";
+        searchInput.value = "";
+        filterTable();
+    }
+
+    function filterTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("menu-items-table");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
 </script>
 
 </body>

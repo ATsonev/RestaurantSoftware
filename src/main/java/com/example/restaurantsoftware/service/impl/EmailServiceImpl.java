@@ -28,7 +28,7 @@ public class EmailServiceImpl {
         this.billService = billService;
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 01 * * * ?")
     public void sendTurnoverEmail() {
         String toEmail = "alexconev1@gmail.com";
         String subject = "Daily Turnover Report - " + LocalDate.now().format(DateTimeFormatter.ISO_DATE);
@@ -71,12 +71,11 @@ public class EmailServiceImpl {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(text, true); // Set to true to indicate the text is HTML
+            helper.setText(text, true);
 
             mailSender.send(message);
         } catch (MessagingException e) {
             e.printStackTrace();
-            // Handle the exception
         }
     }
 

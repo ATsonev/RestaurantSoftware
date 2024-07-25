@@ -12,9 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -51,16 +48,8 @@ public class KitchenBarStaffServiceImpl implements KitchenBarStaffService {
             }
         }
     }
-
-    public List<KitchenBarStaffDto> getAllStaff() {
-        ResponseEntity<KitchenBarStaffDto[]> response = restTemplate.getForEntity(
-                "http://localhost:8081/kitchen-bar-staff",
-                KitchenBarStaffDto[].class);
-        return Arrays.asList(Objects.requireNonNull(response.getBody()));
-    }
-
     @Override
-    public KitchenBarStaffDto addStaff(AddKitchenBarStaffDTO dto) {
-        return restTemplate.postForObject("http://localhost:8081/kitchen-bar-staff", dto, KitchenBarStaffDto.class);
+    public void addStaff(AddKitchenBarStaffDTO dto) {
+        restTemplate.postForObject("http://localhost:8081/kitchen-bar-staff", dto, KitchenBarStaffDto.class);
     }
 }

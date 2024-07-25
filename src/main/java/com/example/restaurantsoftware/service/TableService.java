@@ -8,4 +8,5 @@ public interface TableService {
     List<Table> getAllTables();
     void setWaiter(long tableId, long waiterId);
     Table getTableById(Long id);
+    void addTable(int capacity);
 }
