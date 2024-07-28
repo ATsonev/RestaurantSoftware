@@ -35,4 +35,9 @@ public class WaiterServiceImpl implements WaiterService {
                 .map(w -> modelMapper.map(w, WaiterTurnoverDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteWaiter(Long id) {
+        waiterRepository.deleteById(id);
+    }
 }

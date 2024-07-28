@@ -5,14 +5,19 @@ import com.example.restaurantsoftware.model.customExceptions.ExistingProductExce
 import com.example.restaurantsoftware.model.customExceptions.InvalidProductException;
 import com.example.restaurantsoftware.model.dto.productDto.AddProductDto;
 import com.example.restaurantsoftware.model.dto.productDto.AddQuantityDTO;
+import com.example.restaurantsoftware.model.dto.productDto.ShowProductDto;
 import com.example.restaurantsoftware.repository.ProductRepository;
 import com.example.restaurantsoftware.service.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,8 +31,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ShowProductDto> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(p -> {
+                    ShowProductDto map = modelMapper.map(p, ShowProductDto.class);
+                    BigDecimal bd = new BigDecimal(p.getQuantityInStock()).setScale(3, RoundingMode.HALF_UP);
+                    DecimalFormat df = new DecimalFormat("#.###");
+                    map.setQuantity(df.format(p.getQuantityInStock()));
+                    return map;
+                }).collect(Collectors.toList());
     }
 
     @Override

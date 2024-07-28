@@ -28,7 +28,7 @@ public class EmailServiceImpl {
         this.billService = billService;
     }
 
-    @Scheduled(cron = "0 01 * * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void sendTurnoverEmail() {
         String toEmail = "alexconev1@gmail.com";
         String subject = "Daily Turnover Report - " + LocalDate.now().format(DateTimeFormatter.ISO_DATE);

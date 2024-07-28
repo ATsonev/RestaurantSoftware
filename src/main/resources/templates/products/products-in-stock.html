@@ -16,6 +16,10 @@
             text-align: left;
         }
 
+        td{
+            font-size: 20px;
+        }
+
         th {
             background-color: #f2f2f2;
         }
@@ -214,11 +218,11 @@
     <tbody id="productTable">
     <tr th:each="product : ${products}">
 
-        <td style="font-size: 20px; font-weight: bold" th:text="${product.name}"></td>
-        <td style="font-size: 20px" th:text="${product.quantityInStock}"></td>
-        <td style="font-size: 20px" th:text="
-        ${product.productUnit.name()} == 'KILOGRAM' ? 'Kg' :
-        (${product.getProductUnit().name()} == 'LITER' ? 'Liter' :'Piece')">></td>
+        <td style="font-weight: bold" th:text="${product.name}"></td>
+        <td th:text="${product.quantity}"></td>
+        <td th:text="
+        ${product.productUnit} == 'KILOGRAM' ? 'Kg' :
+        (${product.productUnit} == 'LITER' ? 'Liter' :'Piece')">></td>
         <td>
             <a th:href="@{'/products/add-product-quantity/' + ${product.id}}">
                 <button class="button" th:text="#{products.add.quantity}">Add Quantity</button>

@@ -5,7 +5,9 @@ import com.example.restaurantsoftware.model.customExceptions.ExistingProductExce
 import com.example.restaurantsoftware.model.customExceptions.InvalidProductException;
 import com.example.restaurantsoftware.model.dto.productDto.AddProductDto;
 import com.example.restaurantsoftware.model.dto.productDto.AddQuantityDTO;
+import com.example.restaurantsoftware.model.dto.productDto.ShowProductDto;
 import com.example.restaurantsoftware.service.ProductService;
+import com.example.restaurantsoftware.util.NumberFormatterUtils;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
@@ -30,7 +32,7 @@ public class ProductInStockController {
 
     @GetMapping("/products-in-stock")
     public String productsInStock(Model model) {
-        List<Product> products = productService.getAllProducts();
+        List<ShowProductDto> products = productService.getAllProducts();
         model.addAttribute("products", products);
         return "products/products-in-stock";
     }
@@ -40,6 +42,7 @@ public class ProductInStockController {
         if(!model.containsAttribute("dto")){
             Product product = productService.getProductById(id);
             AddQuantityDTO dto = modelMapper.map(product, AddQuantityDTO.class);
+            dto.setQuantity(Double.parseDouble(NumberFormatterUtils.formatQuantity(product.getQuantityInStock())));
             model.addAttribute("dto", dto);
         }
         return "products/add-product-quantity";
@@ -63,6 +66,7 @@ public class ProductInStockController {
         if(!model.containsAttribute("dto")) {
             Product product = productService.getProductById(id);
             AddQuantityDTO dto = modelMapper.map(product, AddQuantityDTO.class);
+            dto.setQuantity(Double.parseDouble(NumberFormatterUtils.formatQuantity(product.getQuantityInStock())));
             model.addAttribute("dto", dto);
         }
         return "products/edit-product-quantity";

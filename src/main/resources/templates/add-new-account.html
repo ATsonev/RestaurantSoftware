@@ -64,10 +64,6 @@
             border-radius: 5px;
         }
 
-        button:hover {
-            background-color: #1e2a44;
-        }
-
         .hidden {
             display: none;
         }
@@ -76,29 +72,39 @@
             color: red;
             margin-top: 5px;
         }
-    </style>
-    <script>
-        function toggleFields() {
-            const role = document.getElementById('role').value;
-            const waiterFields = document.getElementById('waiterFields');
-            const kitchenStaffFields = document.getElementById('kitchenStaffFields');
-            const commonFields = document.getElementById('commonFields');
 
-            waiterFields.classList.add('hidden');
-            kitchenStaffFields.classList.add('hidden');
-            commonFields.classList.add('hidden');
-
-            if (role === 'waiter') {
-                waiterFields.classList.remove('hidden');
-                commonFields.classList.remove('hidden');
-            } else if (role === 'kitchenStaff') {
-                kitchenStaffFields.classList.remove('hidden');
-                commonFields.classList.remove('hidden');
-            }
+        .top-right-buttons {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
         }
-    </script>
+
+        .go-back-button {
+            background-color: white;
+            color: #304174;
+            border: none;
+            padding: 8px 16px;
+            height: 70px;
+            width: 170px;
+            margin-top: 15px;;
+            margin-right: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 17px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-<body th:classappend="${param.lang == 'bg' ? 'bg-lang' : ''}">
+<body>
+<div class="top-right-buttons">
+    <button class="go-back-button" onclick="location.href='/tables'"
+              > Go back to all products</button>
+    <button onclick="location.href='/all-accounts'" class="go-back-button">See all accounts</button>
+</div>
 <div class="form-container">
     <div th:if="${errorMessage}" class="error">
         <p th:text="${errorMessage}"></p>
@@ -163,5 +169,25 @@
         </div>
     </form>
 </div>
+<script>
+    function toggleFields() {
+        const role = document.getElementById('role').value;
+        const waiterFields = document.getElementById('waiterFields');
+        const kitchenStaffFields = document.getElementById('kitchenStaffFields');
+        const commonFields = document.getElementById('commonFields');
+
+        waiterFields.classList.add('hidden');
+        kitchenStaffFields.classList.add('hidden');
+        commonFields.classList.add('hidden');
+
+        if (role === 'waiter') {
+            waiterFields.classList.remove('hidden');
+            commonFields.classList.remove('hidden');
+        } else if (role === 'kitchenStaff') {
+            kitchenStaffFields.classList.remove('hidden');
+            commonFields.classList.remove('hidden');
+        }
+    }
+</script>
 </body>
 </html>
