@@ -1,10 +1,9 @@
 package com.example.restaurantsoftware.service;
 
 import com.example.restaurantsoftware.model.Waiter;
-import com.example.restaurantsoftware.model.dto.WaiterTurnoverDto;
+import com.example.restaurantsoftware.model.dto.waiterDto.WaiterTurnoverDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface WaiterService {
     Waiter findWaiterByID(long waiterID);

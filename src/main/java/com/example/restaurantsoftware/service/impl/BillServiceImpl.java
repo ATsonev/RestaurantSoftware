@@ -1,7 +1,7 @@
 package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.Bill;
-import com.example.restaurantsoftware.model.dto.TurnoverDto;
+import com.example.restaurantsoftware.model.dto.waiterDto.TurnoverDto;
 import com.example.restaurantsoftware.model.enums.PaymentMethod;
 import com.example.restaurantsoftware.repository.BillRepository;
 import com.example.restaurantsoftware.service.BillService;

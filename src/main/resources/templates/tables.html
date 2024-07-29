@@ -194,9 +194,28 @@
             background-color: #fefefe;
             padding: 20px;
             border: 1px solid #888;
-            width: 300px;
+            width: 500px;
             border-radius: 10px;
             text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-content button {
+            background-color: #253258;
+            color: white;
+            padding: 10px 20px;
+            height: 18vh;
+            width: 8vw;
+            border: 2px solid black;
+            cursor: pointer;
+            font-size: 20px;
+            margin-top: 10px;
+            text-align: center;
+            border-radius: 5px;
         }
 
         .close {
@@ -212,6 +231,20 @@
             color: black;
             text-decoration: none;
         }
+
+        .toggle-drag-button {
+            background-color: #304174;
+            color: white;
+            width: 100%;
+            height: 16.6vh;
+            border: none;
+            border-radius: 5px;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="laminate-background">
@@ -223,13 +256,13 @@
         <button class="table-button"
                 draggable="true"
                 th:attr="id='table-' + ${table.id}" th:attrappend="onclick='navigateToTableOrder(' + ${table.id} + ',' + ${waiterDto.id} + ')'"
-                th:with="isWaiterNull=${table.waiter == null},
+                th:with="isWaiterNull=${!table.hasWaiter()},
                     isTableAssigned=${#lists.contains(waiterDto.getTableIds(), table.id)}"
                 th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
                 th:disabled="${!isWaiterNull && !isTableAssigned}">
             <div class="table-info">
-                <span th:text="${table.id}"></span>
-                <span style="font-size: 14px" th:if="${table.waiter != null}" th:text="${table.waiter.getFirstName()}"></span>
+                <span th:text="${table.getTableNumberOrder()}"></span>
+                <span style="font-size: 14px" th:if="${table.hasWaiter()}" th:text="${table.getWaiterFirstName()}"></span>
             </div>
         </button>
     </div>
@@ -251,9 +284,22 @@
     <button class="add-table-button" sec:authorize="hasRole('ROLE_ADMIN')" onclick="openAddTableModal()"></button>
 </div>
 
+
 <div id="addTableModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('addTableModal')">&times;</span>
+        <h2 style="margin-top: -15px">Add Table</h2>
+        <div class="modal-buttons">
+            <button onclick="toggleDrag()" class="toggle-drag-button">Move Tables</button>
+            <button onclick="showAddTableForm()">Add Table</button>
+            <button onclick="showDeleteTableForm()">Delete Table</button>
+        </div>
+    </div>
+</div>
+
+<div id="addTableFormModal" class="modal">
+    <div class="modal-content" style="width: 300px">
+        <span class="close" onclick="closeModal('addTableFormModal')">&times;</span>
         <h2 style="margin-top: -15px">Add Table</h2>
         <form th:action="@{/add-table}" th:method="post">
             <div style="display: flex; flex-direction: column; align-items: center;">
@@ -265,6 +311,25 @@
             <button type="submit"
                     style="width: 200px; height: 40px; font-size: 16px; margin-top: 20px;
                         background-color: #253258; color: white">Submit
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="deleteTableFormModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('deleteTableFormModal')">&times;</span>
+        <h2 style="margin-top: -15px">Delete Table</h2>
+        <form th:action="@{/delete-table}" th:method="post">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="margin-bottom: 10px;">
+                    <label for="tableId" class="bold" style="font-size: 24px">Table ID:</label>
+                    <input type="number" id="tableId" name="tableId" style="width: 200px; height: 40px; font-size: 16px; text-align: center" required>
+                </div>
+            </div>
+            <button type="submit"
+                    style="width: 200px; height: 40px; font-size: 16px; margin-top: 20px;
+                        background-color: #253258; color: white">Delete
             </button>
         </form>
     </div>
@@ -309,6 +374,7 @@
         var setTablesBtn = document.querySelector(".set-tables-button");
         var addTableBtn = document.querySelector(".add-table-button");
         var closeBtns = document.querySelectorAll(".close");
+        var isDraggingEnabled = false;
 
         if (setTablesBtn) {
             setTablesBtn.addEventListener("click", function () {
@@ -338,7 +404,6 @@
 
         var tableContainer = document.getElementById('table-container');
 
-        // Load saved positions from local storage
         var tables = document.querySelectorAll('.table-button');
         tables.forEach(function(table) {
             var id = table.id;
@@ -350,25 +415,51 @@
         });
 
         tableContainer.addEventListener('dragstart', function(e) {
-            e.target.classList.add('dragging');
-            e.dataTransfer.setData('text/plain', null); // for Firefox
+            if (isDraggingEnabled) {
+                e.target.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', null);
+            } else {
+                e.preventDefault();
+            }
         });
 
         tableContainer.addEventListener('dragend', function(e) {
-            e.target.classList.remove('dragging');
-            var x = parseInt(e.target.style.left, 10);
-            var y = parseInt(e.target.style.top, 10);
-            localStorage.setItem(e.target.id, JSON.stringify({ left: x, top: y }));
+            if (isDraggingEnabled) {
+                e.target.classList.remove('dragging');
+                var x = parseInt(e.target.style.left, 10);
+                var y = parseInt(e.target.style.top, 10);
+                localStorage.setItem(e.target.id, JSON.stringify({ left: x, top: y }));
+            }
         });
 
         tableContainer.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            var dragging = document.querySelector('.dragging');
-            var x = e.clientX - tableContainer.offsetLeft - dragging.offsetWidth / 2;
-            var y = e.clientY - tableContainer.offsetTop - dragging.offsetHeight / 2;
-            dragging.style.left = x + 'px';
-            dragging.style.top = y + 'px';
+            if (isDraggingEnabled) {
+                e.preventDefault();
+                var dragging = document.querySelector('.dragging');
+                var x = e.clientX - tableContainer.offsetLeft - dragging.offsetWidth / 2;
+                var y = e.clientY - tableContainer.offsetTop - dragging.offsetHeight / 2;
+                dragging.style.left = x + 'px';
+                dragging.style.top = y + 'px';
+            }
         });
+
+        window.toggleDrag = function() {
+            isDraggingEnabled = !isDraggingEnabled;
+            var toggleBtn = document.querySelector(".toggle-drag-button");
+            if (toggleBtn) {
+                if (isDraggingEnabled) {
+                    toggleBtn.innerText = "Disable Moving";
+                    tables.forEach(function(table) {
+                        table.setAttribute("draggable", "true");
+                    });
+                } else {
+                    toggleBtn.innerText = "Enable Moving";
+                    tables.forEach(function(table) {
+                        table.removeAttribute("draggable");
+                    });
+                }
+            }
+        }
     });
 
     function openAddTableModal() {
@@ -377,6 +468,16 @@
 
     function closeModal(modalId) {
         document.getElementById(modalId).style.display = "none";
+    }
+
+    function showAddTableForm() {
+        closeModal('addTableModal');
+        document.getElementById("addTableFormModal").style.display = "flex";
+    }
+
+    function showDeleteTableForm() {
+        closeModal('addTableModal');
+        document.getElementById("deleteTableFormModal").style.display = "flex";
     }
 </script>
 </body>

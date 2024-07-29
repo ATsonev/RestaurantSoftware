@@ -1,4 +1,4 @@
-package com.example.restaurantsoftware.model.dto;
+package com.example.restaurantsoftware.model.dto.waiterDto;
 
 public class WaiterTurnoverDto {
     private Long id;

@@ -2,13 +2,12 @@ package com.example.restaurantsoftware.web.controller;
 
 import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.model.base.BaseEntity;
-import com.example.restaurantsoftware.model.dto.ShowWaiterTablesDTO;
+import com.example.restaurantsoftware.model.dto.waiterDto.ShowWaiterTablesDTO;
 import com.example.restaurantsoftware.model.user.CurrentUserDetails;
 import com.example.restaurantsoftware.service.TableService;
 import com.example.restaurantsoftware.service.WaiterService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,6 +53,12 @@ public class TablesController {
     @PostMapping("/add-table")
     public String addTable(@RequestParam("capacity")int capacity){
         tableService.addTable(capacity);
+        return "redirect:/tables";
+    }
+
+    @PostMapping("/delete-table")
+    public String deleteTable(@RequestParam("tableId") Long tableId) {
+        tableService.deleteTable(tableId);
         return "redirect:/tables";
     }
 

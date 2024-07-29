@@ -1,4 +1,4 @@
-package com.example.restaurantsoftware.model.dto;
+package com.example.restaurantsoftware.model.dto.waiterDto;
 
 import com.example.restaurantsoftware.model.Table;
 

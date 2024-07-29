@@ -2,7 +2,7 @@ package com.example.restaurantsoftware.web.controller;
 
 import com.example.restaurantsoftware.model.customExceptions.ExistingUserException;
 import com.example.restaurantsoftware.model.dto.RegisterUserDto;
-import com.example.restaurantsoftware.model.dto.WaiterTurnoverDto;
+import com.example.restaurantsoftware.model.dto.waiterDto.WaiterTurnoverDto;
 import com.example.restaurantsoftware.model.dto.staffDto.KitchenBarStaffDto;
 import com.example.restaurantsoftware.service.KitchenBarStaffService;
 import com.example.restaurantsoftware.service.WaiterService;

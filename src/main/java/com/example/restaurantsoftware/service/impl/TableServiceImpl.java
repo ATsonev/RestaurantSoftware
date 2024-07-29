@@ -2,29 +2,45 @@ package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.Table;
 import com.example.restaurantsoftware.model.Waiter;
+import com.example.restaurantsoftware.model.dto.tableDto.ShowTablesDto;
 import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.repository.TableRepository;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import com.example.restaurantsoftware.service.TableService;
-import javafx.scene.control.Tab;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 public class TableServiceImpl implements TableService {
 
     private final TableRepository tableRepository;
     private final WaiterRepository waiterRepository;
+    private final ModelMapper modelMapper;
 
-    public TableServiceImpl(TableRepository tableRepository, WaiterRepository waiterRepository) {
+    public TableServiceImpl(TableRepository tableRepository, WaiterRepository waiterRepository, ModelMapper modelMapper) {
         this.tableRepository = tableRepository;
         this.waiterRepository = waiterRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
-    public List<Table> getAllTables() {
-        return tableRepository.findAll();
+    public List<ShowTablesDto> getAllTables() {
+        int[] currentTableId = {1};
+        return tableRepository.findAll().stream()
+                .map(t -> {
+                    ShowTablesDto table = modelMapper.map(t, ShowTablesDto.class);
+                    if (t.getWaiter() != null) {
+                        table.setWaiterFirstName(t.getWaiter().getFirstName());
+                        table.setHasWaiter(true);
+                    }
+                    table.setTableNumberOrder(currentTableId[0]);
+                    currentTableId[0]++;
+                    return table;
+                }).collect(Collectors.toList());
     }
 
     @Override
@@ -48,6 +64,11 @@ public class TableServiceImpl implements TableService {
         table.setTableStatus(TableStatus.AVAILABLE);
         table.setBill(0);
         tableRepository.save(table);
+    }
+
+    @Override
+    public void deleteTable(Long tableId) {
+        tableRepository.deleteById(tableId);
     }
 
 

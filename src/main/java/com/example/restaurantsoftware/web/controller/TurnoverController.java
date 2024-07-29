@@ -1,6 +1,6 @@
 package com.example.restaurantsoftware.web.controller;
 
-import com.example.restaurantsoftware.model.dto.TurnoverDto;
+import com.example.restaurantsoftware.model.dto.waiterDto.TurnoverDto;
 import com.example.restaurantsoftware.service.BillService;
 import com.example.restaurantsoftware.service.WaiterService;
 import org.springframework.format.annotation.DateTimeFormat;

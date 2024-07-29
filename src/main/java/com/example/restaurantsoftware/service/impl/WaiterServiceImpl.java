@@ -1,7 +1,7 @@
 package com.example.restaurantsoftware.service.impl;
 
 import com.example.restaurantsoftware.model.Waiter;
-import com.example.restaurantsoftware.model.dto.WaiterTurnoverDto;
+import com.example.restaurantsoftware.model.dto.waiterDto.WaiterTurnoverDto;
 import com.example.restaurantsoftware.repository.WaiterRepository;
 import com.example.restaurantsoftware.service.WaiterService;
 import org.modelmapper.ModelMapper;
@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
