@@ -1,9 +1,6 @@
 package com.example.restaurantsoftware.model.dto.tableDto;
 
 import com.example.restaurantsoftware.model.enums.TableStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 
 public class ShowTablesDto {
     private long id;

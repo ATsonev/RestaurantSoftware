@@ -7,6 +7,7 @@ import com.example.restaurantsoftware.model.enums.OrderStatus;
 import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.model.enums.VAT;
 import com.example.restaurantsoftware.repository.*;
+import com.example.restaurantsoftware.service.TableService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,8 @@ public class OrderServiceImplTest {
     private BillRepository billRepository;
     @Mock
     private ModelMapper modelMapper;
+    @Mock
+    private TableService tableService;
     @InjectMocks
     private OrderServiceImpl orderService;
     private MenuItemOrderStatus menuItemOrderStatus1;
@@ -310,7 +313,7 @@ public class OrderServiceImplTest {
         menuItem.setPrice(10.0);
         menuItem.setVat(VAT.VAT20);
 
-        MenuItemOrderStatus menuItemOrderStatus = new MenuItemOrderStatus(menuItem, OrderStatus.FINISHED);
+        MenuItemOrderStatus menuItemOrderStatus = new MenuItemOrderStatus(menuItem, OrderStatus.PENDING);
         menuItemOrderStatus.setId(1L);
 
         MenuItemProductQuantity menuItemProductQuantity = new MenuItemProductQuantity();
@@ -322,7 +325,6 @@ public class OrderServiceImplTest {
         menuItem.setMenuItemProductsQuantity(Set.of(menuItemProductQuantity));
 
         Order order = new Order();
-        order.setOrderStatus(OrderStatus.FINISHED);
         order.setMenuItems(Collections.singletonList(menuItemOrderStatus));
 
         table.setOrders(new ArrayList<>(Collections.singletonList(order)));
@@ -466,7 +468,7 @@ public class OrderServiceImplTest {
         public void testGetBarPendingOrders() {
             when(orderRepository.findAllByOrderStatus(OrderStatus.PENDING))
                     .thenReturn(List.of(order));
-
+            when(tableService.getCurrentTableNumber(order.getTable().getId())).thenReturn(1);
             List<ShowOrderDto> result = orderService.getBarPendingOrders();
 
             assertEquals(1, result.size());
@@ -489,7 +491,7 @@ public class OrderServiceImplTest {
         public void test_Get_Hot_Kitchen_PendingOrders() {
             when(orderRepository.findAllByOrderStatus(OrderStatus.PENDING))
                     .thenReturn(List.of(order));
-
+            when(tableService.getCurrentTableNumber(order.getTable().getId())).thenReturn(1);
             List<ShowOrderDto> result = orderService.getHotKitchenPendingOrders();
 
             assertEquals(1, result.size());
@@ -512,7 +514,7 @@ public class OrderServiceImplTest {
         public void test_Get_Cold_Kitchen_PendingOrders() {
             when(orderRepository.findAllByOrderStatus(OrderStatus.PENDING))
                     .thenReturn(List.of(order));
-
+            when(tableService.getCurrentTableNumber(order.getTable().getId())).thenReturn(1);
             List<ShowOrderDto> result = orderService.getColdKitchenPendingOrders();
 
             assertEquals(1, result.size());

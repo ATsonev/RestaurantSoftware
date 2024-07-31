@@ -35,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll().stream()
                 .map(p -> {
                     ShowProductDto map = modelMapper.map(p, ShowProductDto.class);
-                    BigDecimal bd = new BigDecimal(p.getQuantityInStock()).setScale(3, RoundingMode.HALF_UP);
+                    BigDecimal bd = BigDecimal.valueOf(p.getQuantityInStock()).setScale(3, RoundingMode.HALF_UP);
                     DecimalFormat df = new DecimalFormat("#.###");
                     map.setQuantity(df.format(p.getQuantityInStock()));
                     return map;

@@ -11,5 +11,7 @@ public interface TableService {
     Table getTableById(Long id);
     void addTable(int capacity);
 
-    void deleteTable(Long tableId);
+    boolean deleteTable(Long tableId);
+
+    int getCurrentTableNumber(Long tableId);
 }

@@ -11,7 +11,7 @@
         <div th:each="order : ${barOrders}" class="order-box">
             <div class="order-time" th:text="${#temporals.format(order.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
             <div class="order-bar">BAR</div>
-            <div class="order-table">Table <span th:text="${order.tableId}">1</span></div>
+            <div class="order-table">Table <span th:text="${order.tableCurrentNumber}">1</span></div>
             <div class="order-item">
                 <div th:each="item : ${order.menuItems}" >
                     <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
@@ -28,7 +28,6 @@
     </div>
 </div>
 <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
-    <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
 </form>
 <button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
 <script>

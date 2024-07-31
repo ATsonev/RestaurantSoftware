@@ -3,7 +3,6 @@ package com.example.restaurantsoftware.model.dto.productDto;
 import com.example.restaurantsoftware.model.enums.ProductUnit;
 import org.hibernate.validator.constraints.Length;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 

@@ -8,8 +8,7 @@ import com.example.restaurantsoftware.model.enums.PaymentMethod;
 import com.example.restaurantsoftware.model.enums.TableStatus;
 import com.example.restaurantsoftware.repository.*;
 import com.example.restaurantsoftware.service.OrderService;
-import org.aspectj.weaver.ast.Or;
-import org.modelmapper.ModelMapper;
+import com.example.restaurantsoftware.service.TableService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -46,11 +45,11 @@ public class OrderServiceImpl implements OrderService {
     private final MenuItemOrderStatusRepository menuItemOrderStatusRepository;
     private final TableRepository tableRepository;
     private final BillRepository billRepository;
-    private final ModelMapper modelMapper;
+    private final TableService tableService;
 
     public OrderServiceImpl(OrderRepository orderRepository, MenuItemRepository menuItemRepository, ProductRepository productRepository
             , WaiterRepository waiterRepository, MenuItemOrderStatusRepository menuItemOrderStatusRepository
-            , TableRepository tableRepository, BillRepository billRepository, ModelMapper modelMapper) {
+            , TableRepository tableRepository, BillRepository billRepository, TableService tableService) {
         this.orderRepository = orderRepository;
         this.menuItemRepository = menuItemRepository;
         this.productRepository = productRepository;
@@ -58,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
         this.menuItemOrderStatusRepository = menuItemOrderStatusRepository;
         this.tableRepository = tableRepository;
         this.billRepository = billRepository;
-        this.modelMapper = modelMapper;
+        this.tableService = tableService;
     }
 
     @Override
@@ -216,7 +215,14 @@ public class OrderServiceImpl implements OrderService {
         Waiter waiter = waiterRepository.findById(waiterId).orElseThrow(NoSuchElementException::new);
         List<Order> orders = orderRepository.findAllByTable(table);
         if (orders.stream().anyMatch(o -> o.getOrderStatus().equals(OrderStatus.PENDING))) {
-            return false;
+            for (Order order : orders) {
+                if(order.getMenuItems().stream().anyMatch(mi -> mi.getOrderStatus().equals(OrderStatus.PENDING))) {
+                    return false;
+                }else {
+                    order.setOrderStatus(OrderStatus.FINISHED);
+                    orderRepository.save(order);
+                }
+            }
         }
         double sum;
         double taxes;
@@ -326,7 +332,8 @@ public class OrderServiceImpl implements OrderService {
     public List<ShowOrderDto> getPendingOrders(List<MenuItemCategory> categoriesToCheck) {
         List<ShowOrderDto> collect = orderRepository.findAllByOrderStatus(OrderStatus.PENDING).stream()
                 .filter(order -> order.getMenuItems().stream()
-                        .anyMatch(m -> categoriesToCheck.contains(m.getMenuItem().getMenuItemCategory()) && m.getOrderStatus().equals(OrderStatus.PENDING)))
+                        .anyMatch(m -> categoriesToCheck.contains(m.getMenuItem().getMenuItemCategory()) && 
+                                            m.getOrderStatus().equals(OrderStatus.PENDING)))
                 .map(order -> convertToDTO(order, categoriesToCheck))
                 .collect(Collectors.toList());
         return collect;
@@ -336,7 +343,8 @@ public class OrderServiceImpl implements OrderService {
         Map<String, ShowOrderMenuItemDto> menuItemMap = new HashMap<>();
 
         for (MenuItemOrderStatus menuItem : order.getMenuItems()) {
-            if (categoriesToCheck.contains(menuItem.getMenuItem().getMenuItemCategory()) && menuItem.getOrderStatus().equals(OrderStatus.PENDING)) {
+            if (categoriesToCheck.contains(menuItem.getMenuItem().getMenuItemCategory()) &&
+                                            menuItem.getOrderStatus().equals(OrderStatus.PENDING)) {
                 String key = menuItem.getMenuItem().getName();
                 ShowOrderMenuItemDto existingItem = menuItemMap.get(key);
                 if (existingItem != null) {
@@ -356,6 +364,7 @@ public class OrderServiceImpl implements OrderService {
         ShowOrderDto dto = new ShowOrderDto();
         dto.setId(order.id);
         dto.setTableId(order.getTable().getId());
+        dto.setTableCurrentNumber(tableService.getCurrentTableNumber(order.getTable().getId()));
         dto.setDateAndTimeOrdered(order.getDateAndTimeOrdered());
         if(order.getWaiter() == null){
             dto.setWaiterFirstName("");

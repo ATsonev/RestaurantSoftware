@@ -7,7 +7,6 @@
     <style>
         .order-box-hot-kitchen {
             background-color: #D28F49;
-            /*color: #253258;*/
             border-radius: 8px;
             width: 18.6vw;
             margin: 0.5vw;
@@ -60,7 +59,7 @@
         <div th:each="hotKitchen : ${hotKitchenOrders}" class="order-box-hot-kitchen">
             <div class="order-time" th:text="${#temporals.format(hotKitchen.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
             <div class="order-bar">Hot kitchen</div>
-            <div class="order-table">Table <span th:text="${hotKitchen.tableId}">1</span></div>
+            <div class="order-table">Table <span th:text="${hotKitchen.tableCurrentNumber}">1</span></div>
             <div class="order-item-hot-kitchen">
                 <div th:each="item : ${hotKitchen.menuItems}" >
                     <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
@@ -80,7 +79,7 @@
     <div th:each="coldKitchen : ${coldKitchenOrders}" class="order-box">
         <div class="order-time" th:text="${#temporals.format(coldKitchen.dateAndTimeOrdered, 'HH:mm')}">12:00</div>
         <div class="order-bar">Cold Kitchen</div>
-        <div class="order-table">Table <span th:text="${coldKitchen.tableId}">1</span></div>
+        <div class="order-table">Table <span th:text="${coldKitchen.tableCurrentNumber}">1</span></div>
         <div class="order-item">
             <div th:each="item : ${coldKitchen.menuItems}" >
                 <p><strong th:text="${item.quantity + ' x ' + item.menuItemName}">Drink</strong></p>
@@ -96,7 +95,6 @@
     </div>
 </div>
 <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
-    <!--<input type="hidden" name="_csrf" th:value="${_csrf.token}"/>-->
 </form>
 <button class="logout-button" onclick="document.getElementById('logout-form').submit();"></button>
 <script>

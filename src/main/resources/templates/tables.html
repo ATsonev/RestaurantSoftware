@@ -10,7 +10,7 @@
             flex-wrap: wrap;
             justify-content: flex-start;
             margin-top: 50px;
-            position: relative; /* Added for positioning */
+            position: relative;
         }
 
         .table-button {
@@ -146,12 +146,12 @@
             cursor: pointer;
         }
 
-        .add-table-button {
+        .manage-table-button {
             background-color: #253258;
             color: white;
             width: 100%;
             height: 16.6vh;
-            background-image: url("/images/add-table.png");
+            background-image: url("/images/manage-tables.png");
             border: none;
             border-radius: 5px;
             background-repeat: no-repeat;
@@ -247,22 +247,25 @@
         }
     </style>
 </head>
-<body class="laminate-background">
+<body class="laminate-background" th:data-delete-error="${deleteError != null} ? ${deleteError} : ''">
 <div class="center-text" style="margin-top: -25px; margin-bottom: -40px" th:if="${(waiterDto.firstName) != null}">
     <p class="bold"><span th:text="${waiterDto.firstName}"></span>'s tables</p>
 </div>
+
 <div class="table-container" id="table-container">
     <div th:each="table, rowStat : ${tables}" th:attr="style=${rowStat.index < 4 ? 'position:relative;' : ''}">
         <button class="table-button"
                 draggable="true"
-                th:attr="id='table-' + ${table.id}" th:attrappend="onclick='navigateToTableOrder(' + ${table.id} + ',' + ${waiterDto.id} + ')'"
+                th:attr="id='table-' + ${table.id}"
+                th:attrappend="onclick='navigateToTableOrder(' + ${table.id} + ',' + ${waiterDto.id} + ',' + ${table.getTableNumberOrder()} + ')'"
                 th:with="isWaiterNull=${!table.hasWaiter()},
                     isTableAssigned=${#lists.contains(waiterDto.getTableIds(), table.id)}"
                 th:class="${isWaiterNull ? 'table-button enabled' : (isTableAssigned ? 'table-button taken' : 'table-button disabled')}"
                 th:disabled="${!isWaiterNull && !isTableAssigned}">
             <div class="table-info">
                 <span th:text="${table.getTableNumberOrder()}"></span>
-                <span style="font-size: 14px" th:if="${table.hasWaiter()}" th:text="${table.getWaiterFirstName()}"></span>
+                <span style="font-size: 14px" th:if="${table.hasWaiter()}"
+                      th:text="${table.getWaiterFirstName()}"></span>
             </div>
         </button>
     </div>
@@ -281,14 +284,14 @@
     </button>
     <button class="add-account-button" sec:authorize="hasRole('ROLE_ADMIN')"
             onclick="window.location.href='/add-new-account'"></button>
-    <button class="add-table-button" sec:authorize="hasRole('ROLE_ADMIN')" onclick="openAddTableModal()"></button>
+    <button class="manage-table-button" sec:authorize="hasRole('ROLE_ADMIN')" onclick="openAddTableModal()"></button>
 </div>
 
 
 <div id="addTableModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal('addTableModal')">&times;</span>
-        <h2 style="margin-top: -15px">Add Table</h2>
+        <h2 style="margin-top: -15px">Manage Tables</h2>
         <div class="modal-buttons">
             <button onclick="toggleDrag()" class="toggle-drag-button">Move Tables</button>
             <button onclick="showAddTableForm()">Add Table</button>
@@ -305,7 +308,8 @@
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="margin-bottom: 10px;">
                     <label for="capacity" class="bold" style="font-size: 24px">Capacity:</label>
-                    <input type="number" id="capacity" name="capacity" style="width: 200px; height: 40px; font-size: 16px; text-align: center" required>
+                    <input type="number" id="capacity" name="capacity"
+                           style="width: 200px; height: 40px; font-size: 16px; text-align: center" required>
                 </div>
             </div>
             <button type="submit"
@@ -320,21 +324,22 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal('deleteTableFormModal')">&times;</span>
         <h2 style="margin-top: -15px">Delete Table</h2>
-        <form th:action="@{/delete-table}" th:method="post">
+        <form id="delete-table-form" th:action="@{/delete-table}" method="post">
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <div style="margin-bottom: 10px;">
-                    <label for="tableId" class="bold" style="font-size: 24px">Table ID:</label>
-                    <input type="number" id="tableId" name="tableId" style="width: 200px; height: 40px; font-size: 16px; text-align: center" required>
+                    <label for="tableNumberOrder" class="bold" style="font-size: 24px">Table Number:</label>
+                    <input type="text" id="tableNumberOrder" name="tableNumberOrder"
+                           style="width: 200px; height: 40px; font-size: 16px; text-align: center" required>
+                    <input type="hidden" id="tableId" name="tableId">
                 </div>
             </div>
-            <button type="submit"
+            <button type="button" onclick="submitDeleteTableForm()"
                     style="width: 200px; height: 40px; font-size: 16px; margin-top: 20px;
                         background-color: #253258; color: white">Delete
             </button>
         </form>
     </div>
 </div>
-
 
 <div id="myModal" class="modal">
     <div class="modal-content">
@@ -365,14 +370,17 @@
     </div>
 </div>
 <script>
-    function navigateToTableOrder(tableId, waiterId) {
-        window.location.href = "/table" + tableId + "-order/" + waiterId;
+    function navigateToTableOrder(tableId, waiterId, tableNumberOrder) {
+        const url = new URL(window.location.href);
+        url.pathname = `/table${tableId}-order/${waiterId}`;
+        url.searchParams.set('tableCurrentNumber', tableNumberOrder);
+        window.location.href = url.toString();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
         var modals = document.querySelectorAll(".modal");
         var setTablesBtn = document.querySelector(".set-tables-button");
-        var addTableBtn = document.querySelector(".add-table-button");
+        var addTableBtn = document.querySelector(".manage-table-button");
         var closeBtns = document.querySelectorAll(".close");
         var isDraggingEnabled = false;
 
@@ -405,7 +413,7 @@
         var tableContainer = document.getElementById('table-container');
 
         var tables = document.querySelectorAll('.table-button');
-        tables.forEach(function(table) {
+        tables.forEach(function (table) {
             var id = table.id;
             var position = JSON.parse(localStorage.getItem(id));
             if (position) {
@@ -414,7 +422,7 @@
             }
         });
 
-        tableContainer.addEventListener('dragstart', function(e) {
+        tableContainer.addEventListener('dragstart', function (e) {
             if (isDraggingEnabled) {
                 e.target.classList.add('dragging');
                 e.dataTransfer.setData('text/plain', null);
@@ -423,16 +431,16 @@
             }
         });
 
-        tableContainer.addEventListener('dragend', function(e) {
+        tableContainer.addEventListener('dragend', function (e) {
             if (isDraggingEnabled) {
                 e.target.classList.remove('dragging');
                 var x = parseInt(e.target.style.left, 10);
                 var y = parseInt(e.target.style.top, 10);
-                localStorage.setItem(e.target.id, JSON.stringify({ left: x, top: y }));
+                localStorage.setItem(e.target.id, JSON.stringify({left: x, top: y}));
             }
         });
 
-        tableContainer.addEventListener('dragover', function(e) {
+        tableContainer.addEventListener('dragover', function (e) {
             if (isDraggingEnabled) {
                 e.preventDefault();
                 var dragging = document.querySelector('.dragging');
@@ -443,22 +451,47 @@
             }
         });
 
-        window.toggleDrag = function() {
+        window.toggleDrag = function () {
             isDraggingEnabled = !isDraggingEnabled;
             var toggleBtn = document.querySelector(".toggle-drag-button");
             if (toggleBtn) {
                 if (isDraggingEnabled) {
                     toggleBtn.innerText = "Disable Moving";
-                    tables.forEach(function(table) {
+                    tables.forEach(function (table) {
                         table.setAttribute("draggable", "true");
                     });
                 } else {
                     toggleBtn.innerText = "Enable Moving";
-                    tables.forEach(function(table) {
+                    tables.forEach(function (table) {
                         table.removeAttribute("draggable");
                     });
                 }
             }
+        }
+
+        window.submitDeleteTableForm = function () {
+            var tableNumberOrder = document.getElementById('tableNumberOrder').value;
+            var tableIdInput = document.getElementById('tableId');
+
+            var found = false;
+            tables.forEach(function (table) {
+                var tableNumberOrderSpan = table.querySelector('.table-info span').innerText;
+                if (tableNumberOrderSpan === tableNumberOrder) {
+                    tableIdInput.value = table.id.split('-')[1];
+                    found = true;
+                }
+            });
+
+            if (found) {
+                document.getElementById('delete-table-form').submit();
+            } else {
+                alert('Table number not found');
+            }
+        }
+
+        const deleteError = document.body.getAttribute('data-delete-error');
+        if (deleteError) {
+            alert(deleteError);
         }
     });
 

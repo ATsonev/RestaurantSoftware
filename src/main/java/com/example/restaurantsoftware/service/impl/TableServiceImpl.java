@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -67,8 +68,24 @@ public class TableServiceImpl implements TableService {
     }
 
     @Override
-    public void deleteTable(Long tableId) {
-        tableRepository.deleteById(tableId);
+    public boolean deleteTable(Long tableId) {
+        Table table = tableRepository.findById(tableId).orElseThrow(NoSuchElementException::new);
+        if(table.getOrders().isEmpty()){
+            tableRepository.deleteById(tableId);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int getCurrentTableNumber(Long tableId) {
+        List<ShowTablesDto> allTables = getAllTables();
+        for (ShowTablesDto table : allTables) {
+            if(table.getId() == tableId){
+                return table.getTableNumberOrder();
+            }
+        }
+        return 0;
     }
 
 

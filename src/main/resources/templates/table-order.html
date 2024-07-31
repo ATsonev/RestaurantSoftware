@@ -375,6 +375,7 @@
             text-align: center;
             align-self: center;
         }
+
         .menu-items-container {
             position: relative;
             display: flex;
@@ -400,14 +401,15 @@
     <button class="header-button"
             th:classappend="${tableWaiterId=='null' ? 'disabled-button' : ''}"
             th:disabled="${tableWaiterId=='null'}"
-            onclick="showPaymentModal()">BILL</button>
+            onclick="showPaymentModal()">BILL
+    </button>
     <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
     </form>
     <button onclick="document.getElementById('logout-form').submit();" class="logout-button"></button>
 </div>
 <div class="content">
     <div class="table-info">
-        <span style="color: #253258;" th:text="'Table ' + ${tableId}">Table 1</span>
+        <span style="color: #253258;" th:text="'Table ' + ${tableCurrentNumber}">Table 1</span>
         <hr class="custom-hr">
         <div class="order-table-container">
             <table class="order-table">
@@ -578,10 +580,10 @@
         var buttons = document.querySelectorAll('.category-button');
         buttons.forEach(function (button) {
             if (category === 'BAR' && (button.dataset.category === 'NON_ALCOHOL_BEVERAGES' || button.dataset.category === 'ALCOHOL_BEVERAGES' ||
-                                            button.dataset.category === 'COFFEE')) {
+                button.dataset.category === 'COFFEE')) {
                 button.style.display = 'block';
             } else if (category === 'KITCHEN' && button.dataset.category !== 'NON_ALCOHOL_BEVERAGES' && button.dataset.category !== 'ALCOHOL_BEVERAGES'
-                            && button.dataset.category !== 'COFFEE') {
+                && button.dataset.category !== 'COFFEE') {
                 button.style.display = 'block';
             } else if (category === 'LUNCH' && button.dataset.category === 'LUNCH') {
                 button.style.display = 'block';
@@ -653,6 +655,7 @@
             showMenuItems(currentCategory, currentPage + 1);
         }
     }
+
     let currentCategory = '';
 
     function addToOrder(item) {
@@ -980,7 +983,7 @@
         const discountPercentage = appliedDiscount;
         const url = `/order/finishTable${paymentType}/${tableId}/${waiterId}?discount=${discountPercentage}`;
 
-        if(currentOrderRows.length === 0){
+        if (currentOrderRows.length === 0) {
             return;
         }
 

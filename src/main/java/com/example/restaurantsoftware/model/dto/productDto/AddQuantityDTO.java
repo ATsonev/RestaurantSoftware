@@ -1,6 +1,5 @@
 package com.example.restaurantsoftware.model.dto.productDto;
 
-import com.example.restaurantsoftware.model.enums.ProductUnit;
 
 public class AddQuantityDTO {
     private Long id;

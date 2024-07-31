@@ -2,7 +2,6 @@ package com.example.restaurantsoftware.model;
 
 
 import com.example.restaurantsoftware.model.base.BaseEntity;
-import com.example.restaurantsoftware.model.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

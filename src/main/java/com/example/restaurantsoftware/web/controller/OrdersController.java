@@ -1,14 +1,12 @@
 package com.example.restaurantsoftware.web.controller;
 
 import com.example.restaurantsoftware.model.MenuItem;
-import com.example.restaurantsoftware.model.Table;
 import com.example.restaurantsoftware.model.Waiter;
 import com.example.restaurantsoftware.model.dto.menuItemDto.ShowMenuItemJSONDTo;
 import com.example.restaurantsoftware.model.dto.orderDto.*;
 import com.example.restaurantsoftware.service.MenuItemService;
 import com.example.restaurantsoftware.service.OrderService;
 import com.example.restaurantsoftware.service.TableService;
-import com.example.restaurantsoftware.service.WaiterService;
 import com.example.restaurantsoftware.util.ImageUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,8 +38,11 @@ public class OrdersController {
     public String tableOrder(Model model, @PathVariable Long tableId, @PathVariable Long waiterId) {
         List<ShowMenuItemJSONDTo> menuItemDTO = getShowMenuItemJSONDTos(menuItemService.getAllMenuItems());
         Waiter waiter = tableService.getTableById(tableId).getWaiter();
-        model.addAttribute("menuItems", menuItemDTO);
         List<MenuItemsDto> currentOrders = orderService.getCurrentOrdersForTable(tableId);
+        int tableCurrentNumber = tableService.getCurrentTableNumber(tableId);
+
+        model.addAttribute("tableCurrentNumber",tableCurrentNumber);
+        model.addAttribute("menuItems", menuItemDTO);
         model.addAttribute("currentOrders", currentOrders);
         model.addAttribute("tables", tableService.getAllTables());
         model.addAttribute("tableWaiterId", waiter==null ? "null" : waiter.getId());

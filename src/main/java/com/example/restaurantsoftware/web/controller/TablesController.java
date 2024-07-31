@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,8 +58,11 @@ public class TablesController {
     }
 
     @PostMapping("/delete-table")
-    public String deleteTable(@RequestParam("tableId") Long tableId) {
-        tableService.deleteTable(tableId);
+    public String deleteTable(@RequestParam("tableId") Long tableId,  RedirectAttributes redirectAttributes) {
+        boolean result = tableService.deleteTable(tableId);
+        if(!result){
+            redirectAttributes.addFlashAttribute("deleteError", "You cannot delete a non-empty table.");
+        }
         return "redirect:/tables";
     }
 

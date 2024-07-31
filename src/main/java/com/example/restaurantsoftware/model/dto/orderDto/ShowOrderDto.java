@@ -7,6 +7,7 @@ public class ShowOrderDto {
     private long id;
     private LocalDateTime dateAndTimeOrdered;
     private long tableId;
+    private long tableCurrentNumber;
     private String waiterFirstName;
     private List<ShowOrderMenuItemDto> menuItems;
 
@@ -48,5 +49,13 @@ public class ShowOrderDto {
 
     public void setMenuItems(List<ShowOrderMenuItemDto> menuItems) {
         this.menuItems = menuItems;
+    }
+
+    public long getTableCurrentNumber() {
+        return tableCurrentNumber;
+    }
+
+    public void setTableCurrentNumber(long tableCurrentNumber) {
+        this.tableCurrentNumber = tableCurrentNumber;
     }
 }

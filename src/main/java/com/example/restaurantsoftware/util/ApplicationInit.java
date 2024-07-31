@@ -13,13 +13,11 @@ public class ApplicationInit implements CommandLineRunner {
 
     private final WaiterRepository waiterRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TableRepository tableRepository;
     private final QRCodeServiceImpl qrCodeService;
 
-    public ApplicationInit(WaiterRepository waiterRepository, PasswordEncoder passwordEncoder, TableRepository tableRepository, QRCodeServiceImpl qrCodeService) {
+    public ApplicationInit(WaiterRepository waiterRepository, PasswordEncoder passwordEncoder, QRCodeServiceImpl qrCodeService) {
         this.waiterRepository = waiterRepository;
         this.passwordEncoder = passwordEncoder;
-        this.tableRepository = tableRepository;
         this.qrCodeService = qrCodeService;
     }
 
