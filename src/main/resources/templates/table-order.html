@@ -366,7 +366,7 @@
         }
 
         .pagination-controls button:disabled {
-            background-color: #ddd;
+            background-color: #4d5365;
             cursor: not-allowed;
         }
 
@@ -390,19 +390,19 @@
 <div class="header">
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <button onclick="reloadTables()" style="width: 15.1vw" class="header-button">TABLES</button>
-    <button class="header-button" onclick="sendOrder()">ORDER</button>
     <button class="table-button" th:attr="data-waiter-id=${waiterId},  data-table-id=${tableId}"
             th:classappend="${tableWaiterId!='null' ? 'disabled-button' : ''}"
             th:disabled="${tableWaiterId!='null'}"
             onclick="setWaiter(this)">TAKE TABLE
     </button>
-    <button class="header-button" onclick="location.href='/turnovers-page'">TURNOVER</button>
+    <button class="header-button" onclick="sendOrder()">ORDER</button>
     <button class="header-button" onclick="showDiscountModal()">DISCOUNT</button>
     <button class="header-button"
             th:classappend="${tableWaiterId=='null' ? 'disabled-button' : ''}"
             th:disabled="${tableWaiterId=='null'}"
-            onclick="showPaymentModal()">BILL
+            onclick="showPaymentModal()">FINISH TABLE
     </button>
+    <button class="header-button" onclick="location.href='/turnovers-page'">TURNOVER</button>
     <form id="logout-form" th:action="@{/logout}" method="post" style="display:none;">
     </form>
     <button onclick="document.getElementById('logout-form').submit();" class="logout-button"></button>
