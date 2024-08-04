@@ -44,11 +44,6 @@
             padding: 10px;
         }
 
-        .button-container {
-            display: flex;
-            gap: 90px;
-        }
-
         form button[type="submit"] {
             background-color: #304174;
             color: white;
@@ -108,6 +103,14 @@
             background-color: #253258;
         }
 
+        .top-right-buttons{
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            display: flex;
+            gap: 30px;
+        }
+
         input {
             font-size: 20px;
         }
@@ -156,7 +159,7 @@
 <body>
 <div class="container-head">
     <h1 th:text="${menuItemDTO.name}">Menu Item Name</h1>
-    <div class="button-container">
+    <div class="top-right-buttons">
         <a th:href="@{'/menuItem/add-new-product/' + ${menuItemDTO.id}}">
             <button class="add-product-button">Add product</button>
         </a>

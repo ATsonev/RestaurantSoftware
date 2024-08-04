@@ -11,12 +11,15 @@
             justify-content: flex-start;
             margin-top: 50px;
             position: relative;
+            width: 80%;
+            height: 80vh;
+            box-sizing: border-box;
         }
 
         .table-button {
             position: absolute;
-            width: 120px;
-            height: 135px;
+            width: 8.7%;
+            height: 21%;
             background-image: url("/images/tables.png");
             background-size: cover;
             color: white;
@@ -253,7 +256,7 @@
 </div>
 
 <div class="table-container" id="table-container">
-    <div th:each="table, rowStat : ${tables}" th:attr="style=${rowStat.index < 4 ? 'position:relative;' : ''}">
+    <div th:each="table, rowStat : ${tables}">
         <button class="table-button"
                 draggable="true"
                 th:attr="id='table-' + ${table.id}"
@@ -287,6 +290,36 @@
     <button class="manage-table-button" sec:authorize="hasRole('ROLE_ADMIN')" onclick="openAddTableModal()"></button>
 </div>
 
+<div id="myModal" class="modal">
+    <div class="modal-content" style="width: 300px">
+        <span class="close" onclick="closeModal('myModal')">&times;</span>
+        <form id="assign-waiter-form" th:action="@{/setWaiter}" th:method="post">
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <div style="margin-bottom: 10px;">
+                    <label for="tableSelect" class="bold" style="font-size: 24px">Select Table:</label>
+                    <select id="tableSelect" name="tableNumberOrder"
+                            style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                        <option th:each="table : ${tables}" th:value="${table.getTableNumberOrder()}" th:text="${table.getTableNumberOrder()}"></option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
+                    <select id="waiterSelect" name="waiterId"
+                            style="width: 200px; height: 40px; font-size: 16px; text-align: center">
+                        <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}"
+                                th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
+                        <option th:value="0" th:text="'Unassign Table'"></option>
+                    </select>
+                </div>
+                <input type="hidden" id="hiddenTableId" name="tableId">
+            </div>
+            <button type="button" onclick="submitAssignWaiterForm()"
+                    style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px;
+                        background-color: #253258; color: white">Assign Table
+            </button>
+        </form>
+    </div>
+</div>
 
 <div id="addTableModal" class="modal">
     <div class="modal-content">
@@ -340,35 +373,6 @@
         </form>
     </div>
 </div>
-
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('myModal')">&times;</span>
-        <form th:action="@{/setWaiter}" th:method="post">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <div style="margin-bottom: 10px;">
-                    <label for="tableSelect" class="bold" style="font-size: 24px">Select Table:</label>
-                    <select id="tableSelect" name="tableId"
-                            style="width: 200px; height: 40px; font-size: 16px; text-align: center">
-                        <option th:each="table : ${tables}" th:value="${table.id}" th:text="${table.id}"></option>
-                    </select>
-                </div>
-                <div style="margin-bottom: 10px;">
-                    <label for="waiterSelect" class="bold" style="font-size: 24px">Select Waiter:</label>
-                    <select id="waiterSelect" name="waiterId"
-                            style="width: 200px; height: 40px; font-size: 16px; text-align: center">
-                        <option th:each="waiter : ${waiters}" th:value="${waiter.getId()}"
-                                th:text="${waiter.getFirstName()+ ' ' + waiter.getLastName()}"></option>
-                    </select>
-                </div>
-            </div>
-            <button type="submit"
-                    style="width: 200px; height: 40px; font-size: 16px; margin-right: 18px; margin-top: 20px;
-                        background-color: #253258; color: white">Assign Table
-            </button>
-        </form>
-    </div>
-</div>
 <script>
     function navigateToTableOrder(tableId, waiterId, tableNumberOrder) {
         const url = new URL(window.location.href);
@@ -417,8 +421,8 @@
             var id = table.id;
             var position = JSON.parse(localStorage.getItem(id));
             if (position) {
-                table.style.left = position.left + 'px';
-                table.style.top = position.top + 'px';
+                table.style.left = position.left;
+                table.style.top = position.top;
             }
         });
 
@@ -434,9 +438,11 @@
         tableContainer.addEventListener('dragend', function (e) {
             if (isDraggingEnabled) {
                 e.target.classList.remove('dragging');
-                var x = parseInt(e.target.style.left, 10);
-                var y = parseInt(e.target.style.top, 10);
-                localStorage.setItem(e.target.id, JSON.stringify({left: x, top: y}));
+                var x = (e.clientX - tableContainer.offsetLeft - e.target.offsetWidth / 2) / tableContainer.offsetWidth * 100;
+                var y = (e.clientY - tableContainer.offsetTop - e.target.offsetHeight / 2) / tableContainer.offsetHeight * 100;
+                e.target.style.left = x + '%';
+                e.target.style.top = y + '%';
+                localStorage.setItem(e.target.id, JSON.stringify({left: x + '%', top: y + '%'}));
             }
         });
 
@@ -444,10 +450,10 @@
             if (isDraggingEnabled) {
                 e.preventDefault();
                 var dragging = document.querySelector('.dragging');
-                var x = e.clientX - tableContainer.offsetLeft - dragging.offsetWidth / 2;
-                var y = e.clientY - tableContainer.offsetTop - dragging.offsetHeight / 2;
-                dragging.style.left = x + 'px';
-                dragging.style.top = y + 'px';
+                var x = (e.clientX - tableContainer.offsetLeft - dragging.offsetWidth / 2) / tableContainer.offsetWidth * 100;
+                var y = (e.clientY - tableContainer.offsetTop - dragging.offsetHeight / 2) / tableContainer.offsetHeight * 100;
+                dragging.style.left = x + '%';
+                dragging.style.top = y + '%';
             }
         });
 
@@ -506,6 +512,28 @@
     function showAddTableForm() {
         closeModal('addTableModal');
         document.getElementById("addTableFormModal").style.display = "flex";
+    }
+
+    function submitAssignWaiterForm() {
+        var tableNumberOrder = document.getElementById('tableSelect').value;
+        var hiddenTableIdInput = document.getElementById('hiddenTableId');
+
+        var found = false;
+        var tables = document.querySelectorAll('.table-button');
+
+        tables.forEach(function(table) {
+            var tableNumberOrderSpan = table.querySelector('.table-info span').innerText;
+            if (tableNumberOrderSpan === tableNumberOrder) {
+                hiddenTableIdInput.value = table.id.split('-')[1];
+                found = true;
+            }
+        });
+
+        if (found) {
+            document.getElementById('assign-waiter-form').submit();
+        } else {
+            alert('Table number not found');
+        }
     }
 
     function showDeleteTableForm() {

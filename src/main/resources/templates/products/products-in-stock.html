@@ -16,7 +16,7 @@
             text-align: left;
         }
 
-        td{
+        td {
             font-size: 20px;
         }
 
@@ -41,7 +41,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
+            margin-bottom: 10px;
         }
 
         button {
@@ -99,6 +99,7 @@
         .add-product-button:hover {
             background-color: #253258;
         }
+
         .delete-button {
             background-color: #D84E38;
             color: white;
@@ -112,6 +113,7 @@
             cursor: pointer;
             border-radius: 5px;
         }
+
         .delete-button:hover {
             background-color: #BE4634;
         }
@@ -173,25 +175,41 @@
             display: none;
         }
 
+        .center-text {
+            text-align: center;
+        }
+
+        .top-right-buttons {
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            display: flex;
+            gap: 30px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="language-selector">
-        <form action="#" method="get">
-            <label>
-                <select name="lang" onchange="this.form.submit()">
-                    <option value="en" th:selected="${#locale.language == 'en'}">English</option>
-                    <option value="bg" th:selected="${#locale.language == 'bg'}">Български</option>
-                </select>
-            </label>
-        </form>
-    </div>
+<div class="language-selector">
+    <form action="#" method="get">
+        <label>
+            <select name="lang" onchange="this.form.submit()">
+                <option value="en" th:selected="${#locale.language == 'en'}">English</option>
+                <option value="bg" th:selected="${#locale.language == 'bg'}">Български</option>
+            </select>
+        </label>
+    </form>
+</div>
 <div class="container">
-<h1 th:text="#{products.products.in.stock}">Products in Stock</h1>
-<button class="add-product-button" onclick="location.href='/products/add-product';"
-        th:text="#{products.add.product}">Add product</button>
-<button class="go-back-button" onclick="location.href='/tables'"
-        th:text="#{products.go.back.to.tables}">Go back to tables</button>
+    <h1 th:text="#{products.products.in.stock}">Products in Stock</h1>
+    <div class="top-right-buttons">
+        <button class="add-product-button" onclick="location.href='/products/add-product';"
+                th:text="#{products.add.product}">Add product
+        </button>
+        <button class="go-back-button" onclick="location.href='/tables'"
+                th:text="#{products.go.back.to.tables}">Go back to tables
+        </button>
+    </div>
 </div>
 
 
@@ -222,7 +240,8 @@
         <td th:text="${product.quantity}"></td>
         <td th:text="
         ${product.productUnit} == 'KILOGRAM' ? 'Kg' :
-        (${product.productUnit} == 'LITER' ? 'Liter' :'Piece')">></td>
+        (${product.productUnit} == 'LITER' ? 'Liter' :'Piece')">>
+        </td>
         <td>
             <a th:href="@{'/products/add-product-quantity/' + ${product.id}}">
                 <button class="button" th:text="#{products.add.quantity}">Add Quantity</button>
@@ -230,7 +249,7 @@
         </td>
         <td>
             <a th:href="@{'/products/edit-product-quantity/'+ ${product.id}}">
-            <button class="button" th:text="#{products.edit.quantity}">Edit Quantity</button>
+                <button class="button" th:text="#{products.edit.quantity}">Edit Quantity</button>
             </a>
         </td>
         <td>
@@ -251,6 +270,7 @@
             event.preventDefault();
         }
     }
+
     document.addEventListener("submit", confirmDelete);
 
     function toggleSearch() {
@@ -265,6 +285,7 @@
             searchInput.focus();
         }
     }
+
     function closeSearch() {
         var searchInput = document.getElementById("searchInput");
         var searchButton = document.querySelector(".search-button");

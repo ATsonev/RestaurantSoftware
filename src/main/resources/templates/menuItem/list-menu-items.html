@@ -46,6 +46,14 @@
             padding: 10px;
         }
 
+        .top-right-buttons{
+            position: absolute;
+            top: 20px;
+            right: 10px;
+            display: flex;
+            gap: 30px;
+        }
+
         .button {
             background-color: #304174;
             color: white;
@@ -125,12 +133,17 @@
             width: 120px;
         }
 
+        .center-text {
+            text-align: center;
+        }
+
         .dropdown {
             display: inline-block;
             position: relative;
         }
 
         .dropdown button {
+            position: absolute;
             width: 100%;
             text-align: left;
             background-color: #304174;
@@ -229,13 +242,15 @@
 <body>
 <div class="container">
     <h1>Menu Items</h1>
-    <button class="add-product-button" onclick="location.href='/menuItem/add-menu-item';">Add Menu Item</button>
-    <button class="go-back-button" onclick="location.href='/tables'">Go back to tables</button>
+    <div class="top-right-buttons">
+        <button class="add-product-button" onclick="location.href='/menuItem/add-menu-item';">Add Menu Item</button>
+        <button class="go-back-button" onclick="location.href='/tables'">Go back to tables</button>
+    </div>
 </div>
 <table>
     <thead>
     <tr>
-        <th style="font-size: 24px; display: flex; align-items: center;;height: 63px">
+        <th style="display: flex; align-items: center;height: 63px">
             <span>Name</span>
             <button class="search-button" onclick="toggleSearch()"></button>
             <div class="search-container" style="margin-left: 10px; margin-top: 20px">
@@ -246,9 +261,10 @@
             </div>
         </th>
         <th>Description</th>
-        <th>Category
+        <th>
             <div class="dropdown">
-                <button class="button">Categories</button>
+                <button style="background-color: transparent; color: black; font-weight: bold"></button>
+                <span>Category ▼</span>
                 <div class="dropdown-content">
                     <label>
                         <input type="checkbox" class="filter-checkbox" value="all" onchange="filterByCategory()">

@@ -46,8 +46,13 @@ public class TableServiceImpl implements TableService {
 
     @Override
     public void setWaiter(long tableId, long waiterId) {
-        Waiter waiter = waiterRepository.findById(waiterId).get();
         Table table = tableRepository.findById(tableId).get();
+        if(waiterId == 0){
+            table.setWaiter(null);
+            tableRepository.save(table);
+            return;
+        }
+        Waiter waiter = waiterRepository.findById(waiterId).get();
         table.setWaiter(waiter);
         table.setTableStatus(TableStatus.TAKEN);
         tableRepository.save(table);

@@ -515,7 +515,7 @@
         <p>Select Table to Move to:</p>
         <select id="tableSelect">
             <option value="" disabled selected>Select a table</option>
-            <option th:each="table : ${tables}" th:value="${table.id}" th:text="'Table ' + ${table.id}"></option>
+            <option th:each="table : ${tables}" th:value="${table.id}" th:text="'Table ' + ${table.getTableNumberOrder()}"></option>
         </select>
         <button onclick="moveItem()">Move</button>
     </div>
@@ -941,6 +941,8 @@
         selectedTable = document.getElementById('tableSelect').value;
         const menuItem = selectedRow.cells[0].textContent;
         const tableId = document.querySelector('.table-button').getAttribute('data-table-id');
+
+
 
         if (selectedTable) {
             fetch('/order/moveOrderItem', {
