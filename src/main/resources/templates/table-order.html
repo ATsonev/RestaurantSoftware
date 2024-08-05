@@ -327,7 +327,6 @@
         }
 
         .payment-button {
-            background-color: #D28F49;
             color: white;
             height: 20.85vh;
             width: 10.735vw;
@@ -513,7 +512,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeTableSelectionModal()">&times;</span>
         <p>Select Table to Move to:</p>
-        <select id="tableSelect">
+        <select id="tableSelect" style="margin-bottom: 10px">
             <option value="" disabled selected>Select a table</option>
             <option th:each="table : ${tables}" th:value="${table.id}" th:text="'Table ' + ${table.getTableNumberOrder()}"></option>
         </select>
