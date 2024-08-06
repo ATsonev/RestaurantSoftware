@@ -27,10 +27,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests(authorizeRequests ->
+                .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                                .requestMatchers("/login", "/customer-order/**","/menu-items", "/order-menuItem").permitAll()
+                                .requestMatchers("/login", "/customer-order/**","/menu-items", "/order-menuItem", "/").permitAll()
                                 .requestMatchers("/orders/kitchen").hasRole("KITCHEN")
                                 .requestMatchers("/orders/order-done/hotKitchen/**").hasRole("KITCHEN")
                                 .requestMatchers("/orders/order-done/coldKitchen/**").hasRole("KITCHEN")
@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler(customAuthenticationSuccessHandler())
+                        .failureUrl("/login?error=true")
                         .permitAll()
                         .usernameParameter("password")
                         .passwordParameter("password")
