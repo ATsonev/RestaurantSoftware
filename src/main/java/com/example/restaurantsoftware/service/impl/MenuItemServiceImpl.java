@@ -37,7 +37,6 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public List<MenuItem> getAllMenuItems() {
-        System.out.println(menuItemRepository.findAll().size());
         return menuItemRepository.findAll();
     }
 

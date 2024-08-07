@@ -43,7 +43,7 @@ public class KitchenBarStaffServiceImplTest {
 
         ResponseEntity<KitchenBarStaffDto> responseEntity = new ResponseEntity<>(responseDto, HttpStatus.OK);
         when(restTemplate.exchange(
-                eq("http://localhost:8081/kitchen-bar-staff/by-password"),
+                eq("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff/by-password"),
                 eq(HttpMethod.POST),
                 any(HttpEntity.class),
                 eq(KitchenBarStaffDto.class)
@@ -61,7 +61,7 @@ public class KitchenBarStaffServiceImplTest {
         String password = "testPassword";
 
         when(restTemplate.exchange(
-                eq("http://localhost:8081/kitchen-bar-staff/by-password"),
+                eq("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff/by-password"),
                 eq(HttpMethod.POST),
                 any(HttpEntity.class),
                 eq(KitchenBarStaffDto.class)
@@ -77,14 +77,14 @@ public class KitchenBarStaffServiceImplTest {
         AddKitchenBarStaffDTO dto = new AddKitchenBarStaffDTO();
         KitchenBarStaffDto responseDto = new KitchenBarStaffDto();
         when(restTemplate.postForObject(
-                eq("http://localhost:8081/kitchen-bar-staff"),
+                eq("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff"),
                 eq(dto),
                 eq(KitchenBarStaffDto.class)
         )).thenReturn(responseDto);
 
         kitchenBarStaffService.addStaff(dto);
 
-        verify(restTemplate).postForObject("http://localhost:8081/kitchen-bar-staff", dto, KitchenBarStaffDto.class);
+        verify(restTemplate).postForObject("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff", dto, KitchenBarStaffDto.class);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class KitchenBarStaffServiceImplTest {
         KitchenBarStaffDto[] staffArray = { new KitchenBarStaffDto(), new KitchenBarStaffDto() };
         ResponseEntity<KitchenBarStaffDto[]> responseEntity = new ResponseEntity<>(staffArray, HttpStatus.OK);
         when(restTemplate.getForEntity(
-                eq("http://localhost:8081/kitchen-bar-staff"),
+                eq("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff"),
                 eq(KitchenBarStaffDto[].class)
         )).thenReturn(responseEntity);
 

@@ -3,8 +3,6 @@ package com.example.restaurantsoftware.service.impl;
 import com.example.restaurantsoftware.model.dto.staffDto.AddKitchenBarStaffDTO;
 import com.example.restaurantsoftware.model.dto.staffDto.KitchenBarStaffDto;
 import com.example.restaurantsoftware.service.KitchenBarStaffService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -21,7 +19,6 @@ import java.util.Optional;
 @Service
 public class KitchenBarStaffServiceImpl implements KitchenBarStaffService {
 
-    private static final Logger logger = LoggerFactory.getLogger(KitchenBarStaffServiceImpl.class);
     private final RestTemplate restTemplate;
     public KitchenBarStaffServiceImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -33,23 +30,19 @@ public class KitchenBarStaffServiceImpl implements KitchenBarStaffService {
         requestDto.setPassword(password);
 
         try {
-            logger.debug("Sending request to find staff by password");
             ResponseEntity<KitchenBarStaffDto> responseEntity = restTemplate.exchange(
-                    "http://localhost:8081/kitchen-bar-staff/by-password",
+            "https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff/by-password",
                     HttpMethod.POST,
                     new HttpEntity<>(requestDto),
                     KitchenBarStaffDto.class
             );
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                logger.debug("Received response: {}", responseEntity.getBody());
                 return Optional.ofNullable(responseEntity.getBody());
             } else {
-                logger.warn("Received non-OK response: {}", responseEntity.getStatusCode());
                 return Optional.empty();
             }
         } catch (HttpClientErrorException e) {
-            logger.error("HTTP error occurred: {}", e.getStatusCode(), e);
             if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
                 return Optional.empty();
             } else {
@@ -59,12 +52,13 @@ public class KitchenBarStaffServiceImpl implements KitchenBarStaffService {
     }
     @Override
     public void addStaff(AddKitchenBarStaffDTO dto) {
-        restTemplate.postForObject("http://localhost:8081/kitchen-bar-staff", dto, KitchenBarStaffDto.class);
+        restTemplate.postForObject("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff", dto, KitchenBarStaffDto.class);
     }
 
     @Override
     public List<KitchenBarStaffDto> getAllStaff() {
-        ResponseEntity<KitchenBarStaffDto[]> response = restTemplate.getForEntity("http://localhost:8081/kitchen-bar-staff",
+        ResponseEntity<KitchenBarStaffDto[]> response =
+                restTemplate.getForEntity("https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff",
                 KitchenBarStaffDto[].class);
         KitchenBarStaffDto[] staffArray = response.getBody();
         if(staffArray != null){
@@ -75,7 +69,7 @@ public class KitchenBarStaffServiceImpl implements KitchenBarStaffService {
 
     @Override
     public void deleteAccount(long id) {
-        String url = "http://localhost:8081/kitchen-bar-staff/delete-account/" + id;
+        String url = "https://easyserves-easyservesrest2.azuremicroservices.io/kitchen-bar-staff/delete-account/" + id;
         restTemplate.delete(url);
     }
 
