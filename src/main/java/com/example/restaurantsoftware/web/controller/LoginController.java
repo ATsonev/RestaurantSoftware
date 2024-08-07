@@ -18,5 +18,9 @@ public class LoginController {
         return "login";
     }
 
+    @GetMapping("/test-error")
+    public String testError() {
+        throw new RuntimeException("Test 500 error");
+    }
 
 }
