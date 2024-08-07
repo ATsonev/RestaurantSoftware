@@ -7,7 +7,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +18,15 @@ import java.util.List;
 @Service
 public class QRCodeServiceImpl {
 
-    @Autowired
     private TableRepository tableRepository;
+
+    public QRCodeServiceImpl(TableRepository tableRepository) {
+        this.tableRepository = tableRepository;
+    }
 
     @Transactional
     public void generateAndSaveQRCodes() throws WriterException, IOException {
-        String localIpAddress = System.getProperty("ip_address");
-        String baseUrl = "http://"+localIpAddress+ ":8080/customer-order/";
+        String baseUrl = "https://easyserves-easyserves2.azuremicroservices.io/customer-order/";
         int width = 350;
         int height = 350;
 

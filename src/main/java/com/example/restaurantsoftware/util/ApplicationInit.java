@@ -23,7 +23,6 @@ public class ApplicationInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        qrCodeService.generateAndSaveQRCodes();
         if(waiterRepository.count() == 0){
             Waiter waiter = new Waiter();
             waiter.setFirstName("admin");
